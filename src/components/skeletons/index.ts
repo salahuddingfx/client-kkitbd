@@ -1,0 +1,10 @@
+export { HomeSkeleton } from "./HomeSkeleton";
+export { AboutSkeleton } from "./AboutSkeleton";
+export { ServicesSkeleton } from "./ServicesSkeleton";
+export { CoursesSkeleton } from "./CoursesSkeleton";
+export { TechnologiesSkeleton } from "./TechnologiesSkeleton";
+export { BlogSkeleton } from "./BlogSkeleton";
+export { ContactSkeleton } from "./ContactSkeleton";
+export { PolicySkeleton } from "./PolicySkeleton";
+export { GridSkeleton } from "./GridSkeleton";
+export { AuthSkeleton } from "./AuthSkeleton";
