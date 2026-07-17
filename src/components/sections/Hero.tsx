@@ -30,19 +30,25 @@ function Typewriter() {
 
   useEffect(() => {
     const currentWord = typewriterWords[wordIndex];
-    const speed = isDeleting ? 40 : 100;
 
     if (!isDeleting && text === currentWord) {
-      const pause = setTimeout(() => setIsDeleting(true), 1800);
+      const pause = setTimeout(() => {
+        setWordIndex(wordIndex);
+        setIsDeleting(true);
+      }, 1800);
       return () => clearTimeout(pause);
     }
 
     if (isDeleting && text === "") {
-      setIsDeleting(false);
-      setWordIndex((prev) => (prev + 1) % typewriterWords.length);
-      return;
+      const next = (wordIndex + 1) % typewriterWords.length;
+      const timeout = setTimeout(() => {
+        setWordIndex(next);
+        setIsDeleting(false);
+      }, 50);
+      return () => clearTimeout(timeout);
     }
 
+    const speed = isDeleting ? 40 : 100;
     const timeout = setTimeout(() => {
       setText(
         isDeleting
