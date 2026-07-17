@@ -55,17 +55,29 @@ export default function TeamPage() {
                       <p className="text-sm text-muted-foreground mb-4">{member.bio}</p>
                       <div className="flex items-center justify-center space-x-3 mb-4">
                         {member.socialLinks.linkedin && (
-                          <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                          <span
+                            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.linkedin.color; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
+                          >
                             <socialIcons.linkedin.icon className="h-4 w-4" />
                           </span>
                         )}
                         {member.socialLinks.twitter && (
-                          <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                          <span
+                            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.twitter.color; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
+                          >
                             <socialIcons.twitter.icon className="h-4 w-4" />
                           </span>
                         )}
                         {member.socialLinks.github && (
-                          <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                          <span
+                            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.github.color; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
+                          >
                             <socialIcons.github.icon className="h-4 w-4" />
                           </span>
                         )}

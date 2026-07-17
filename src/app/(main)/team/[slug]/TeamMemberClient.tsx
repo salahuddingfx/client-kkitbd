@@ -71,7 +71,10 @@ export default function TeamMemberClient({ member }: { member: TeamMember }) {
                     href={member.socialLinks.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-all hover:text-white"
+                    style={{ "--hover-bg": socialIcons.linkedin.color } as React.CSSProperties}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.linkedin.color; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
                   >
                     <socialIcons.linkedin.icon className="h-5 w-5" />
                   </a>
@@ -81,7 +84,10 @@ export default function TeamMemberClient({ member }: { member: TeamMember }) {
                     href={member.socialLinks.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-all hover:text-white"
+                    style={{ "--hover-bg": socialIcons.twitter.color } as React.CSSProperties}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.twitter.color; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
                   >
                     <socialIcons.twitter.icon className="h-5 w-5" />
                   </a>
@@ -91,7 +97,10 @@ export default function TeamMemberClient({ member }: { member: TeamMember }) {
                     href={member.socialLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-all hover:text-white"
+                    style={{ "--hover-bg": socialIcons.github.color } as React.CSSProperties}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.github.color; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
                   >
                     <socialIcons.github.icon className="h-5 w-5" />
                   </a>
@@ -101,7 +110,9 @@ export default function TeamMemberClient({ member }: { member: TeamMember }) {
                     href={member.socialLinks.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                    className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center transition-all hover:text-white"
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.globe.color; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
                   >
                     <Globe className="h-5 w-5" />
                   </a>

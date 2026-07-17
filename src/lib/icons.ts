@@ -135,12 +135,12 @@ export const techSkillIcons: Record<string, SkillIcon> = {
   "Analytics": { name: "Analytics", icon: BsBarChartLine, color: "#06B6D4" },
 };
 
-// Social icons
+// Social icons with brand colors
 export const socialIcons = {
-  github: { icon: BsGithub, label: "GitHub" },
-  linkedin: { icon: BsLinkedin, label: "LinkedIn" },
-  twitter: { icon: BsTwitter, label: "Twitter" },
-  globe: { icon: BsGlobe, label: "Website" },
+  github: { icon: BsGithub, label: "GitHub", color: "#333333" },
+  linkedin: { icon: BsLinkedin, label: "LinkedIn", color: "#0A66C2" },
+  twitter: { icon: BsTwitter, label: "Twitter", color: "#1DA1F2" },
+  globe: { icon: BsGlobe, label: "Website", color: "#10B981" },
 };
 
 // Helper to get skill icon by name
