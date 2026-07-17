@@ -600,3 +600,35 @@ img[data-allow-drag="true"] {
 .animate-pulse-border {
   animation: pulse-border 2s linear infinite;
 }
+
+/* Module Download Button Pulse */
+.module-download-btn {
+  position: relative;
+  overflow: visible;
+}
+
+.module-download-btn::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #dc2626;
+  border-radius: 10px;
+  opacity: 0;
+  animation: module-pulse 2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes module-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.04, 1.08);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
