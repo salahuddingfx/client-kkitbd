@@ -49,7 +49,7 @@ const jobOpenings = [
 export default function CareersPage() {
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -71,14 +71,14 @@ export default function CareersPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="max-w-3xl mx-auto">
             <div className="grid gap-6">
               {jobOpenings.map((job, index) => (
                 <FadeIn key={job.id} delay={index * 0.1}>
                   <Card className="group hover:border-primary/50 transition-all duration-300">
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 sm:p-6">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">

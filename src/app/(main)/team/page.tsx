@@ -12,7 +12,7 @@ import { ArrowRight } from "lucide-react";
 export default function TeamPage() {
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -34,14 +34,14 @@ export default function TeamPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {team.map((member, index) => (
               <FadeIn key={member.id} delay={index * 0.1}>
                 <Link href={`/team/${member.slug}`}>
                   <Card className="h-full text-center group hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                    <CardContent className="p-8">
+                    <CardContent className="p-4 sm:p-8">
                       <Avatar className="w-24 h-24 mx-auto mb-4">
                         <AvatarImage src={member.avatar} />
                         <AvatarFallback>

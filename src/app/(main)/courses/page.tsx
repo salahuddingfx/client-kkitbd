@@ -101,7 +101,7 @@ export default function CoursesPage() {
 
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -123,7 +123,7 @@ export default function CoursesPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="relative flex-1">
@@ -167,7 +167,7 @@ export default function CoursesPage() {
                         {course.description}
                       </p>
                       <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                           <span className="flex items-center">
                             <Clock className="h-4 w-4 mr-1" />
                             {course.duration}

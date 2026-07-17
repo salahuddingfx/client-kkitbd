@@ -201,7 +201,7 @@ export default function TechnologiesPage() {
   return (
     <>
       {/* Hero */}
-      <section ref={heroRef} className="pt-20 pb-16 bg-background-secondary">
+      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-4xl mx-auto">
             <span className="tech-hero-badge inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -232,7 +232,7 @@ export default function TechnologiesPage() {
 
       {/* Tech Categories */}
       {techCategories.map((category, catIndex) => (
-        <section key={category.title} className={`py-20 ${catIndex % 2 === 1 ? "bg-background-secondary" : ""}`}>
+        <section key={category.title} className={`py-12 sm:py-20 ${catIndex % 2 === 1 ? "bg-background-secondary" : ""}`}>
           <Container>
             <ScrollReveal direction="up" distance={30}>
               <div className="text-center mb-12">
@@ -276,7 +276,7 @@ export default function TechnologiesPage() {
       ))}
 
       {/* Our Process */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <SectionHeader
             subtitle="Our Process"
@@ -293,7 +293,7 @@ export default function TechnologiesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {processSteps.map((step) => (
                 <div key={step.step} className="process-step">
-                  <GlowCard variant="animated" className="p-8 h-full relative overflow-hidden">
+                  <GlowCard variant="animated" className="p-4 sm:p-8 h-full relative overflow-hidden">
                     <div className="text-6xl font-black text-primary/10 absolute top-4 right-4">
                       {step.step}
                     </div>
@@ -313,7 +313,7 @@ export default function TechnologiesPage() {
       </section>
 
       {/* Why Our Stack */}
-      <section className="py-20 bg-background-secondary">
+      <section className="py-12 sm:py-20 bg-background-secondary">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <ScrollReveal direction="right" distance={60}>
@@ -345,7 +345,7 @@ export default function TechnologiesPage() {
             </ScrollReveal>
 
             <ScrollReveal direction="left" distance={60}>
-              <GlowCard variant="neu" className="p-8">
+              <GlowCard variant="neu" className="p-4 sm:p-8">
                 <div className="space-y-6">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -391,7 +391,7 @@ export default function TechnologiesPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-12 sm:py-20 bg-primary">
         <Container>
           <ScrollReveal direction="up" distance={0} duration={0.8}>
             <div className="text-center max-w-3xl mx-auto">

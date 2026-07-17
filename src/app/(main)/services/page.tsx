@@ -62,7 +62,7 @@ export default function ServicesPage() {
 
   return (
     <>
-      <section ref={heroRef} className="pt-20 pb-16 bg-background-secondary">
+      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <span className="svc-hero-badge inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -79,16 +79,16 @@ export default function ServicesPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <StaggerReveal childSelector=".service-card" stagger={0.12} y={50} duration={0.7}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {services.map((service) => (
                 <div key={service.title} className="service-card">
                   <Link href={service.href}>
                     <div className="animated-border-lg">
                       <GlowCard variant="glow" className="h-full group border-transparent bg-background">
-                      <div className="p-8">
+                      <div className="p-4 sm:p-8">
                         <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                           <service.icon className="h-7 w-7 text-primary group-hover:text-white" />
                         </div>
@@ -119,7 +119,7 @@ export default function ServicesPage() {
         </Container>
       </section>
 
-      <section className="py-20 bg-primary">
+      <section className="py-12 sm:py-20 bg-primary">
         <Container>
           <ScrollReveal direction="up" distance={0} duration={0.8}>
             <div className="text-center">

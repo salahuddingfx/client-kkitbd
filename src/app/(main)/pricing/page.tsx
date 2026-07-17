@@ -54,7 +54,7 @@ const plans = [
 export default function PricingPage() {
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -76,14 +76,14 @@ export default function PricingPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {plans.map((plan, index) => (
               <FadeIn key={plan.name} delay={index * 0.1}>
                 <Card
                   className={`h-full relative ${
-                    plan.isPopular ? "border-primary shadow-lg scale-105" : ""
+                    plan.isPopular ? "border-primary shadow-lg md:scale-105" : ""
                   }`}
                 >
                   {plan.isPopular && (
@@ -91,7 +91,7 @@ export default function PricingPage() {
                       <Badge className="bg-primary">Most Popular</Badge>
                     </div>
                   )}
-                  <CardContent className="p-8 text-center">
+                  <CardContent className="p-4 sm:p-8 text-center">
                     <h3 className="text-xl font-semibold text-foreground">{plan.name}</h3>
                     <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
                     <div className="mt-6">

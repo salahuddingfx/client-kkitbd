@@ -83,7 +83,7 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -105,7 +105,7 @@ export default function PortfolioPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="flex flex-wrap justify-center gap-2 mb-12">
             {categories.map((category) => (
@@ -136,7 +136,7 @@ export default function PortfolioPage() {
                       </a>
                     </div>
                   </div>
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 sm:p-6">
                     <div className="flex items-center justify-between mb-2">
                       <Badge variant="secondary">{project.category}</Badge>
                       <span className="text-sm text-muted-foreground">{project.duration}</span>

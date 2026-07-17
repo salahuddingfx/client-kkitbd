@@ -63,7 +63,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -85,7 +85,7 @@ export default function BlogPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="relative flex-1 max-w-md">

@@ -115,7 +115,7 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section ref={heroRef} className="pt-20 pb-16 bg-background-secondary">
+      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <span className="about-subtitle text-sm font-medium text-primary uppercase tracking-wider">
@@ -136,9 +136,9 @@ export default function AboutPage() {
       </section>
 
       {/* Our Story */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <ScrollReveal direction="right" distance={60} duration={0.8}>
               <div className="space-y-6">
                 <h2 className="text-3xl font-bold text-foreground">Our Story</h2>
@@ -188,7 +188,7 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline */}
-      <section className="py-20 bg-background-secondary overflow-hidden">
+      <section className="py-12 sm:py-20 bg-background-secondary overflow-hidden">
         <Container>
           <SectionHeader
             subtitle="Our Journey"
@@ -200,7 +200,7 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <SectionHeader
             subtitle="Our Values"
@@ -236,7 +236,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-12 sm:py-20 bg-primary">
         <Container>
           <ScrollReveal direction="up" distance={0} duration={0.8}>
             <div className="text-center">

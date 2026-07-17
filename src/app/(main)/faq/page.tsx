@@ -61,7 +61,7 @@ const faqCategories = [
 export default function FAQPage() {
   return (
     <>
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -83,7 +83,7 @@ export default function FAQPage() {
         </Container>
       </section>
 
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="max-w-3xl mx-auto space-y-12">
             {faqCategories.map((category, categoryIndex) => (
