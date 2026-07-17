@@ -144,7 +144,7 @@ export default function ReviewsPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-3 justify-end">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-end">
                 <button
                   onClick={() => setShowForm(false)}
                   className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-colors"

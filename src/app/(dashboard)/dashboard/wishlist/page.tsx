@@ -73,7 +73,7 @@ export default function WishlistPage() {
                         <span className="text-sm text-muted-foreground">{item.course.lectures} lectures</span>
                       </div>
 
-                      <div className="flex items-center justify-between mt-4">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-4">
                         <div className="flex items-center gap-3">
                           <span className="text-xl font-bold text-foreground">
                             {formatCurrency(item.course.discountPrice || item.course.price)}

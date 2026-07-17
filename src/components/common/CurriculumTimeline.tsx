@@ -190,7 +190,73 @@ export default function CurriculumTimeline({ curriculum, totalLessons }: Curricu
   const endPt = waypointToPercent(ROAD_END.x, ROAD_END.y);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto py-12 overflow-visible">
+    <>
+      {/* Mobile: Simple vertical timeline */}
+      <div className="md:hidden w-full max-w-lg mx-auto py-8 px-4">
+        <div className="relative">
+          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-border" />
+          <div className="space-y-6">
+            <div className="relative flex items-start gap-4">
+              <div className="relative z-10 h-12 w-12 rounded-xl bg-green-500/10 border border-green-500/30 flex items-center justify-center shrink-0">
+                <Rocket className="h-5 w-5 text-green-600" />
+              </div>
+              <div className="pt-2">
+                <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider">Starting Point</span>
+                <p className="text-sm font-semibold text-foreground">Let&apos;s Begin!</p>
+              </div>
+            </div>
+            {curriculum.map((section, i) => {
+              const color = moduleColors[i % moduleColors.length];
+              const Icon = moduleIcons[i % moduleIcons.length];
+              return (
+                <div key={i} className="relative flex items-start gap-4">
+                  <div className="relative z-10 h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <Icon className={`h-5 w-5 ${color.text}`} />
+                  </div>
+                  <div className="flex-1 min-w-0 pt-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                      Module {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <h3 className="font-semibold text-foreground text-sm leading-tight line-clamp-2">
+                      {section.title}
+                    </h3>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <BookOpen className="h-3 w-3" />
+                        {section.lessons} lessons
+                      </span>
+                      <span className="text-xs text-muted-foreground flex items-center gap-1">
+                        <Clock className="h-3 w-3" />
+                        {section.duration}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            <div className="relative flex items-start gap-4">
+              <div className="relative z-10 h-12 w-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                <Flag className="h-5 w-5 text-primary" />
+              </div>
+              <div className="pt-2">
+                <span className="text-[10px] font-bold text-primary uppercase tracking-wider">Finish Line</span>
+                <p className="text-sm font-semibold text-foreground">Course Complete!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-center mt-6">
+          <div className="flex items-center gap-2 bg-primary/10 border border-primary/20 rounded-full px-5 py-2.5">
+            <Trophy className="h-5 w-5 text-primary" />
+            <span className="text-sm font-bold text-primary">
+              {curriculum.length} Modules • {totalLessons} Lessons
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: SVG road timeline */}
+      <div className="hidden md:block relative w-full max-w-6xl mx-auto py-12 overflow-visible">
       <div
         ref={wrapperRef}
         className="relative w-full"

@@ -171,7 +171,7 @@ export default function DevelopersPage() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -194,7 +194,7 @@ export default function DevelopersPage() {
       </section>
 
       {/* Developers Grid */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {developers.map((dev, index) => (
@@ -288,7 +288,7 @@ export default function DevelopersPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 bg-background-secondary">
+      <section className="py-12 sm:py-16 bg-background-secondary">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -296,7 +296,7 @@ export default function DevelopersPage() {
             viewport={{ once: true }}
             className="text-center max-w-2xl mx-auto"
           >
-            <h2 className="text-3xl font-bold text-foreground mb-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
               Want to Join Our Team?
             </h2>
             <p className="text-muted-foreground mb-8">

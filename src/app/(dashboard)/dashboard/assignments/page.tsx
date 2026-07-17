@@ -210,7 +210,7 @@ export default function AssignmentsPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground">{milestone.title}</h3>
-                    <div className="flex items-center gap-3 mt-1">
+                    <div className="flex flex-wrap items-center gap-3 mt-1">
                       <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", config.bg, config.color)}>
                         {config.label}
                       </span>
@@ -249,7 +249,7 @@ export default function AssignmentsPage() {
                                 </span>
                               </div>
                               <p className="text-sm text-muted-foreground mb-2">{assignment.description}</p>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                                 <span>{assignment.points} points</span>
                                 {assignment.submittedAt && (
                                   <span>Submitted {formatDate(assignment.submittedAt)}</span>

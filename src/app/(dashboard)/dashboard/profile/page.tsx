@@ -29,9 +29,9 @@ export default function ProfilePage() {
       <FadeIn>
         <Card>
           <CardContent className="p-6">
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
               <div className="relative">
-                <div className="h-24 w-24 rounded-full bg-muted overflow-hidden ring-4 ring-primary/20">
+                <div className="h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-muted overflow-hidden ring-4 ring-primary/20">
                   {user.avatar ? (
                     <img
                       src={user.avatar}

@@ -44,7 +44,7 @@ export function PolicyPage({
   return (
     <>
       {/* Hero */}
-      <section ref={heroRef} className="pt-20 pb-16 bg-background-secondary">
+      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <span className="policy-badge inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
@@ -64,7 +64,7 @@ export function PolicyPage({
       </section>
 
       {/* Content */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="max-w-3xl mx-auto">
             {intro && (
@@ -112,7 +112,7 @@ export function PolicyPage({
 
             {/* Contact footer */}
             <ScrollReveal direction="up" distance={20} delay={0.2}>
-              <div className="mt-16 p-8 rounded-2xl bg-background-secondary border border-border text-center">
+              <div className="mt-12 sm:mt-16 p-4 sm:p-8 rounded-2xl bg-background-secondary border border-border text-center">
                 <h3 className="text-lg font-bold text-foreground mb-2">
                   Questions about this policy?
                 </h3>

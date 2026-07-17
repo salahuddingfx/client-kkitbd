@@ -49,7 +49,7 @@ export default function CertificatesPage() {
                   <p className="text-xs text-muted-foreground mb-4">
                     Instructor: {cert.instructor}
                   </p>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                     <a
                       href={cert.certificateUrl}
                       target="_blank"
