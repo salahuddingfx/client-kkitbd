@@ -60,14 +60,14 @@ export function LiveChat() {
             </div>
 
             {/* Messages */}
-            <div className="px-3 py-2.5 bg-background-secondary">
+            <div className="px-3 py-3 bg-background-secondary min-h-[180px]">
               <div className="flex gap-2">
-                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <span className="text-[9px] font-bold text-primary">K</span>
+                <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-[10px] font-bold text-primary">K</span>
                 </div>
-                <div className="bg-muted rounded-lg px-2.5 py-1.5 max-w-[80%]">
-                  <p className="text-[11px] text-foreground">
-                    Hi! How can we help?
+                <div className="bg-muted rounded-lg px-3 py-2 max-w-[80%]">
+                  <p className="text-xs text-foreground">
+                    Hi there! How can we help you today?
                   </p>
                 </div>
               </div>
