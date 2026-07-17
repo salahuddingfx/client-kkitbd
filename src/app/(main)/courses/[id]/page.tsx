@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Clock,
@@ -12,6 +13,8 @@ import {
   BookOpen,
   Award,
   Play,
+  Heart,
+  Share2,
 } from "lucide-react";
 import { Button, Badge, GlowCard } from "@/components/ui";
 import { Breadcrumb, Container, ShareButtons } from "@/components/common";
@@ -279,6 +282,7 @@ export default function CourseDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const course = courses.find((c) => c.id === id);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   if (!course) {
     return (
@@ -330,7 +334,20 @@ export default function CourseDetailPage() {
 
               <p className="text-muted-foreground text-lg">{course.description}</p>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              {/* Intro Video - Right after description */}
+              {course.introVideoUrl && (
+                <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-xl mt-6">
+                  <iframe
+                    src={course.introVideoUrl}
+                    title={`${course.title} - Introduction`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full"
+                  />
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mt-4">
                 <span className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
                   <span className="font-semibold text-foreground">{course.rating}</span>
@@ -363,7 +380,20 @@ export default function CourseDetailPage() {
                 </div>
               </div>
 
-              <div className="pt-2">
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  onClick={() => setIsWishlisted(!isWishlisted)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
+                    isWishlisted
+                      ? "bg-red-50 border-red-200 text-red-600 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400"
+                      : "bg-background border-border text-muted-foreground hover:border-red-300 hover:text-red-500"
+                  }`}
+                >
+                  <Heart
+                    className={`h-4 w-4 ${isWishlisted ? "fill-red-500" : ""}`}
+                  />
+                  {isWishlisted ? "Wishlisted" : "Add to Wishlist"}
+                </button>
                 <ShareButtons title={course.title} />
               </div>
             </div>
@@ -402,24 +432,6 @@ export default function CourseDetailPage() {
                   ))}
                 </div>
               </GlowCard>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Intro Video */}
-      <section className="py-16">
-        <Container>
-          <div className="max-w-4xl">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Course Introduction</h2>
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-black shadow-xl">
-              <iframe
-                src={course.introVideoUrl}
-                title={`${course.title} - Introduction`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
             </div>
           </div>
         </Container>
