@@ -52,6 +52,7 @@
   --sidebar-foreground: #ffffff;
 }
 
+/* stylelint-disable-next-line */
 @theme inline {
   --color-background: var(--background);
   --color-background-secondary: var(--background-secondary);
