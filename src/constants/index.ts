@@ -51,6 +51,9 @@ export const FOOTER_LINKS = {
     { label: "Portfolio", href: "/portfolio" },
     { label: "Pricing", href: "/pricing" },
     { label: "FAQ", href: "/faq" },
+    { label: "API Docs", href: "/api-docs" },
+    { label: "Status", href: "/status" },
+    { label: "Changelog", href: "/changelog" },
   ],
   legal: [
     { label: "Privacy Policy", href: "/privacy-policy" },
