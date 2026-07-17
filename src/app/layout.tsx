@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/components/providers";
 import { IntroLoader } from "@/components/loaders/IntroLoader";
 import { CookieConsent } from "@/components/common/CookieConsent";
+import { SecurityWrapper } from "@/components/common/SecurityWrapper";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -84,9 +85,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <IntroLoader />
-        <Providers>{children}</Providers>
-        <CookieConsent />
+        <SecurityWrapper>
+          <IntroLoader />
+          <Providers>{children}</Providers>
+          <CookieConsent />
+        </SecurityWrapper>
       </body>
     </html>
   );
