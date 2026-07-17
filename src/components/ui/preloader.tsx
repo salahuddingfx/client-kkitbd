@@ -75,7 +75,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       variants={slideUp}
       initial="initial"
       animate={isExiting ? "exit" : "initial"}
-      className="fixed inset-0 w-screen h-screen flex items-center justify-center bg-black z-[99999999999]"
+      className="fixed inset-0 w-screen h-screen flex items-center justify-center z-[99999999999]" style={{ backgroundColor: '#0a0a0a' }}
     >
       {dimension.width > 0 && (
         <>
@@ -85,11 +85,11 @@ export default function Preloader({ onComplete }: PreloaderProps) {
             animate="enter"
             className="flex items-center text-white text-4xl md:text-5xl lg:text-6xl absolute z-10 font-medium"
           >
-            <span className="block w-2.5 h-2.5 bg-white rounded-full mr-2.5"></span>
+            <span className="block w-2.5 h-2.5 rounded-full mr-2.5" style={{ backgroundColor: '#dc2626', boxShadow: '0 0 8px 2px rgba(220,38,38,0.6)' }}></span>
             {words[index]}
           </motion.p>
           <svg className="absolute top-0 w-full h-[calc(100%+300px)]">
-            <motion.path variants={curve} initial="initial" animate={isExiting ? "exit" : "initial"} fill="#070b13" />
+            <motion.path variants={curve} initial="initial" animate={isExiting ? "exit" : "initial"} fill="#0a0a0a" />
           </svg>
         </>
       )}
