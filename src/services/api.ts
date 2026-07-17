@@ -115,11 +115,17 @@ export interface Submission {
 
 // Auth API
 export const authApi = {
-  register: (data: { name: string; email: string; password: string }) =>
-    api.post<ApiResponse<{ user: User; accessToken: string; refreshToken: string }>>("/auth/register", data),
+  register: (data: { name: string; email: string; password: string; phone?: string }) =>
+    api.post<ApiResponse<any>>("/auth/register", data),
+
+  verifyRegister: (data: { email: string; otp: string }) =>
+    api.post<ApiResponse<{ user: User; accessToken: string; refreshToken: string }>>("/auth/verify-register", data),
 
   login: (data: { email: string; password: string }) =>
-    api.post<ApiResponse<{ user: User; accessToken: string; refreshToken: string }>>("/auth/login", data),
+    api.post<ApiResponse<any>>("/auth/login", data),
+
+  verifyLogin: (data: { email: string; otp: string; fingerprint?: string }) =>
+    api.post<ApiResponse<{ user: User; accessToken: string; refreshToken: string; deviceInfo?: any }>>("/auth/verify-login", data),
 
   getMe: (token: string) =>
     api.get<ApiResponse<User>>("/auth/me", { token }),
@@ -129,6 +135,12 @@ export const authApi = {
 
   resetPassword: (token: string, password: string) =>
     api.post<ApiResponse<{ message: string }>>(`/auth/reset-password/${token}`, { password }),
+
+  changePassword: (data: any, token: string) =>
+    api.put<ApiResponse<{ message: string }>>("/auth/change-password", data, { token }),
+
+  logout: (token: string) =>
+    api.post<ApiResponse<any>>("/auth/logout", {}, { token }),
 };
 
 // Courses API
@@ -329,5 +341,6 @@ export const invoiceApi = {
     return response.blob();
   },
 };
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";

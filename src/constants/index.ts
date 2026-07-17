@@ -75,6 +75,8 @@ export const SOCIAL_LINKS = {
   youtube: "https://youtube.com/@kkitbd",
 };
 
+export const AUTH_COOKIE_NAME = "token";
+
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export const BREAKPOINTS = {

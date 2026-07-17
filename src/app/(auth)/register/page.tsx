@@ -25,6 +25,9 @@ import {
 } from "lucide-react";
 import { Button, Label, PhoneInput } from "@/components/ui";
 import { OTPInput } from "@/components/ui/OTPInput";
+import { useAppDispatch } from "@/redux/hooks";
+import { login } from "@/redux/slices/authSlice";
+import { authApi } from "@/services/api";
 
 const stepOneSchema = z
   .object({
@@ -81,6 +84,7 @@ export default function RegisterPage() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [phone, setPhone] = useState("");
   const [timer, setTimer] = useState(OTP_EXPIRY);
+  const dispatch = useAppDispatch();
 
   const stepOneForm = useForm<StepOneData>({
     resolver: zodResolver(stepOneSchema),
@@ -105,12 +109,23 @@ export default function RegisterPage() {
     setFormData(data);
     setIsSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-      toast.success("OTP sent to your email!");
-      setTimer(OTP_EXPIRY);
-      setStep("otp");
-    } catch {
-      toast.error("Failed to send OTP. Please try again.");
+      const response = await authApi.register({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        phone: data.phone,
+      });
+      if (response.success) {
+        toast.success(response.message || "OTP sent to your email!");
+        setTimer(OTP_EXPIRY);
+        setStep("otp");
+      } else {
+        toast.error(response.message || "Failed to send OTP. Please try again.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      const errMsg = error.message || "Failed to send OTP. Please try again.";
+      toast.error(errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -122,13 +137,34 @@ export default function RegisterPage() {
       toast.error("Please enter the complete 6-digit OTP.");
       return;
     }
+    if (!formData?.email) return;
     setIsSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
-      toast.success("Account created successfully! Welcome aboard.");
-      window.location.href = "/";
-    } catch {
-      toast.error("Invalid OTP. Please try again.");
+      const response = await authApi.verifyRegister({
+        email: formData.email,
+        otp,
+      });
+      if (response.success) {
+        const payload = response.data;
+        dispatch(
+          login({
+            user: {
+              id: payload.user._id,
+              name: payload.user.name,
+              email: payload.user.email,
+            },
+            token: payload.accessToken,
+          })
+        );
+        toast.success("Account created successfully! Welcome aboard.");
+        window.location.href = "/dashboard";
+      } else {
+        toast.error(response.message || "Invalid OTP. Please try again.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      const errMsg = error.message || "Invalid OTP. Please try again.";
+      toast.error(errMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -136,16 +172,30 @@ export default function RegisterPage() {
 
   /* ---------- resend ---------- */
   const resendOTP = useCallback(async () => {
+    if (!formData?.email) return;
     setIsSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 500));
-      setTimer(OTP_EXPIRY);
-      setOtp("");
-      toast.success("OTP resent to your email!");
+      const response = await authApi.register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+      });
+      if (response.success) {
+        setTimer(OTP_EXPIRY);
+        setOtp("");
+        toast.success("OTP resent to your email!");
+      } else {
+        toast.error(response.message || "Failed to resend OTP.");
+      }
+    } catch (error: any) {
+      console.error(error);
+      const errMsg = error.message || "Failed to resend OTP.";
+      toast.error(errMsg);
     } finally {
       setIsSubmitting(false);
     }
-  }, []);
+  }, [formData]);
 
   return (
     <div className="min-h-screen flex">

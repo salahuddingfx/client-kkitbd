@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -29,6 +29,9 @@ import { cn } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { mockUserProfile } from "@/services/dashboard-data";
 import { getInitials } from "@/utils";
+import { useAppSelector, useAppDispatch } from "@/redux/hooks";
+import { authApi } from "@/services/api";
+import { setUser, logout } from "@/redux/slices/authSlice";
 
 const sidebarLinks = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -46,8 +49,31 @@ const sidebarLinks = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const user = mockUserProfile;
+  const { token, user: authUser } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (token && !authUser) {
+      authApi.getMe(token)
+        .then((res) => {
+          if (res.success) {
+            const u = res.data as any;
+            dispatch(setUser({
+              id: u._id,
+              name: u.name,
+              email: u.email,
+              avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url
+            }));
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load user profile in layout:", err);
+        });
+    }
+  }, [token, authUser, dispatch]);
+
+  const user = authUser || mockUserProfile;
 
   return (
     <div className="min-h-screen bg-background-secondary">
