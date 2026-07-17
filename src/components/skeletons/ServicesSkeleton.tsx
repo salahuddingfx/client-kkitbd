@@ -7,22 +7,22 @@ export function ServicesSkeleton() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <Skeleton className="h-3 w-28 mx-auto rounded-full" />
-            <Skeleton className="h-12 w-80 mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[450px] mx-auto rounded-md" />
+            <Skeleton className="h-12 w-full max-w-sm mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
           </div>
         </Container>
       </section>
 
       {/* Service Cards */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="rounded-xl border border-border bg-card p-8 space-y-4">
+              <div key={i} className="rounded-xl border border-border bg-card p-4 sm:p-8 space-y-4">
                 <Skeleton className="h-14 w-14 rounded-xl" />
                 <Skeleton className="h-6 w-48 rounded-md" />
                 <SkeletonText lines={3} />

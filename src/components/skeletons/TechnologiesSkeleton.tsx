@@ -7,12 +7,12 @@ export function TechnologiesSkeleton() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-4xl mx-auto space-y-6">
             <Skeleton className="h-8 w-32 mx-auto rounded-full" />
-            <Skeleton className="h-14 w-[500px] mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[400px] mx-auto rounded-md" />
+            <Skeleton className="h-14 w-full max-w-lg mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <SkeletonCard key={i} />
@@ -24,7 +24,7 @@ export function TechnologiesSkeleton() {
 
       {/* Tech Grids */}
       {[1, 2, 3, 4].map((section) => (
-        <section key={section} className={`py-20 ${section % 2 === 0 ? "bg-background-secondary" : ""}`}>
+        <section key={section} className={`py-12 sm:py-20 ${section % 2 === 0 ? "bg-background-secondary" : ""}`}>
           <Container>
             <div className="text-center space-y-3 mb-12">
               <Skeleton className="h-8 w-64 mx-auto rounded-lg" />

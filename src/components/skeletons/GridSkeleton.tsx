@@ -6,12 +6,12 @@ import { Skeleton, SkeletonCard } from "@/components/ui";
 export function GridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <div className="min-h-screen">
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <Skeleton className="h-3 w-20 mx-auto rounded-full" />
-            <Skeleton className="h-12 w-72 mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[400px] mx-auto rounded-md" />
+            <Skeleton className="h-12 w-full max-w-sm mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
           </div>
         </Container>
       </section>

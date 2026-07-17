@@ -50,7 +50,7 @@ export function OTPInput({ length = 6, value, onChange, className }: OTPInputPro
   );
 
   return (
-    <div className={cn("flex gap-3 justify-center", className)}>
+    <div className={cn("flex gap-2 sm:gap-3 justify-center", className)}>
       {Array.from({ length }).map((_, index) => (
         <input
           key={index}
@@ -65,7 +65,7 @@ export function OTPInput({ length = 6, value, onChange, className }: OTPInputPro
           onFocus={() => setFocusedIndex(index)}
           onBlur={() => setFocusedIndex(null)}
           className={cn(
-            "w-12 h-14 text-center text-xl font-bold rounded-xl border-2 bg-background transition-all duration-200 focus:outline-none",
+            "w-10 h-12 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-bold rounded-xl border-2 bg-background transition-all duration-200 focus:outline-none",
             focusedIndex === index
               ? "border-primary shadow-[0_0_0_3px_rgba(220,38,38,0.15)]"
               : value[index]

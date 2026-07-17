@@ -31,7 +31,7 @@ export function HomeSkeleton() {
       </section>
 
       {/* Trusted Companies */}
-      <section className="py-16 bg-background-secondary">
+      <section className="py-12 sm:py-16 bg-background-secondary">
         <Container>
           <div className="text-center space-y-3 mb-12">
             <Skeleton className="h-3 w-24 mx-auto rounded-full" />
@@ -46,11 +46,11 @@ export function HomeSkeleton() {
       </section>
 
       {/* Featured Services */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="text-center space-y-3 mb-12">
             <Skeleton className="h-3 w-28 mx-auto rounded-full" />
-            <Skeleton className="h-8 w-56 mx-auto rounded-lg" />
+            <Skeleton className="h-8 w-full max-w-xs mx-auto rounded-lg" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -61,11 +61,11 @@ export function HomeSkeleton() {
       </section>
 
       {/* Featured Courses */}
-      <section className="py-20 bg-background-secondary">
+      <section className="py-12 sm:py-20 bg-background-secondary">
         <Container>
           <div className="text-center space-y-3 mb-12">
             <Skeleton className="h-3 w-28 mx-auto rounded-full" />
-            <Skeleton className="h-8 w-52 mx-auto rounded-lg" />
+            <Skeleton className="h-8 w-full max-w-xs mx-auto rounded-lg" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -86,12 +86,12 @@ export function HomeSkeleton() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <div className="space-y-6">
               <Skeleton className="h-3 w-28 rounded-full" />
-              <Skeleton className="h-8 w-80 rounded-lg" />
+              <Skeleton className="h-8 w-full max-w-xs rounded-lg" />
               <SkeletonText lines={3} />
               <div className="grid grid-cols-2 gap-6 pt-4">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -111,10 +111,10 @@ export function HomeSkeleton() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-primary">
+      <section className="py-12 sm:py-20 bg-primary">
         <Container>
           <div className="text-center space-y-4 max-w-2xl mx-auto">
-            <Skeleton className="h-10 w-96 mx-auto rounded-lg bg-white/10" />
+            <Skeleton className="h-10 w-full max-w-md mx-auto rounded-lg bg-white/10" />
             <Skeleton className="h-5 w-full rounded-md bg-white/10" />
             <Skeleton className="h-5 w-3/4 mx-auto rounded-md bg-white/10" />
             <div className="flex justify-center gap-4 pt-4">

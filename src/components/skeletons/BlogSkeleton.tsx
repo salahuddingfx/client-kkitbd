@@ -6,12 +6,12 @@ import { Skeleton, SkeletonText } from "@/components/ui";
 export function BlogSkeleton() {
   return (
     <div className="min-h-screen">
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <Skeleton className="h-3 w-16 mx-auto rounded-full" />
-            <Skeleton className="h-12 w-52 mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[400px] mx-auto rounded-md" />
+            <Skeleton className="h-12 w-full max-w-xs mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
           </div>
         </Container>
       </section>

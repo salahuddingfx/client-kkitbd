@@ -6,18 +6,18 @@ import { Skeleton, SkeletonText } from "@/components/ui";
 export function ContactSkeleton() {
   return (
     <div className="min-h-screen">
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <Skeleton className="h-3 w-20 mx-auto rounded-full" />
-            <Skeleton className="h-12 w-64 mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[400px] mx-auto rounded-md" />
+            <Skeleton className="h-12 w-full max-w-xs mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
           </div>
         </Container>
       </section>
-      <section className="py-20">
+      <section className="py-12 sm:py-20">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
             <div className="space-y-6">
               <Skeleton className="h-6 w-48 rounded-lg" />
               <SkeletonText lines={3} />
@@ -33,7 +33,7 @@ export function ContactSkeleton() {
                 ))}
               </div>
             </div>
-            <div className="rounded-xl border border-border bg-card p-8 space-y-5">
+            <div className="rounded-xl border border-border bg-card p-6 sm:p-8 space-y-5">
               <Skeleton className="h-5 w-36 rounded-md" />
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">

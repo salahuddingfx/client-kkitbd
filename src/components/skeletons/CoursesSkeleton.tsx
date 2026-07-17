@@ -7,12 +7,12 @@ export function CoursesSkeleton() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="pt-20 pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
         <Container>
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <Skeleton className="h-3 w-20 mx-auto rounded-full" />
-            <Skeleton className="h-12 w-72 mx-auto rounded-xl" />
-            <Skeleton className="h-5 w-[400px] mx-auto rounded-md" />
+            <Skeleton className="h-12 w-full max-w-sm mx-auto rounded-xl" />
+            <Skeleton className="h-5 w-full max-w-md mx-auto rounded-md" />
           </div>
         </Container>
       </section>
@@ -20,7 +20,7 @@ export function CoursesSkeleton() {
       {/* Filters */}
       <section className="py-8 border-b border-border">
         <Container>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center">
             {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-9 w-24 rounded-lg" />
             ))}
