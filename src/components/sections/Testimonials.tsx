@@ -81,7 +81,7 @@ export function Testimonials() {
         />
 
         <div
-          className="relative max-w-3xl mx-auto"
+          className="relative max-w-3xl mx-auto overflow-hidden"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >

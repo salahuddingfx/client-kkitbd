@@ -313,7 +313,7 @@ export default function TechnologiesPage() {
       </section>
 
       {/* Why Our Stack */}
-      <section className="py-12 sm:py-20 bg-background-secondary">
+      <section className="py-12 sm:py-20 bg-background-secondary overflow-hidden">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <ScrollReveal direction="right" distance={60}>

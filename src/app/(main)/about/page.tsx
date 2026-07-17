@@ -136,7 +136,7 @@ export default function AboutPage() {
       </section>
 
       {/* Our Story */}
-      <section className="py-12 sm:py-20">
+      <section className="py-12 sm:py-20 overflow-hidden">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <ScrollReveal direction="right" distance={60} duration={0.8}>
