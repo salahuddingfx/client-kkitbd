@@ -2,7 +2,7 @@ import "core-js/stable";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/components/providers";
-import { IntroLoader } from "@/components/loaders/IntroLoader";
+import { PreloaderWrapper } from "@/components/ui/preloader-wrapper";
 import { CookieConsent } from "@/components/common/CookieConsent";
 import { SecurityWrapper } from "@/components/common/SecurityWrapper";
 import "./globals.css";
@@ -86,7 +86,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <SecurityWrapper>
-          <IntroLoader />
+          <PreloaderWrapper />
           <Providers>{children}</Providers>
           <CookieConsent />
         </SecurityWrapper>
