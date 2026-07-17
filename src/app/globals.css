@@ -201,6 +201,7 @@ html {
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -430,7 +431,9 @@ html {
   list-style: none;
   padding: 0;
   margin: 0.75rem 0;
-  space-y: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .policy-content ul li {
@@ -536,3 +539,63 @@ html {
 .intro-loader-dot-1 { animation-delay: 0s; }
 .intro-loader-dot-2 { animation-delay: 0.2s; }
 .intro-loader-dot-3 { animation-delay: 0.4s; }
+
+/* Video Protection */
+video {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: auto;
+}
+
+video::-webkit-media-controls-download-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+  overflow: hidden;
+}
+
+video::-webkit-media-controls-toggle-closed-captions-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+/* Block image dragging */
+img {
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Selective image allow */
+img[data-allow-drag="true"] {
+  pointer-events: auto;
+}
+
+/* Pulsing Download Button */
+.download-btn-pulse {
+  position: relative;
+}
+
+@keyframes pulse-border {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05, 1.1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s linear infinite;
+}
