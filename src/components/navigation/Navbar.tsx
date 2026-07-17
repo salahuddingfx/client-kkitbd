@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Sun, Moon } from "lucide-react";
@@ -32,6 +32,21 @@ export function Navbar() {
     dispatch(closeMobileMenu());
   }, [pathname, dispatch]);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
+  const handleBackdropClick = useCallback(() => {
+    dispatch(closeMobileMenu());
+  }, [dispatch]);
+
   return (
     <header
       className={cn(
@@ -42,23 +57,25 @@ export function Navbar() {
       )}
     >
       <Container>
-        <nav className="flex h-16 items-center justify-between">
+        <nav className="flex h-16 items-center justify-between gap-2">
           {/* Left — Logo */}
           <Link href="/" className="flex items-center space-x-2 shrink-0">
-            <span className="text-2xl font-bold text-primary">KKIT</span>
+            <span className="text-xl sm:text-2xl font-bold text-primary">
+              KKIT
+            </span>
           </Link>
 
-          {/* Center — Empty */}
+          {/* Center — Empty (pushes links right on lg+) */}
           <div className="hidden lg:block flex-1" />
 
-          {/* Right — Links + Actions */}
-          <div className="hidden lg:flex items-center space-x-6">
+          {/* Right — Desktop Links + Actions (lg+) */}
+          <div className="hidden lg:flex items-center space-x-5 xl:space-x-6">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "text-sm font-medium transition-colors hover:text-primary whitespace-nowrap",
                   pathname === link.href
                     ? "text-primary"
                     : "text-foreground/70"
@@ -74,7 +91,6 @@ export function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hidden sm:flex"
             >
               <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
               <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -89,64 +105,106 @@ export function Navbar() {
             </Button>
           </div>
 
-          {/* Mobile — Hamburger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-            onClick={() => dispatch(toggleMobileMenu())}
-          >
-            {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-          </Button>
+          {/* Right — Tablet: Theme toggle + Hamburger (md to lg) */}
+          <div className="flex lg:hidden items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => dispatch(toggleMobileMenu())}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMobileMenuOpen}
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                {isMobileMenuOpen ? (
+                  <motion.span
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="flex items-center justify-center"
+                  >
+                    <X className="h-5 w-5" />
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="flex items-center justify-center"
+                  >
+                    <Menu className="h-5 w-5" />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </Button>
+          </div>
         </nav>
       </Container>
 
+      {/* Backdrop overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-background border-b border-border"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 top-16 z-40 bg-black/50 lg:hidden"
+            onClick={handleBackdropClick}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile menu panel */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-x-0 top-16 z-50 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-border bg-background lg:hidden"
           >
-            <Container className="py-4">
-              <div className="flex flex-col space-y-4">
+            <Container className="py-4 sm:py-6">
+              <div className="flex flex-col">
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "text-sm font-medium transition-colors hover:text-primary py-2",
+                      "text-base font-medium transition-colors hover:text-primary -mx-4 px-4 py-3 rounded-lg hover:bg-muted/50",
                       pathname === link.href
-                        ? "text-primary"
+                        ? "text-primary bg-muted/50"
                         : "text-foreground/70"
                     )}
                   >
                     {link.label}
                   </Link>
                 ))}
-                <div className="flex items-center justify-between pt-4 border-t border-border">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  >
-                    <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                    <span className="sr-only">Toggle theme</span>
+
+                <div className="my-4 h-px bg-border" />
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <Button variant="outline" asChild className="w-full sm:w-auto">
+                    <Link href="/login">Login</Link>
                   </Button>
-                  <div className="flex items-center space-x-2">
-                    <Button variant="outline" asChild>
-                      <Link href="/login">Login</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href="/register">Get Started</Link>
-                    </Button>
-                  </div>
+                  <Button asChild className="w-full sm:w-auto">
+                    <Link href="/register">Get Started</Link>
+                  </Button>
                 </div>
               </div>
             </Container>
