@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 interface FadeInProps {
   children: React.ReactNode;
@@ -34,7 +35,7 @@ export function FadeIn({
       initial={{ opacity: 0, ...directionMap[direction] }}
       animate={isInView ? { opacity: 1, x: 0, y: 0 } : {}}
       transition={{ duration, delay, ease: "easeOut" }}
-      className={className}
+      className={cn("overflow-hidden", className)}
     >
       {children}
     </motion.div>
