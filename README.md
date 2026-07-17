@@ -6,17 +6,37 @@
 
 <br/>
 
-![License](https://img.shields.io/badge/license-GNU%20GPL%20v3-dc2626?style=for-the-badge&logo=gnu)
-![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Redux](https://img.shields.io/badge/Redux_Toolkit-2-764ABC?style=for-the-badge&logo=redux&logoColor=white)
+<!-- View counter -->
+<a href="https://github.com/kkitbd/client-kkitbd">
+  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fkkitbd%2Fclient-kkitbd&count_bg=%23DC2626&title_bg=%23111111&icon=github&icon_color=%23FFFFFF&title=Views&edge_flat=false" alt="Views"/>
+</a>
+<img src="https://img.shields.io/github/stars/kkitbd/client-kkitbd?style=flat&logo=github&logoColor=white&color=dc2626&labelColor=111111" alt="Stars"/>
+<img src="https://img.shields.io/github/forks/kkitbd/client-kkitbd?style=flat&logo=github&logoColor=white&color=dc2626&labelColor=111111" alt="Forks"/>
+<img src="https://img.shields.io/github/issues/kkitbd/client-kkitbd?style=flat&logo=github&logoColor=white&color=dc2626&labelColor=111111" alt="Issues"/>
+<img src="https://img.shields.io/badge/license-GPL%20v3-dc2626?style=flat&logo=gnu&logoColor=white&labelColor=111111" alt="License"/>
+
+<br/><br/>
+
+<!-- Tech stack with real icons -->
+<img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js"/>
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+<img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind"/>
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"/>
+<img src="https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=redux&logoColor=white" alt="Redux"/>
+<img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion"/>
+<img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=threedotjs&logoColor=white" alt="Three.js"/>
+<img src="https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white" alt="Zod"/>
+<img src="https://img.shields.io/badge/React_Hook_Form-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white" alt="React Hook Form"/>
+<img src="https://img.shields.io/badge/TanStack_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="TanStack Query"/>
+<img src="https://img.shields.io/badge/Recharts-22B5BF?style=for-the-badge&logo=recharts&logoColor=white" alt="Recharts"/>
+<img src="https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black" alt="GSAP"/>
+
+<br/><br/>
 
 <p>The official frontend for <strong>KKIT</strong> — Bangladesh's premium digital solutions and e-learning platform.<br/>
 Expert-led courses · Portfolio showcase · Digital services · Blog · Payments · Certificates</p>
 
-[![Live Demo](https://img.shields.io/badge/Live-kkitbd.com-dc2626?style=for-the-badge&logo=vercel)](https://kkitbd.com)
+[![Live](https://img.shields.io/badge/Live-kkitbd.com-dc2626?style=for-the-badge&logo=googlechrome&logoColor=white)](https://kkitbd.com)
 
 </div>
 
@@ -102,46 +122,31 @@ src/
 ### Prerequisites
 
 - Node.js `>= 18`
-- pnpm `>= 8` (`npm i -g pnpm`)
+- pnpm `>= 8` — `npm i -g pnpm`
 
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/kkitbd/client-kkitbd.git
 cd client-kkitbd
-
-# Install dependencies
 pnpm install
-
-# Set up environment variables
 cp .env.local.example .env.local
 ```
 
 ### Environment Variables
-
-Create a `.env.local` file in the root:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
 NEXT_PUBLIC_SITE_URL=http://localhost:4000
 ```
 
-### Running Locally
+### Running
 
 ```bash
-# Development (port 4000)
-pnpm dev
-
-# Production build
-pnpm build
-pnpm start
-```
-
-### Linting
-
-```bash
-pnpm lint
+pnpm dev      # Development (port 4000)
+pnpm build    # Production build
+pnpm start    # Production server
+pnpm lint     # Lint
 ```
 
 ---
@@ -179,13 +184,13 @@ This project follows the [Contributor Covenant v2.1](./CODE_OF_CONDUCT.md).
 
 ## 🔒 Security
 
-Found a vulnerability? Please read [SECURITY.md](./SECURITY.md) and report privately.
+Found a vulnerability? Read [SECURITY.md](./SECURITY.md) and report privately.
 
 ---
 
 ## 📄 License
 
-Licensed under the **GNU General Public License v3.0** — see [LICENSE](./LICENSE) for details.
+Licensed under the **GNU General Public License v3.0** — see [LICENSE](./LICENSE).
 
 ---
 
