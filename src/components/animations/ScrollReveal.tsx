@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
+import { cn } from "@/lib/utils";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -60,7 +61,7 @@ export function ScrollReveal({
   );
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={cn("overflow-hidden", className)}>
       {children}
     </div>
   );
