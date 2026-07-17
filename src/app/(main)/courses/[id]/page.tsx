@@ -14,7 +14,7 @@ import {
   Play,
 } from "lucide-react";
 import { Button, Badge, GlowCard } from "@/components/ui";
-import { Breadcrumb, Container } from "@/components/common";
+import { Breadcrumb, Container, ShareButtons } from "@/components/common";
 import CurriculumTimeline from "@/components/common/CurriculumTimeline";
 
 const courses = [
@@ -361,6 +361,10 @@ export default function CourseDetailPage() {
                   <div className="font-medium text-foreground text-sm">{course.instructor}</div>
                   <div className="text-xs text-muted-foreground">{course.instructorRole}</div>
                 </div>
+              </div>
+
+              <div className="pt-2">
+                <ShareButtons title={course.title} />
               </div>
             </div>
 

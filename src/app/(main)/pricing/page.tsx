@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent, Badge, Button, Separator } from "@/components/ui";
-import { Breadcrumb, Container, SectionHeader } from "@/components/common";
+import { Breadcrumb, Container, SectionHeader, CourseComparison, GuaranteeBadge } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Check } from "lucide-react";
 
@@ -118,9 +118,15 @@ export default function PricingPage() {
                 </Card>
               </FadeIn>
             ))}
-          </div>
+            </div>
         </Container>
       </section>
+
+      <div className="flex justify-center pb-12 sm:pb-20">
+        <GuaranteeBadge />
+      </div>
+
+      <CourseComparison />
     </>
   );
 }

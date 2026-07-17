@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Shield, Lock, CreditCard, Award } from "lucide-react";
 import { Separator } from "@/components/ui";
 import { Container } from "@/components/common";
 import { FOOTER_LINKS, SOCIAL_LINKS } from "@/constants";
@@ -109,6 +109,20 @@ export function Footer() {
         </div>
 
         <Separator className="my-8" />
+
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mb-8">
+          {[
+            { icon: Shield, label: "SSL Secured" },
+            { icon: Lock, label: "Data Encrypted" },
+            { icon: CreditCard, label: "Secure Payments" },
+            { icon: Award, label: "ISO Certified" },
+          ].map((badge) => (
+            <div key={badge.label} className="flex items-center gap-2 text-xs text-muted-foreground">
+              <badge.icon className="h-4 w-4" />
+              <span>{badge.label}</span>
+            </div>
+          ))}
+        </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           <p className="text-sm text-muted-foreground">

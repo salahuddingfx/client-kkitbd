@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui";
-import { Container } from "@/components/common";
+import { Container, StudentTicker } from "@/components/common";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
 import { Counter } from "@/components/animations";
 
@@ -148,6 +148,10 @@ export function Hero() {
                 Watch Demo
               </Link>
             </Button>
+          </div>
+
+          <div className="mt-8 flex justify-center">
+            <StudentTicker />
           </div>
 
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
