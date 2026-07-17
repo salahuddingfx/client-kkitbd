@@ -123,32 +123,20 @@ export function Navbar() {
               onClick={() => dispatch(toggleMobileMenu())}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={isMobileMenuOpen}
+              className="relative"
             >
-              <AnimatePresence mode="wait" initial={false}>
-                {isMobileMenuOpen ? (
-                  <motion.span
-                    key="close"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="flex items-center justify-center"
-                  >
-                    <X className="h-5 w-5" />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="menu"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.15 }}
-                    className="flex items-center justify-center"
-                  >
-                    <Menu className="h-5 w-5" />
-                  </motion.span>
+              <Menu
+                className={cn(
+                  "h-5 w-5 absolute transition-all duration-200",
+                  isMobileMenuOpen ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
                 )}
-              </AnimatePresence>
+              />
+              <X
+                className={cn(
+                  "h-5 w-5 absolute transition-all duration-200",
+                  isMobileMenuOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
+                )}
+              />
             </Button>
           </div>
         </nav>

@@ -131,19 +131,19 @@ export function CookieConsent() {
                       </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row flex-wrap gap-2 mt-5">
-                      <Button size="sm" onClick={acceptAll} className="flex-1 min-w-0 sm:min-w-[100px]">
+                    <div className="flex flex-col sm:flex-row gap-2 mt-5">
+                      <Button size="sm" onClick={acceptAll} className="w-full sm:flex-1">
                         <Check className="h-4 w-4 mr-1" />
                         Accept All
                       </Button>
-                      <Button size="sm" variant="outline" onClick={rejectAll} className="flex-1 min-w-0 sm:min-w-[100px]">
+                      <Button size="sm" variant="outline" onClick={rejectAll} className="w-full sm:flex-1">
                         Reject All
                       </Button>
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => setShowCustomize(true)}
-                        className="flex-1 min-w-0 sm:min-w-[100px] text-primary hover:text-primary"
+                        className="w-full sm:flex-1 text-primary hover:text-primary"
                       >
                         <Settings className="h-4 w-4 mr-1" />
                         Customize
