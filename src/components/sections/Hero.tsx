@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Container } from "@/components/common";
@@ -14,6 +14,53 @@ const stats = [
   { value: 50, suffix: "+", label: "Expert Instructors" },
   { value: 95, suffix: "%", label: "Success Rate" },
 ];
+
+const typewriterWords = [
+  "Expert-Led",
+  "Industry-Ready",
+  "Career-Focused",
+  "Hands-On",
+  "Job-Ready",
+];
+
+function Typewriter() {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [text, setText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = typewriterWords[wordIndex];
+    const speed = isDeleting ? 40 : 100;
+
+    if (!isDeleting && text === currentWord) {
+      const pause = setTimeout(() => setIsDeleting(true), 1800);
+      return () => clearTimeout(pause);
+    }
+
+    if (isDeleting && text === "") {
+      setIsDeleting(false);
+      setWordIndex((prev) => (prev + 1) % typewriterWords.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setText(
+        isDeleting
+          ? currentWord.substring(0, text.length - 1)
+          : currentWord.substring(0, text.length + 1)
+      );
+    }, speed);
+
+    return () => clearTimeout(timeout);
+  }, [text, isDeleting, wordIndex]);
+
+  return (
+    <span className="text-primary">
+      {text}
+      <span className="animate-pulse text-primary">|</span>
+    </span>
+  );
+}
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +121,7 @@ export function Hero() {
 
           <h1 className="hero-title text-4xl md:text-5xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
             Transform Your Career with{" "}
-            <span className="text-primary">Expert-Led</span> Courses
+            <Typewriter /> Courses
           </h1>
 
           <p className="hero-desc text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
