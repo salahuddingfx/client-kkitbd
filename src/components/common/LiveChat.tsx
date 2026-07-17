@@ -35,7 +35,7 @@ export function LiveChat() {
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 20, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-4 right-4 z-50 w-[280px] bg-background border border-border rounded-2xl shadow-2xl overflow-hidden"
+            className="fixed top-1/2 -translate-y-1/2 right-12 z-50 w-[280px] bg-background border border-border rounded-2xl shadow-2xl overflow-hidden"
           >
             {/* Header */}
             <div className="bg-primary px-3 py-2.5 text-white flex items-center justify-between">
