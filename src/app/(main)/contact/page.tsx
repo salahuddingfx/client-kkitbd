@@ -95,7 +95,7 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <section className="py-12 sm:py-20">
+      <section className="py-12 sm:py-20 overflow-hidden">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-12">
             <FadeIn direction="right">
