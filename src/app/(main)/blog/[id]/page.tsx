@@ -79,7 +79,6 @@ export default function BlogPostPage() {
       <Container>
         <Breadcrumb
           items={[
-            { label: "Home", href: "/" },
             { label: "Blog", href: "/blog" },
             { label: post.title },
           ]}

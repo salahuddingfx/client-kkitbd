@@ -8,8 +8,7 @@ export default function Status() {
     <div className="pt-12 sm:pt-20">
       <Breadcrumb
         items={[
-          { label: "Home", href: "/" },
-          { label: "Status", href: "/status" },
+          { label: "Status" },
         ]}
       />
       <StatusPage />

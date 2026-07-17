@@ -8,8 +8,7 @@ export default function ApiDocsPage() {
     <div className="pt-12 sm:pt-20">
       <Breadcrumb
         items={[
-          { label: "Home", href: "/" },
-          { label: "API Documentation", href: "/api-docs" },
+          { label: "API Documentation" },
         ]}
       />
       <ApiDocsSection />

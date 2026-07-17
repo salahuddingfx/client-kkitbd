@@ -8,8 +8,7 @@ export default function Changelog() {
     <div className="pt-12 sm:pt-20">
       <Breadcrumb
         items={[
-          { label: "Home", href: "/" },
-          { label: "Changelog", href: "/changelog" },
+          { label: "Changelog" },
         ]}
       />
       <ChangelogPage />
