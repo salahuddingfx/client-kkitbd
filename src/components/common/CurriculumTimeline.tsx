@@ -423,7 +423,8 @@ export default function CurriculumTimeline({ curriculum, totalLessons }: Curricu
           </span>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 
