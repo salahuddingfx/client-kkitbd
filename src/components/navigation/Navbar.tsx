@@ -129,13 +129,24 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
-                <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                  <Button variant="outline" asChild className="w-full">
-                    <Link href="/login">Login</Link>
+                <div className="flex items-center justify-between pt-4 border-t border-border">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  >
+                    <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                    <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <span className="sr-only">Toggle theme</span>
                   </Button>
-                  <Button asChild className="w-full">
-                    <Link href="/register">Get Started</Link>
-                  </Button>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" asChild>
+                      <Link href="/login">Login</Link>
+                    </Button>
+                    <Button asChild>
+                      <Link href="/register">Get Started</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </Container>
