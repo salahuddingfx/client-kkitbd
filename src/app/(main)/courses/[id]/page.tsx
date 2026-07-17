@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   BookOpen,
-  Award,
   Play,
   Heart,
   Share2,
@@ -19,7 +18,7 @@ import {
 import { Button, Badge, GlowCard } from "@/components/ui";
 import { Breadcrumb, Container, ShareButtons } from "@/components/common";
 import { CourseOutlineForm } from "@/components/common/CourseOutlineForm";
-import CurriculumTimeline from "@/components/common/CurriculumTimeline";
+import { HowItWorksSection } from "@/components/common/HowItWorksSection";
 
 const courses = [
   {
@@ -480,65 +479,8 @@ export default function CourseDetailPage() {
         </Container>
       </section>
 
-      {/* Curriculum */}
-      <section className="py-16">
-        <Container>
-          <div className="max-w-4xl">
-            <h2 className="text-2xl font-bold text-foreground mb-2">Course Curriculum</h2>
-            <p className="text-sm text-muted-foreground mb-10">
-              {course.curriculum.length} sections • {totalLessons} lessons
-            </p>
-            <div className="space-y-4">
-              {course.curriculum.map((section, index) => (
-                <div
-                  key={index}
-                  className="border border-border rounded-xl overflow-hidden bg-card"
-                >
-                  <div className="flex items-center justify-between p-4 bg-background-secondary">
-                    <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold">
-                        {index + 1}
-                      </span>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{section.title}</h3>
-                        <p className="text-xs text-muted-foreground">
-                          {section.lessons} lessons • {section.duration}
-                        </p>
-                      </div>
-                    </div>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 transition-all module-download-btn">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Download
-                    </button>
-                  </div>
-                  <div className="divide-y divide-border">
-                    {Array.from({ length: Math.min(section.lessons, 5) }).map((_, li) => (
-                      <div key={li} className="flex items-center gap-3 px-4 py-3 hover:bg-background-secondary/50 transition-colors">
-                        <Play className="h-4 w-4 text-muted-foreground shrink-0" />
-                        <span className="text-sm text-foreground flex-1">
-                          {li === 0 ? `Introduction to ${section.title}` : `Lesson ${li + 1}`}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {li === 0 ? "Preview" : "12 min"}
-                        </span>
-                      </div>
-                    ))}
-                    {section.lessons > 5 && (
-                      <div className="px-4 py-3 text-center">
-                        <span className="text-xs text-primary font-medium cursor-pointer hover:underline">
-                          + {section.lessons - 5} more lessons
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* How This Bootcamp Works */}
+      <HowItWorksSection />
 
       {/* Download Course Outline */}
       <section className="py-16 bg-background-secondary">
