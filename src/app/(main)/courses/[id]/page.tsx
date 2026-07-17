@@ -656,6 +656,15 @@ export default function CourseDetailPage() {
           </motion.div>
         </Container>
       </section>
+
+      {/* Course Outline Modal */}
+      {showOutlineForm && (
+        <CourseOutlineForm
+          courseName={course.title}
+          courseId={course.id}
+          onClose={() => setShowOutlineForm(false)}
+        />
+      )}
     </>
   );
 }
