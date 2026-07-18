@@ -185,7 +185,12 @@ html {
   position: relative;
   border-radius: 1rem;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glow-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 .glow-card::before {
@@ -205,14 +210,14 @@ html {
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
   z-index: 1;
   pointer-events: none;
 }
 
 .glow-card:hover::before {
   opacity: 1;
-  animation: spin-border 3s linear infinite;
+  animation: spin-border 6s linear infinite;
 }
 
 .glow-card::after {
@@ -226,7 +231,7 @@ html {
     transparent 40%
   );
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.3s ease;
   z-index: 0;
   pointer-events: none;
 }
@@ -272,7 +277,7 @@ html {
     transparent 90%,
     var(--primary) 100%
   );
-  animation: rotate-border 4s linear infinite;
+  animation: rotate-border 8s linear infinite;
   z-index: 0;
   pointer-events: none;
 }
@@ -323,7 +328,7 @@ html {
     #f97316 83%,
     transparent 91%
   );
-  animation: spin-border-angle 4s linear infinite;
+  animation: spin-border-angle 8s linear infinite;
 }
 
 @keyframes spin-border-angle {
@@ -344,7 +349,14 @@ html {
   box-shadow:
     6px 6px 12px rgba(0, 0, 0, 0.05),
     -6px -6px 12px rgba(255, 255, 255, 0.8);
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.neu-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    8px 8px 16px rgba(0, 0, 0, 0.08),
+    -8px -8px 16px rgba(255, 255, 255, 0.9);
 }
 
 .dark .neu-card {
