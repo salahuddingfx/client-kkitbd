@@ -6,6 +6,7 @@ import { Cookie, Settings, X, Check } from "lucide-react";
 import { Button } from "@/components/ui";
 import { GlowCard } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { useCookieConsent } from "./CookieConsentProvider";
 
 const CONSENT_KEY = "kkit_cookie_consent";
 
@@ -51,24 +52,20 @@ const categories = [
 ];
 
 export function CookieConsent() {
+  const { updatePreferences, hasConsented } = useCookieConsent();
   const [visible, setVisible] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const [prefs, setPrefs] = useState<CookiePreferences>(defaultPreferences);
 
   useEffect(() => {
-    // Clear any old consent data from previous keys
-    localStorage.removeItem("cookie-consent");
-
-    const stored = localStorage.getItem(CONSENT_KEY);
-    if (!stored) {
-      // Delay showing until preloader finishes (~4s)
+    if (!hasConsented) {
       const timer = setTimeout(() => setVisible(true), 4500);
       return () => clearTimeout(timer);
     }
-  }, []);
+  }, [hasConsented]);
 
   const save = (preferences: CookiePreferences) => {
-    localStorage.setItem(CONSENT_KEY, JSON.stringify(preferences));
+    updatePreferences(preferences);
     setVisible(false);
     setShowCustomize(false);
   };

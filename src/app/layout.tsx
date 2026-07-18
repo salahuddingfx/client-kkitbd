@@ -5,6 +5,8 @@ import Providers from "@/components/providers";
 import { PreloaderWrapper } from "@/components/ui/preloader-wrapper";
 import { CookieConsent } from "@/components/common/CookieConsent";
 import { SecurityWrapper } from "@/components/common/SecurityWrapper";
+import { CookieConsentProvider } from "@/components/common/CookieConsentProvider";
+import { ConditionalScripts } from "@/components/common/ConditionalScripts";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -86,11 +88,14 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Providers>
-          <SecurityWrapper>
-            <PreloaderWrapper />
-            {children}
-            <CookieConsent />
-          </SecurityWrapper>
+          <CookieConsentProvider>
+            <SecurityWrapper>
+              <PreloaderWrapper />
+              <ConditionalScripts />
+              {children}
+              <CookieConsent />
+            </SecurityWrapper>
+          </CookieConsentProvider>
         </Providers>
       </body>
     </html>
