@@ -53,6 +53,7 @@ import {
   BsGithub,
   BsLinkedin,
   BsTwitter,
+  BsFacebook,
   BsGlobe,
 } from "react-icons/bs";
 
@@ -140,6 +141,7 @@ export const socialIcons = {
   github: { icon: BsGithub, label: "GitHub", color: "#333333" },
   linkedin: { icon: BsLinkedin, label: "LinkedIn", color: "#0A66C2" },
   twitter: { icon: BsTwitter, label: "Twitter", color: "#1DA1F2" },
+  facebook: { icon: BsFacebook, label: "Facebook", color: "#1877F2" },
   globe: { icon: BsGlobe, label: "Website", color: "#10B981" },
 };
 

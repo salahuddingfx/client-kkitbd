@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Sun, Moon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Sun, Moon, LogOut, LayoutDashboard, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,9 @@ import { Button } from "@/components/ui";
 import { Container } from "@/components/common";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleMobileMenu, closeMobileMenu } from "@/redux/slices/uiSlice";
+import { authApi, leaderboardApi } from "@/services/api";
+import { setUser, logout } from "@/redux/slices/authSlice";
+import { getInitials } from "@/utils";
 
 function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
@@ -56,9 +59,49 @@ function ThemeToggle({ className }: { className?: string }) {
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
+  const { user: authUser, isAuthenticated } = useAppSelector((state) => state.auth);
   const [scrolled, setScrolled] = useState(false);
+  const [userRank, setUserRank] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!authUser) {
+      authApi.getMe()
+        .then((res) => {
+          if (res.success) {
+            const u = res.data as any;
+            dispatch(setUser({
+              id: u._id,
+              name: u.name,
+              email: u.email,
+              avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url,
+            }));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [authUser, dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      leaderboardApi.getMyStats()
+        .then((res) => {
+          if (res.success && res.data) {
+            setUserRank((res.data as any).rank);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isAuthenticated]);
+
+  const handleLogout = async () => {
+    try { await authApi.logout(); } catch { /* ignore */ }
+    dispatch(logout());
+    setUserRank(null);
+    router.push("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -129,12 +172,48 @@ export function Navbar() {
 
             <ThemeToggle />
 
-            <Button variant="ghost" asChild>
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">Get Started</Link>
-            </Button>
+            {isAuthenticated && authUser ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="h-4 w-4 mr-1.5" />
+                    Dashboard
+                  </Link>
+                </Button>
+                <Link href="/dashboard/profile" className="flex items-center gap-2.5 group">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
+                    {authUser.avatar ? (
+                      <img src={authUser.avatar} alt={authUser.name} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-xs font-bold text-primary">
+                        {getInitials(authUser.name)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="hidden xl:block">
+                    <div className="text-sm font-medium text-foreground leading-tight">{authUser.name}</div>
+                    {userRank && (
+                      <div className="flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400">
+                        <Trophy className="h-3 w-3" />
+                        Rank #{userRank}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+                <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Right — Tablet: Theme toggle + Hamburger (md to lg) */}
@@ -233,14 +312,52 @@ export function Navbar() {
 
                 <div className="my-4 h-px bg-border" />
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  <Button variant="outline" asChild className="w-full sm:w-auto">
-                    <Link href="/login">Login</Link>
-                  </Button>
-                  <Button asChild className="w-full sm:w-auto">
-                    <Link href="/register">Get Started</Link>
-                  </Button>
-                </div>
+                {isAuthenticated && authUser ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 px-4">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20">
+                        {authUser.avatar ? (
+                          <img src={authUser.avatar} alt={authUser.name} className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center text-sm font-bold text-primary">
+                            {getInitials(authUser.name)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium text-foreground">{authUser.name}</div>
+                        {userRank && (
+                          <div className="flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400">
+                            <Trophy className="h-3 w-3" />
+                            Rank #{userRank}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link href="/dashboard">
+                        <LayoutDashboard className="h-4 w-4 mr-2" />
+                        Dashboard
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" asChild className="w-full">
+                      <Link href="/dashboard/profile">Profile</Link>
+                    </Button>
+                    <Button variant="ghost" onClick={handleLogout} className="w-full text-destructive">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <Button variant="outline" asChild className="w-full sm:w-auto">
+                      <Link href="/login">Login</Link>
+                    </Button>
+                    <Button asChild className="w-full sm:w-auto">
+                      <Link href="/register">Get Started</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </Container>
           </motion.div>

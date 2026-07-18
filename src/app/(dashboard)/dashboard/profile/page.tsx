@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Camera, Save, User, Mail, Phone, MapPin, Globe, Loader2 } from "lucide-react";
+import { socialIcons } from "@/lib/icons";
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { getInitials } from "@/utils";
@@ -26,7 +27,10 @@ export default function ProfilePage() {
     phone: "",
     bio: "",
     location: "",
-    website: "",
+    designation: "",
+    github: "",
+    linkedin: "",
+    facebook: "",
   });
 
   useEffect(() => {
@@ -41,7 +45,10 @@ export default function ProfilePage() {
             phone: u.phone || "",
             bio: u.bio || "",
             location: u.address?.city || "",
-            website: u.socialLinks?.github || "",
+            designation: u.designation || "",
+            github: u.socialLinks?.github || "",
+            linkedin: u.socialLinks?.linkedin || "",
+            facebook: u.socialLinks?.facebook || "",
           });
         }
       })
@@ -61,11 +68,14 @@ export default function ProfilePage() {
         name: form.name,
         phone: form.phone,
         bio: form.bio,
+        designation: form.designation,
         address: {
           city: form.location,
         },
         socialLinks: {
-          github: form.website,
+          github: form.github,
+          linkedin: form.linkedin,
+          facebook: form.facebook,
         }
       };
       const res = await userApi.update(userProfile._id, updateData);
@@ -281,15 +291,59 @@ export default function ProfilePage() {
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                  Website
+                  Designation
                 </label>
                 <input
-                  type="url"
-                  value={form.website}
-                  onChange={(e) => setForm({ ...form, website: e.target.value })}
-                  placeholder="https://example.com"
+                  type="text"
+                  value={form.designation}
+                  onChange={(e) => setForm({ ...form, designation: e.target.value })}
+                  placeholder="e.g. Frontend Developer"
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                 />
+              </div>
+
+              <h4 className="text-sm font-semibold text-foreground pt-2">Social Links</h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <socialIcons.github.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    GitHub
+                  </label>
+                  <input
+                    type="url"
+                    value={form.github}
+                    onChange={(e) => setForm({ ...form, github: e.target.value })}
+                    placeholder="https://github.com/username"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <socialIcons.linkedin.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    LinkedIn
+                  </label>
+                  <input
+                    type="url"
+                    value={form.linkedin}
+                    onChange={(e) => setForm({ ...form, linkedin: e.target.value })}
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <socialIcons.facebook.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    Facebook
+                  </label>
+                  <input
+                    type="url"
+                    value={form.facebook}
+                    onChange={(e) => setForm({ ...form, facebook: e.target.value })}
+                    placeholder="https://facebook.com/username"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1.5">
