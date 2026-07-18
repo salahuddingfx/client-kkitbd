@@ -200,6 +200,9 @@ export const enrollmentsApi = {
 
   markComplete: (id: string) =>
     api.post<ApiResponse<Enrollment>>(`/enrollments/${id}/complete`, {}),
+
+  toggleLessonComplete: (enrollmentId: string, lessonId: string) =>
+    api.post<ApiResponse<{ completed: boolean; completedCount: number; percentage: number }>>(`/enrollments/${enrollmentId}/complete-lesson`, { lessonId }),
 };
 
 // Assignments API
