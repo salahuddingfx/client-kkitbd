@@ -37,7 +37,6 @@ export type {
   Course,
   EnrolledCourse,
   Certificate,
-  Payment,
   WishlistItem,
   UserProfile,
   Activity,
