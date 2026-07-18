@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,6 +46,8 @@ const techStack = [
 ];
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/dashboard";
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [formData, setFormData] = useState<CredentialsFormData | null>(null);
   const [otp, setOtp] = useState("");
@@ -118,11 +121,10 @@ export default function LoginPage() {
               name: payload.user.name,
               email: payload.user.email,
             },
-            token: payload.accessToken,
           })
         );
         toast.success("Login successful!");
-        window.location.href = "/dashboard";
+        window.location.href = redirectTo;
       } else {
         toast.error(response.message || "Invalid OTP. Please try again.");
       }
