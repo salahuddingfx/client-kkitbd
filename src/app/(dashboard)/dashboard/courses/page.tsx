@@ -128,7 +128,7 @@ export default function MyCoursesPage() {
 
             return (
               <FadeIn key={enrollment._id} delay={i * 0.1}>
-                <Link href={courseId ? `/courses/${courseId}` : "#"}>
+                <Link href={courseId ? `/dashboard/courses/${courseId}` : "#"}>
                   <Card className="h-full hover:shadow-lg hover:border-primary/30 transition-all group cursor-pointer">
                     <div className="relative aspect-video bg-muted overflow-hidden rounded-t-xl">
                       {course.thumbnail?.url ? (
