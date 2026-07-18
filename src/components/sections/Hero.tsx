@@ -5,6 +5,7 @@ import { useRef, useState, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Container, StudentTicker } from "@/components/common";
+import { VideoModal } from "@/components/common/VideoModal";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
 import { Counter } from "@/components/animations";
 
@@ -70,6 +71,12 @@ function Typewriter() {
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  // Replace with your actual course highlight video URL
+  // YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
+  // Direct: "https://your-cdn.com/videos/course-highlight.mp4"
+  const COURSE_VIDEO_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
   useGSAP(
     () => {
@@ -142,13 +149,39 @@ export function Hero() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button variant="outline" size="xl" asChild>
-              <Link href="/about">
-                <Play className="mr-2 h-5 w-5" />
-                Watch Demo
-              </Link>
+            <Button variant="outline" size="xl" onClick={() => setVideoOpen(true)}>
+              <Play className="mr-2 h-5 w-5" />
+              Watch Demo
             </Button>
           </div>
+
+          {/* Course Highlight Video */}
+          <div className="mt-12 max-w-3xl mx-auto">
+            <button
+              onClick={() => setVideoOpen(true)}
+              className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-border bg-card shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              {/* Thumbnail placeholder — replace src with your thumbnail */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-background flex items-center justify-center">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                    <Play className="h-8 w-8 text-primary ml-1" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-foreground">See What You&apos;ll Learn</p>
+                    <p className="text-sm text-muted-foreground">Watch a preview of our top courses</p>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+
+          <VideoModal
+            isOpen={videoOpen}
+            onClose={() => setVideoOpen(false)}
+            videoUrl={COURSE_VIDEO_URL}
+            title="Course Highlight"
+          />
 
           <div className="mt-8 flex justify-center">
             <StudentTicker />
