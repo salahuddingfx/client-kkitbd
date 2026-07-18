@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import { Play, Quote } from "lucide-react";
 import { GlowCard, Button } from "@/components/ui";
 import { Breadcrumb, Container, SectionHeader } from "@/components/common";
+import { VideoModal } from "@/components/common/VideoModal";
 import { ScrollReveal, StaggerReveal, Timeline } from "@/components/animations";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
 import {
@@ -17,6 +19,7 @@ import {
   GraduationCap,
   Globe,
   Zap,
+  Eye,
 } from "lucide-react";
 
 const timelineData = [
@@ -94,8 +97,46 @@ const stats = [
   { number: "95%", label: "Success Rate" },
 ];
 
+const missionVision = [
+  {
+    icon: Target,
+    title: "Our Mission",
+    description:
+      "To democratize technology education by providing accessible, affordable, and industry-relevant courses that empower individuals to build successful careers in the digital age.",
+  },
+  {
+    icon: Eye,
+    title: "Our Vision",
+    description:
+      "To become the world's most trusted platform for tech education, bridging the gap between learning and employment, and creating a global community of skilled professionals.",
+  },
+];
+
+const leadership = [
+  {
+    name: "CEO Name",
+    role: "Chief Executive Officer",
+    quote:
+      "At KKIT, we believe that education is the most powerful tool for change. Our goal is to make world-class tech education accessible to everyone, everywhere. Every course we create, every mentor we bring on, and every feature we build is driven by one question: how can we help our students succeed?",
+    avatar: null,
+  },
+  {
+    name: "MD Name",
+    role: "Managing Director",
+    quote:
+      "When we started KKIT, we had a simple dream — to help people transform their lives through technology. Today, with over 10,000 students across 30+ countries, that dream has become a reality. But we're just getting started. The future of learning is personalized, immersive, and limitless.",
+    avatar: null,
+  },
+];
+
 export default function AboutPage() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  // Replace with your actual introduction video URL
+  // YouTube: "https://www.youtube.com/watch?v=VIDEO_ID"
+  // Direct: "https://your-cdn.com/videos/intro.mp4"
+  const INTRO_VIDEO_URL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 
   useGSAP(
     () => {
@@ -132,6 +173,39 @@ export default function AboutPage() {
               <Breadcrumb items={[{ label: "About Us" }]} className="justify-center mt-6" />
             </div>
           </div>
+        </Container>
+      </section>
+
+      {/* Introduction Video */}
+      <section className="py-12 sm:py-20">
+        <Container>
+          <ScrollReveal direction="up" distance={40} duration={0.8}>
+            <div className="max-w-4xl mx-auto">
+              <button
+                onClick={() => setVideoOpen(true)}
+                className="group relative w-full aspect-video rounded-2xl overflow-hidden border border-border bg-card shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-background flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <div className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                      <Play className="h-10 w-10 text-primary ml-1" />
+                    </div>
+                    <div>
+                      <p className="text-xl font-semibold text-foreground">Watch Our Story</p>
+                      <p className="text-muted-foreground">Learn about KKIT and our mission</p>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </ScrollReveal>
+
+          <VideoModal
+            isOpen={videoOpen}
+            onClose={() => setVideoOpen(false)}
+            videoUrl={INTRO_VIDEO_URL}
+            title="About KKIT"
+          />
         </Container>
       </section>
 
@@ -187,6 +261,39 @@ export default function AboutPage() {
         </Container>
       </section>
 
+      {/* Mission & Vision */}
+      <section className="py-12 sm:py-20 bg-background-secondary overflow-hidden">
+        <Container>
+          <SectionHeader
+            subtitle="Purpose"
+            title="Mission & Vision"
+            description="What drives us forward and where we're headed."
+          />
+          <StaggerReveal
+            childSelector=".mv-card"
+            stagger={0.15}
+            y={40}
+            duration={0.6}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {missionVision.map((item) => (
+                <div key={item.title} className="mv-card">
+                  <GlowCard variant="glow" className="h-full">
+                    <div className="p-8">
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+                        <item.icon className="h-7 w-7 text-primary" />
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mb-3">{item.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                    </div>
+                  </GlowCard>
+                </div>
+              ))}
+            </div>
+          </StaggerReveal>
+        </Container>
+      </section>
+
       {/* Timeline */}
       <section className="py-12 sm:py-20 bg-background-secondary overflow-hidden">
         <Container>
@@ -226,6 +333,47 @@ export default function AboutPage() {
                         {value.title}
                       </h3>
                       <p className="text-sm text-muted-foreground">{value.description}</p>
+                    </div>
+                  </GlowCard>
+                </div>
+              ))}
+            </div>
+          </StaggerReveal>
+        </Container>
+      </section>
+
+      {/* Leadership Messages */}
+      <section className="py-12 sm:py-20 bg-background-secondary overflow-hidden">
+        <Container>
+          <SectionHeader
+            subtitle="Leadership"
+            title="Messages from Our Leaders"
+            description="Hear directly from the people driving KKIT's mission forward."
+          />
+          <StaggerReveal
+            childSelector=".leader-card"
+            stagger={0.15}
+            y={40}
+            duration={0.6}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {leadership.map((leader) => (
+                <div key={leader.name} className="leader-card">
+                  <GlowCard variant="glow" className="h-full">
+                    <div className="p-8">
+                      <Quote className="h-8 w-8 text-primary/30 mb-4" />
+                      <p className="text-muted-foreground leading-relaxed mb-6 italic">
+                        &ldquo;{leader.quote}&rdquo;
+                      </p>
+                      <div className="flex items-center gap-4 pt-4 border-t border-border">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                          {leader.name.split(" ").map((n) => n[0]).join("")}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground">{leader.name}</p>
+                          <p className="text-sm text-muted-foreground">{leader.role}</p>
+                        </div>
+                      </div>
                     </div>
                   </GlowCard>
                 </div>

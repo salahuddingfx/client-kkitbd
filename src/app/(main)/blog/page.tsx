@@ -1,64 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
 import { Breadcrumb, Pagination, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
-import { Calendar, Clock, Search, ArrowRight } from "lucide-react";
+import { Calendar, Clock, Search, ArrowRight, Loader2 } from "lucide-react";
+import { blogApi } from "@/services/api";
 
-const blogPosts = [
-  {
-    id: "1",
-    title: "The Future of Web Development in 2024",
-    excerpt: "Explore the latest trends and technologies shaping the future of web development.",
-    author: "John Doe",
-    category: "Technology",
-    publishedAt: "2024-01-15",
-    readingTime: "5 min read",
-    image: "/blog/web-dev.jpg",
-  },
-  {
-    id: "2",
-    title: "Why React is Still the Best Choice",
-    excerpt: "A comprehensive look at why React continues to dominate the frontend ecosystem.",
-    author: "Jane Smith",
-    category: "React",
-    publishedAt: "2024-01-10",
-    readingTime: "7 min read",
-    image: "/blog/react.jpg",
-  },
-  {
-    id: "3",
-    title: "Building Scalable Applications with Next.js",
-    excerpt: "Learn how to build production-ready applications with Next.js.",
-    author: "Mike Johnson",
-    category: "Next.js",
-    publishedAt: "2024-01-05",
-    readingTime: "10 min read",
-    image: "/blog/nextjs.jpg",
-  },
-  {
-    id: "4",
-    title: "UI/UX Design Principles Every Developer Should Know",
-    excerpt: "Essential design principles that will improve your applications.",
-    author: "Sarah Williams",
-    category: "Design",
-    publishedAt: "2024-01-01",
-    readingTime: "6 min read",
-    image: "/blog/design.jpg",
-  },
-];
+interface BlogPost {
+  _id: string;
+  title: string;
+  excerpt?: string;
+  slug: string;
+  author?: { name: string };
+  category?: string;
+  publishedAt?: string;
+  createdAt: string;
+  readingTime?: string;
+  image?: string;
+}
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const filteredPosts = blogPosts.filter(
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await blogApi.getAll({ status: "published" });
+        setPosts((res.data as BlogPost[]) || []);
+      } catch {
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const filteredPosts = posts.filter(
     (post) =>
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+      (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   return (
@@ -99,59 +86,69 @@ export default function BlogPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredPosts.map((post, index) => (
-              <FadeIn key={post.id} delay={index * 0.1}>
-                <Link href={`/blog/${post.id}`}>
-                  <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300">
-                    <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="secondary">{post.category}</Badge>
-                        <span className="text-sm text-muted-foreground flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          {post.readingTime}
-                        </span>
-                      </div>
-                      <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {post.title}
-                      </h2>
-                      <p className="text-muted-foreground text-sm mb-4">{post.excerpt}</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Calendar className="h-4 w-4 mr-1" />
-                          {new Date(post.publishedAt).toLocaleDateString()}
-                        </div>
-                        <span className="text-sm font-medium text-primary group-hover:gap-2 transition-all inline-flex items-center">
-                          Read More
-                          <ArrowRight className="ml-1 h-4 w-4" />
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </FadeIn>
-            ))}
-          </div>
-
-          {filteredPosts.length === 0 && (
-            <div className="text-center py-12">
-              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground">No articles found</h3>
-              <p className="text-muted-foreground mt-2">
-                Try adjusting your search query.
-              </p>
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-          )}
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredPosts.map((post, index) => (
+                  <FadeIn key={post._id} delay={index * 0.1}>
+                    <Link href={`/blog/${post.slug || post._id}`}>
+                      <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300">
+                        <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-2 mb-3">
+                            {post.category && <Badge variant="secondary">{post.category}</Badge>}
+                            {post.readingTime && (
+                              <span className="text-sm text-muted-foreground flex items-center">
+                                <Clock className="h-4 w-4 mr-1" />
+                                {post.readingTime}
+                              </span>
+                            )}
+                          </div>
+                          <h2 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                            {post.title}
+                          </h2>
+                          <p className="text-muted-foreground text-sm mb-4">{post.excerpt}</p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-sm text-muted-foreground">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
+                            </div>
+                            <span className="text-sm font-medium text-primary group-hover:gap-2 transition-all inline-flex items-center">
+                              Read More
+                              <ArrowRight className="ml-1 h-4 w-4" />
+                            </span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </FadeIn>
+                ))}
+              </div>
 
-          {filteredPosts.length > 0 && (
-            <div className="mt-12">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={3}
-                onPageChange={setCurrentPage}
-              />
-            </div>
+              {filteredPosts.length === 0 && (
+                <div className="text-center py-12">
+                  <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground">No articles found</h3>
+                  <p className="text-muted-foreground mt-2">
+                    Try adjusting your search query.
+                  </p>
+                </div>
+              )}
+
+              {filteredPosts.length > 0 && (
+                <div className="mt-12">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={3}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
+            </>
           )}
         </Container>
       </section>

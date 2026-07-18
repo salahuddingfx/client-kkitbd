@@ -5,8 +5,7 @@ import { CreditCard, Download, CheckCircle, Clock, XCircle, Receipt, Loader2 } f
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatCurrency, formatDate } from "@/utils";
-import { useAppSelector } from "@/redux/hooks";
-import { paymentApi, invoiceApi } from "@/services/api";
+import { paymentApi, invoiceApi, Payment } from "@/services/api";
 import { toast } from "sonner";
 
 const statusConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
@@ -17,15 +16,13 @@ const statusConfig: Record<string, { icon: any; color: string; bg: string; label
 };
 
 export default function BillingPage() {
-  const { token } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
-  const [payments, setPayments] = useState<any[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
   const [downloading, setDownloading] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!token) return;
     paymentApi
-      .getAll(undefined, token)
+      .getAll()
       .then((res) => {
         if (res.success) {
           setPayments(res.data);
@@ -36,7 +33,7 @@ export default function BillingPage() {
         toast.error("Failed to load billing history.");
       })
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
   const totalSpent = payments
     .filter((p) => p.status === "completed")
@@ -45,8 +42,7 @@ export default function BillingPage() {
   const handleDownloadPdf = async (invoiceId: string) => {
     setDownloading(invoiceId);
     try {
-      if (!token) return;
-      const blob = await invoiceApi.downloadPdf(invoiceId, token);
+      const blob = await invoiceApi.downloadPdf(invoiceId);
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -193,7 +189,7 @@ export default function BillingPage() {
                           {payment.invoice ? (
                             <button
                               disabled={downloading === payment.invoice}
-                              onClick={() => handleDownloadPdf(payment.invoice)}
+                              onClick={() => handleDownloadPdf(payment.invoice!)}
                               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline disabled:opacity-50"
                             >
                               {downloading === payment.invoice ? (

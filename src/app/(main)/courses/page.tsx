@@ -1,101 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
 import { Breadcrumb, Pagination, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
-import { Clock, Users, Star, Search, Filter } from "lucide-react";
-
-const courses = [
-  {
-    id: "1",
-    title: "Complete Web Development Bootcamp",
-    description: "Master HTML, CSS, JavaScript, React, Node.js and more.",
-    instructor: "John Doe",
-    duration: "12 weeks",
-    enrolledStudents: 5420,
-    rating: 4.9,
-    price: 99.99,
-    level: "beginner" as const,
-    category: "Web Development",
-  },
-  {
-    id: "2",
-    title: "React & Next.js Masterclass",
-    description: "Build modern web applications with React and Next.js.",
-    instructor: "Jane Smith",
-    duration: "8 weeks",
-    enrolledStudents: 3210,
-    rating: 4.8,
-    price: 79.99,
-    level: "intermediate" as const,
-    category: "Web Development",
-  },
-  {
-    id: "3",
-    title: "Mobile App Development with Flutter",
-    description: "Create beautiful cross-platform mobile apps.",
-    instructor: "Mike Johnson",
-    duration: "10 weeks",
-    enrolledStudents: 2890,
-    rating: 4.7,
-    price: 89.99,
-    level: "beginner" as const,
-    category: "Mobile Development",
-  },
-  {
-    id: "4",
-    title: "UI/UX Design Fundamentals",
-    description: "Learn the principles of great user interface design.",
-    instructor: "Sarah Williams",
-    duration: "6 weeks",
-    enrolledStudents: 4100,
-    rating: 4.9,
-    price: 69.99,
-    level: "beginner" as const,
-    category: "Design",
-  },
-  {
-    id: "5",
-    title: "Python for Data Science",
-    description: "Master Python programming for data analysis and ML.",
-    instructor: "David Brown",
-    duration: "14 weeks",
-    enrolledStudents: 6200,
-    rating: 4.8,
-    price: 109.99,
-    level: "intermediate" as const,
-    category: "Data Science",
-  },
-  {
-    id: "6",
-    title: "Advanced TypeScript",
-    description: "Deep dive into TypeScript advanced features and patterns.",
-    instructor: "Emily Davis",
-    duration: "6 weeks",
-    enrolledStudents: 1890,
-    rating: 4.7,
-    price: 59.99,
-    level: "advanced" as const,
-    category: "Web Development",
-  },
-];
+import { Clock, Users, Star, Search, Filter, Loader2 } from "lucide-react";
+import { coursesApi, Course } from "@/services/api";
 
 const categories = ["All", "Web Development", "Mobile Development", "Design", "Data Science"];
 
 export default function CoursesPage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await coursesApi.getAll({ status: "published" });
+        setCourses(res.data || []);
+      } catch {
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
+  }, []);
 
   const filteredCourses = courses.filter((course) => {
     const matchesCategory =
       selectedCategory === "All" || course.category === selectedCategory;
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (course.description && course.description.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesCategory && matchesSearch;
   });
 
@@ -148,74 +90,82 @@ export default function CoursesPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses.map((course, index) => (
-              <FadeIn key={course.id} delay={index * 0.1}>
-                <Link href={`/courses/${course.id}`}>
-                  <div className="animated-border-lg">
-                    <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300 border-transparent bg-background">
-                    <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <Badge variant="secondary">{course.category}</Badge>
-                        <Badge>{course.level}</Badge>
-                      </div>
-                      <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                        {course.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm mb-4">
-                        {course.description}
-                      </p>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center space-x-2 sm:space-x-4">
-                          <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1" />
-                            {course.duration}
-                          </span>
-                          <span className="flex items-center">
-                            <Users className="h-4 w-4 mr-1" />
-                            {course.enrolledStudents}
-                          </span>
-                        </div>
-                        <span className="flex items-center">
-                          <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                          {course.rating}
-                        </span>
-                      </div>
-                      <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                        <span className="text-xl font-bold text-primary">
-                          ${course.price}
-                        </span>
-                        <Button variant="ghost" size="sm">
-                          Enroll Now
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                  </div>
-                </Link>
-              </FadeIn>
-            ))}
-          </div>
-
-          {filteredCourses.length === 0 && (
-            <div className="text-center py-12">
-              <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground">No courses found</h3>
-              <p className="text-muted-foreground mt-2">
-                Try adjusting your search or filter criteria.
-              </p>
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
-          )}
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredCourses.map((course, index) => (
+                  <FadeIn key={course._id} delay={index * 0.1}>
+                    <Link href={`/courses/${course._id}`}>
+                      <div className="animated-border-lg">
+                        <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300 border-transparent bg-background">
+                        <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
+                        <CardContent className="p-6">
+                          <div className="flex items-center justify-between mb-2">
+                            <Badge variant="secondary">{course.category}</Badge>
+                            <Badge>{course.level}</Badge>
+                          </div>
+                          <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                            {course.title}
+                          </h3>
+                          <p className="text-muted-foreground text-sm mb-4">
+                            {course.shortDescription || course.description?.substring(0, 100)}
+                          </p>
+                          <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <div className="flex items-center space-x-2 sm:space-x-4">
+                              <span className="flex items-center">
+                                <Clock className="h-4 w-4 mr-1" />
+                                {course.totalDuration}h
+                              </span>
+                              <span className="flex items-center">
+                                <Users className="h-4 w-4 mr-1" />
+                                {course.enrolledStudents}
+                              </span>
+                            </div>
+                            <span className="flex items-center">
+                              <Star className="h-4 w-4 mr-1 text-yellow-500" />
+                              {course.rating?.average?.toFixed(1) || "N/A"}
+                            </span>
+                          </div>
+                          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+                            <span className="text-xl font-bold text-primary">
+                              ${course.price}
+                            </span>
+                            <Button variant="ghost" size="sm">
+                              Enroll Now
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      </div>
+                    </Link>
+                  </FadeIn>
+                ))}
+              </div>
 
-          {filteredCourses.length > 0 && (
-            <div className="mt-12">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={3}
-                onPageChange={setCurrentPage}
-              />
-            </div>
+              {filteredCourses.length === 0 && (
+                <div className="text-center py-12">
+                  <Filter className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-foreground">No courses found</h3>
+                  <p className="text-muted-foreground mt-2">
+                    Try adjusting your search or filter criteria.
+                  </p>
+                </div>
+              )}
+
+              {filteredCourses.length > 0 && (
+                <div className="mt-12">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={3}
+                    onPageChange={setCurrentPage}
+                  />
+                </div>
+              )}
+            </>
           )}
         </Container>
       </section>

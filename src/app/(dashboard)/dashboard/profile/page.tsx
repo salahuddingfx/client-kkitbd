@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Camera, Save, User, Mail, Phone, MapPin, Globe, Loader2 } from "lucide-react";
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
-import { mockUserProfile } from "@/services/dashboard-data";
 import { getInitials } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { authApi, userApi } from "@/services/api";
@@ -13,7 +12,7 @@ import { setUser } from "@/redux/slices/authSlice";
 
 export default function ProfilePage() {
   const dispatch = useAppDispatch();
-  const { token, user: authUser } = useAppSelector((state) => state.auth);
+  const { user: authUser } = useAppSelector((state) => state.auth);
   
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
@@ -29,8 +28,7 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (!token) return;
-    authApi.getMe(token)
+    authApi.getMe()
       .then((res) => {
         if (res.success) {
           const u = res.data as any;
@@ -50,11 +48,11 @@ export default function ProfilePage() {
         toast.error(err.message || "Failed to load profile data.");
       })
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userProfile?._id || !token) return;
+    if (!userProfile?._id) return;
     setSaving(true);
     try {
       const updateData = {
@@ -68,7 +66,7 @@ export default function ProfilePage() {
           github: form.website,
         }
       };
-      const res = await userApi.update(userProfile._id, updateData, token);
+      const res = await userApi.update(userProfile._id, updateData);
       if (res.success) {
         toast.success("Profile updated successfully!");
         if (authUser) {
@@ -83,7 +81,7 @@ export default function ProfilePage() {
     }
   };
 
-  const user = userProfile || mockUserProfile;
+  const user = userProfile;
 
   if (loading) {
     return (

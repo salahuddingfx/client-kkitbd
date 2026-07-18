@@ -2,62 +2,57 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Calendar, Clock, User, Loader2 } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { Breadcrumb, Container, ShareButtons } from "@/components/common";
 import { ScrollReveal } from "@/components/animations";
+import { blogApi } from "@/services/api";
 
-const posts = [
-  {
-    id: "1",
-    title: "The Future of Web Development in 2024",
-    author: "John Doe",
-    category: "Technology",
-    publishedAt: "2024-01-15",
-    readingTime: "5 min read",
-    content: `The web development landscape is evolving rapidly. With the rise of AI-powered tools, server components, and edge computing, developers need to stay ahead of the curve. In this article, we explore the key trends shaping the future of web development.
-
-## Key Trends
-
-### 1. AI-Assisted Development
-Tools like GitHub Copilot and ChatGPT are transforming how we write code. AI is becoming an essential part of the development workflow.
-
-### 2. Server Components
-React Server Components and similar patterns are changing how we think about rendering and data fetching.
-
-### 3. Edge Computing
-Running code closer to users reduces latency and improves user experience.
-
-## Conclusion
-The future of web development is exciting. Stay curious, keep learning, and embrace new technologies.`,
-  },
-  {
-    id: "2",
-    title: "Top 10 JavaScript Frameworks to Learn",
-    author: "Sarah Smith",
-    category: "Programming",
-    publishedAt: "2024-01-10",
-    readingTime: "8 min read",
-    content: `JavaScript frameworks continue to evolve. Here are the top 10 frameworks every developer should learn in 2024.
-
-## The List
-
-1. **React** - The most popular UI library
-2. **Next.js** - The React framework for production
-3. **Vue.js** - The progressive framework
-4. **Svelte** - The compile-time framework
-5. **Angular** - The platform for enterprise
-6. **Nuxt** - The Vue.js framework
-7. **Remix** - The full stack web framework
-8. **Astro** - The content-focused framework
-9. **SolidJS** - The reactive framework
-10. **Qwik** - The resumable framework`,
-  },
-];
+interface BlogPostDetail {
+  _id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  author?: { name: string };
+  category?: string;
+  publishedAt?: string;
+  createdAt: string;
+  readingTime?: string;
+}
 
 export default function BlogPostPage() {
   const params = useParams();
-  const post = posts.find((p) => p.id === params.id);
+  const slugOrId = params.id as string;
+  const [post, setPost] = useState<BlogPostDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const res = await blogApi.getBySlug(slugOrId);
+        setPost((res.data as BlogPostDetail) || null);
+      } catch {
+        setPost(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (slugOrId) fetchPost();
+  }, [slugOrId]);
+
+  if (loading) {
+    return (
+      <div className="pt-12 sm:pt-20">
+        <Container>
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </Container>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -88,19 +83,23 @@ export default function BlogPostPage() {
         <ScrollReveal direction="up">
           <article className="max-w-3xl mx-auto">
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <Badge variant="secondary">{post.category}</Badge>
+              {post.category && <Badge variant="secondary">{post.category}</Badge>}
               <span className="flex items-center gap-1 text-sm text-muted-foreground">
                 <Calendar className="h-3.5 w-3.5" />
-                {new Date(post.publishedAt).toLocaleDateString()}
+                {new Date(post.publishedAt || post.createdAt).toLocaleDateString()}
               </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <Clock className="h-3.5 w-3.5" />
-                {post.readingTime}
-              </span>
-              <span className="flex items-center gap-1 text-sm text-muted-foreground">
-                <User className="h-3.5 w-3.5" />
-                {post.author}
-              </span>
+              {post.readingTime && (
+                <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Clock className="h-3.5 w-3.5" />
+                  {post.readingTime}
+                </span>
+              )}
+              {post.author && (
+                <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <User className="h-3.5 w-3.5" />
+                  {post.author.name}
+                </span>
+              )}
             </div>
 
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-8">

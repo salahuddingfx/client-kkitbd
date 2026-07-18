@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,49 @@ import { Container } from "@/components/common";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleMobileMenu, closeMobileMenu } from "@/redux/slices/uiSlice";
 
+function ThemeToggle({ className }: { className?: string }) {
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === "dark";
+
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className={cn("relative", className)}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.span
+            key="moon"
+            initial={{ rotate: -90, scale: 0, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: 90, scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="flex items-center justify-center"
+          >
+            <Moon className="h-5 w-5" />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="sun"
+            initial={{ rotate: 90, scale: 0, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: -90, scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="flex items-center justify-center"
+          >
+            <Sun className="h-5 w-5" />
+          </motion.span>
+        )}
+      </AnimatePresence>
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  );
+}
+
 export function Navbar() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
   const dispatch = useAppDispatch();
   const { isMobileMenuOpen } = useAppSelector((state) => state.ui);
   const [scrolled, setScrolled] = useState(false);
@@ -87,15 +127,7 @@ export function Navbar() {
 
             <div className="w-px h-5 bg-border" />
 
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+            <ThemeToggle />
 
             <Button variant="ghost" asChild>
               <Link href="/login">Login</Link>
@@ -107,16 +139,9 @@ export function Navbar() {
 
           {/* Right — Tablet: Theme toggle + Hamburger (md to lg) */}
           <div className="flex lg:hidden items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+            <ThemeToggle />
 
+            {/* Hamburger — lines morph into X */}
             <Button
               variant="ghost"
               size="icon"
@@ -125,18 +150,40 @@ export function Navbar() {
               aria-expanded={isMobileMenuOpen}
               className="relative"
             >
-              <Menu
-                className={cn(
-                  "h-5 w-5 absolute transition-all duration-200",
-                  isMobileMenuOpen ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
-                )}
-              />
-              <X
-                className={cn(
-                  "h-5 w-5 absolute transition-all duration-200",
-                  isMobileMenuOpen ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
-                )}
-              />
+              <svg
+                className="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <line
+                  x1="3" y1="6" x2="21" y2="6"
+                  className="transition-all duration-300 ease-in-out"
+                  style={{
+                    transform: isMobileMenuOpen ? "translateY(6px) rotate(45deg)" : "translateY(0) rotate(0deg)",
+                    transformOrigin: "center",
+                  }}
+                />
+                <line
+                  x1="7" y1="12" x2="17" y2="12"
+                  className="transition-all duration-300 ease-in-out"
+                  style={{
+                    opacity: isMobileMenuOpen ? 0 : 1,
+                    transform: isMobileMenuOpen ? "scaleX(0)" : "scaleX(1)",
+                    transformOrigin: "center",
+                  }}
+                />
+                <line
+                  x1="3" y1="18" x2="21" y2="18"
+                  className="transition-all duration-300 ease-in-out"
+                  style={{
+                    transform: isMobileMenuOpen ? "translateY(-6px) rotate(-45deg)" : "translateY(0) rotate(0deg)",
+                    transformOrigin: "center",
+                  }}
+                />
+              </svg>
             </Button>
           </div>
         </nav>

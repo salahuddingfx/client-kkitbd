@@ -16,11 +16,6 @@ import {
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatCurrency, formatDate } from "@/utils";
-import {
-  mockDashboardStats,
-  mockEnrolledCourses,
-  mockActivity,
-} from "@/services/dashboard-data";
 import { useAppSelector } from "@/redux/hooks";
 import { enrollmentsApi, paymentApi } from "@/services/api";
 
@@ -33,7 +28,7 @@ const activityIcons = {
 };
 
 export default function DashboardOverviewPage() {
-  const { token, user: authUser } = useAppSelector((state) => state.auth);
+  const { user: authUser } = useAppSelector((state) => state.auth);
   const userName = authUser?.name || "Student";
 
   const [loading, setLoading] = useState(true);
@@ -41,10 +36,9 @@ export default function DashboardOverviewPage() {
   const [payments, setPayments] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!token) return;
     Promise.all([
-      enrollmentsApi.getAll(undefined, token),
-      paymentApi.getAll(undefined, token),
+      enrollmentsApi.getAll(),
+      paymentApi.getAll(),
     ])
       .then(([enrollmentsRes, paymentsRes]) => {
         if (enrollmentsRes.success) {
@@ -58,7 +52,7 @@ export default function DashboardOverviewPage() {
         console.error("Error loading dashboard data:", err);
       })
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
   const enrolledCount = enrollments.length;
   const completedCount = enrollments.filter(

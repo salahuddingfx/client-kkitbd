@@ -7,8 +7,6 @@ import { Play, Clock, BookOpen, Search, Filter, Loader2 } from "lucide-react";
 import { Card, CardContent, Badge, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
-import { mockEnrolledCourses } from "@/services/dashboard-data";
-import { useAppSelector } from "@/redux/hooks";
 import { enrollmentsApi } from "@/services/api";
 import { toast } from "sonner";
 
@@ -19,14 +17,12 @@ const levelColors: Record<string, string> = {
 };
 
 export default function MyCoursesPage() {
-  const { token } = useAppSelector((state) => state.auth);
   const [loading, setLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!token) return;
     enrollmentsApi
-      .getAll(undefined, token)
+      .getAll()
       .then((res) => {
         if (res.success) {
           setEnrollments(res.data);
@@ -37,7 +33,7 @@ export default function MyCoursesPage() {
         toast.error("Failed to load your enrolled courses.");
       })
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
   if (loading) {
     return (

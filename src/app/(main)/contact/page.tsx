@@ -10,6 +10,7 @@ import { Card, CardContent, Input, Textarea, Button, Label, PhoneInput } from "@
 import { Breadcrumb, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import { contactApi } from "@/services/api";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -60,8 +61,13 @@ export default function ContactPage() {
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     try {
-      // API call would go here
-      console.log(data);
+      await contactApi.send({
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        phone: data.phone,
+      });
       toast.success("Message sent successfully! We'll get back to you soon.");
       reset();
     } catch {
