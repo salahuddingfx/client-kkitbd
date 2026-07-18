@@ -33,7 +33,7 @@ const stepOneSchema = z
   .object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
-    phone: z.string().min(1, "Phone number is required"),
+    phone: z.string().regex(/^\+\d{7,15}$/, "Please enter a valid phone number with country code"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
     acceptedTerms: z.boolean(),
@@ -153,7 +153,6 @@ export default function RegisterPage() {
               name: payload.user.name,
               email: payload.user.email,
             },
-            token: payload.accessToken,
           })
         );
         toast.success("Account created successfully! Welcome aboard.");
