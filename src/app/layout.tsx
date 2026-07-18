@@ -20,6 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4000"),
   title: {
     default: "KKIT - Premium Digital Solutions & Learning Platform",
     template: "%s | KKIT",

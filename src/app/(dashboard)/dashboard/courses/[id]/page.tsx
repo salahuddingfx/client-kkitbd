@@ -281,44 +281,44 @@ export default function DashboardCourseViewerPage() {
         <div className="lg:col-span-8 order-2 lg:order-1">
           {currentLesson ? (
             <div className="border rounded-xl overflow-hidden border-border bg-card">
-              {/* Video player */}
-              <div className="aspect-video bg-black">
+              {/* Video player — smaller on mobile */}
+              <div className="aspect-video sm:aspect-[16/9] bg-black max-h-[50vh] sm:max-h-[60vh]">
                 {currentLesson.videoUrl ? (
                   <VideoPlayer url={currentLesson.videoUrl} title={currentLesson.title} />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
-                    <Film className="h-12 w-12 mb-3 opacity-40" />
-                    <p className="text-sm">No video available for this lesson</p>
+                    <Film className="h-10 w-10 sm:h-12 sm:w-12 mb-2 sm:mb-3 opacity-40" />
+                    <p className="text-xs sm:text-sm">No video available for this lesson</p>
                   </div>
                 )}
               </div>
 
-              {/* Tabs row */}
+              {/* Tabs row — compact on mobile */}
               <div className="flex items-center gap-0 border-t border-border overflow-x-auto">
                 {[
                   { key: "video" as const, icon: Film, label: "Video" },
                   { key: "notes" as const, icon: FileText, label: "Notes" },
                   { key: "code" as const, icon: Code2, label: "Code" },
-                  { key: "attachments" as const, icon: Paperclip, label: "Attachments" },
+                  { key: "attachments" as const, icon: Paperclip, label: "Files" },
                 ].map((t) => (
                   <button
                     key={t.key}
                     type="button"
                     onClick={() => setLessonTab(t.key)}
                     className={cn(
-                      "flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-1 justify-center",
+                      "flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-1 justify-center",
                       lessonTab === t.key
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground"
                     )}
                   >
-                    <t.icon className="h-4 w-4" /> {t.label}
+                    <t.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> {t.label}
                   </button>
                 ))}
               </div>
 
-              {/* Tab content */}
-              <div className="p-5 min-h-[200px]">
+              {/* Tab content — compact on mobile */}
+              <div className="p-3 sm:p-5 max-h-[35vh] sm:max-h-[45vh] overflow-y-auto">
                 {lessonTab === "notes" && (
                   currentLesson.notes ? (
                     <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed">
@@ -412,10 +412,10 @@ export default function DashboardCourseViewerPage() {
               </div>
             </div>
           ) : (
-            <div className="border rounded-xl border-border bg-card flex flex-col items-center justify-center py-20 text-muted-foreground">
-              <CheckCircle2 className="h-16 w-16 mb-4 opacity-30" />
-              <p className="text-lg font-medium mb-1">Select a lesson to start learning</p>
-              <p className="text-sm">Click any lesson from the sidebar on the right</p>
+            <div className="border rounded-xl border-border bg-card flex flex-col items-center justify-center py-12 sm:py-20 text-muted-foreground">
+              <CheckCircle2 className="h-12 w-12 sm:h-16 sm:w-16 mb-3 sm:mb-4 opacity-30" />
+              <p className="text-base sm:text-lg font-medium mb-1">Select a lesson to start learning</p>
+              <p className="text-xs sm:text-sm">Click any lesson from the sidebar</p>
             </div>
           )}
         </div>
