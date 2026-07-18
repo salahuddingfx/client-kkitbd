@@ -2,6 +2,7 @@ import { Hero } from "@/components/sections/Hero";
 import { TrustedCompanies } from "@/components/sections/TrustedCompanies";
 import { FeaturedServices } from "@/components/sections/FeaturedServices";
 import { FeaturedCourses } from "@/components/sections/FeaturedCourses";
+import { AllCourses } from "@/components/sections/AllCourses";
 import { WhyChooseUs } from "@/components/sections/WhyChooseUs";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { FAQ } from "@/components/sections/FAQ";
@@ -14,6 +15,7 @@ export default function Home() {
       <TrustedCompanies />
       <FeaturedServices />
       <FeaturedCourses />
+      <AllCourses />
       <WhyChooseUs />
       <Testimonials />
       <FAQ />

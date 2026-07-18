@@ -6,7 +6,7 @@ import Image from "next/image";
 import { ArrowRight, Clock, Users, Star, Loader2 } from "lucide-react";
 import { GlowCard, Badge, Button } from "@/components/ui";
 import { Container, SectionHeader } from "@/components/common";
-import { StaggerReveal } from "@/components/animations";
+import { StaggerReveal, ScrollReveal } from "@/components/animations";
 import { coursesApi, Course } from "@/services/api";
 
 export function FeaturedCourses() {
@@ -17,7 +17,7 @@ export function FeaturedCourses() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const res = await coursesApi.getAll({ isFeatured: "true", limit: "3" });
+        const res = await coursesApi.getAll({ isFeatured: "true", limit: "6" });
         setCourses(res.data || []);
       } catch (err: any) {
         setError(err.message || "Failed to load courses");
@@ -31,11 +31,13 @@ export function FeaturedCourses() {
   return (
     <section className="py-20 bg-background-secondary">
       <Container>
-        <SectionHeader
-          subtitle="Our Courses"
-          title="Featured Courses"
-          description="Explore our most popular courses taught by industry experts."
-        />
+        <ScrollReveal direction="up" distance={50}>
+          <SectionHeader
+            subtitle="Our Courses"
+            title="Featured Courses"
+            description="Explore our most popular courses taught by industry experts."
+          />
+        </ScrollReveal>
 
         {loading ? (
           <div className="flex items-center justify-center py-12">
@@ -64,7 +66,7 @@ export function FeaturedCourses() {
                             src={course.thumbnail.url}
                             alt={course.title}
                             fill
-                            className="object-cover"
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5" />
@@ -74,7 +76,7 @@ export function FeaturedCourses() {
                           <Badge variant="secondary">{course.level}</Badge>
                         </div>
                         <div className="absolute bottom-4 right-4 z-20">
-                          <Badge className="bg-primary">${course.price}</Badge>
+                          <Badge className="bg-primary">৳{course.price.toLocaleString()}</Badge>
                         </div>
                       </div>
                       <div className="p-6">
@@ -92,7 +94,7 @@ export function FeaturedCourses() {
                             </span>
                             <span className="flex items-center">
                               <Users className="h-4 w-4 mr-1" />
-                              {course.enrolledStudents}
+                              {course.enrolledStudents?.toLocaleString() || 0}
                             </span>
                           </div>
                           <span className="flex items-center">
@@ -110,14 +112,16 @@ export function FeaturedCourses() {
           </StaggerReveal>
         )}
 
-        <div className="mt-12 text-center">
-          <Button variant="outline" size="lg" asChild>
-            <Link href="/courses">
-              View All Courses
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
+        <ScrollReveal direction="up" distance={30} delay={0.2}>
+          <div className="mt-12 text-center">
+            <Button variant="outline" size="lg" asChild>
+              <Link href="/courses">
+                View All Courses
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
+        </ScrollReveal>
       </Container>
     </section>
   );
