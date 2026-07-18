@@ -627,6 +627,9 @@ export interface Notice {
   type: "info" | "warning" | "urgent" | "maintenance" | "general";
   priority: "low" | "medium" | "high" | "critical";
   targetAudience: "all" | "students" | "instructors" | "admins";
+  targetCourses?: Course[];
+  classLink?: string;
+  classSchedule?: string;
   author: { _id: string; name: string; avatar?: string };
   isActive: boolean;
   isPinned: boolean;

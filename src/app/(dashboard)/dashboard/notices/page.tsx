@@ -13,6 +13,8 @@ import {
   Loader2,
   Eye,
   Filter,
+  Video,
+  ExternalLink,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
@@ -235,6 +237,48 @@ export default function NoticesPage() {
                     <div className="prose prose-sm dark:prose-invert max-w-none">
                       <p className="whitespace-pre-wrap">{selectedNotice.content}</p>
                     </div>
+
+                    {/* Online Class Link */}
+                    {selectedNotice.classLink && (
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <div className="p-2 rounded-lg bg-blue-500/20">
+                          <Video className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground">Online Class</p>
+                          {selectedNotice.classSchedule && (
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(selectedNotice.classSchedule).toLocaleString("en-BD", {
+                                weekday: "short", month: "short", day: "numeric",
+                                hour: "2-digit", minute: "2-digit",
+                              })}
+                            </p>
+                          )}
+                        </div>
+                        <a
+                          href={selectedNotice.classLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-medium hover:bg-blue-700 transition-colors shrink-0"
+                        >
+                          Join <ExternalLink className="h-3 w-3" />
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Target Courses */}
+                    {selectedNotice.targetCourses && selectedNotice.targetCourses.length > 0 && (
+                      <div className="border-t pt-4">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Target Courses</p>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedNotice.targetCourses.map((course: any) => (
+                            <span key={course._id} className="px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                              {course.title}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Attachments */}
                     {selectedNotice.attachments && selectedNotice.attachments.length > 0 && (
