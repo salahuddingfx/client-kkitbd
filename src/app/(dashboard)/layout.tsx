@@ -24,14 +24,15 @@ import {
   Search,
   Sun,
   Moon,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
-import { mockUserProfile } from "@/services/dashboard-data";
 import { getInitials } from "@/utils";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
 import { authApi } from "@/services/api";
 import { setUser, logout } from "@/redux/slices/authSlice";
+import { useRouter } from "next/navigation";
 
 const sidebarLinks = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -40,6 +41,7 @@ const sidebarLinks = [
   { label: "Projects", href: "/dashboard/projects", icon: FolderGit2 },
   { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   { label: "Reviews", href: "/dashboard/reviews", icon: MessageSquare },
+  { label: "Notices", href: "/dashboard/notices", icon: Bell },
   { label: "Certificates", href: "/dashboard/certificates", icon: Award },
   { label: "Wishlist", href: "/dashboard/wishlist", icon: Heart },
   { label: "Billing", href: "/dashboard/billing", icon: CreditCard },
@@ -49,13 +51,14 @@ const sidebarLinks = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { token, user: authUser } = useAppSelector((state) => state.auth);
+  const { user: authUser } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    if (token && !authUser) {
-      authApi.getMe(token)
+    if (!authUser) {
+      authApi.getMe()
         .then((res) => {
           if (res.success) {
             const u = res.data as any;
@@ -69,11 +72,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         })
         .catch((err) => {
           console.error("Failed to load user profile in layout:", err);
+          dispatch(logout());
+          router.push("/login");
         });
     }
-  }, [token, authUser, dispatch]);
+  }, [authUser, dispatch, router]);
 
-  const user = authUser || mockUserProfile;
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // ignore logout API errors
+    } finally {
+      dispatch(logout());
+      router.push("/login");
+    }
+  };
+
+  const user = authUser;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background-secondary flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background-secondary">
@@ -156,12 +180,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <p className="text-sm font-medium text-foreground truncate">{user.name}</p>
                 <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
-              <Link
-                href="/"
+              <button
+                onClick={handleLogout}
                 className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
               >
                 <LogOut className="h-4 w-4" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
