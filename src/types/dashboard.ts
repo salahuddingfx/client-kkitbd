@@ -38,18 +38,6 @@ export interface Certificate {
   instructor: string;
 }
 
-export interface Payment {
-  id: string;
-  courseId: string;
-  courseTitle: string;
-  amount: number;
-  currency: string;
-  status: "completed" | "pending" | "failed" | "refunded";
-  date: string;
-  invoiceUrl: string;
-  method: string;
-}
-
 export interface WishlistItem {
   id: string;
   course: Course;
