@@ -60,6 +60,9 @@ export interface Lesson {
   duration?: number;
   order: number;
   isFree: boolean;
+  notes?: string;
+  codeExamples?: { title: string; language: string; code: string; description?: string }[];
+  attachments?: { title: string; url: string; type: string; size?: number }[];
 }
 
 export interface Enrollment {
