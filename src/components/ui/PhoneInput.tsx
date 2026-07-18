@@ -13,6 +13,18 @@ interface PhoneInputProps {
   placeholder?: string;
 }
 
+// Max local number length per country (digits only, without dial code)
+const MAX_LENGTHS: Record<string, number> = {
+  BD: 11, // 01712345678
+  IN: 10,
+  US: 10,
+  UK: 10,
+  PK: 10,
+  NP: 10,
+  LK: 9,
+  DEFAULT: 12,
+};
+
 export function PhoneInput({
   value,
   onChange,
@@ -60,6 +72,24 @@ export function PhoneInput({
     setSelected(country);
     setOpen(false);
     setSearch("");
+    // Re-emit current local number with new country code
+    const localNumber = stripCountryCode(value, country);
+    if (localNumber) {
+      onChange(formatFullNumber(localNumber, country));
+    }
+  };
+
+  const maxLen = MAX_LENGTHS[selected.code] || MAX_LENGTHS.DEFAULT;
+
+  // Strip existing dial code from value to get local number for display
+  const displayNumber = stripDialCode(value, countries);
+
+  const handleChange = (input: string) => {
+    // Only allow digits
+    const digits = input.replace(/\D/g, "");
+    // Enforce max length
+    const truncated = digits.slice(0, maxLen);
+    onChange(formatFullNumber(truncated, selected));
   };
 
   return (
@@ -122,11 +152,37 @@ export function PhoneInput({
       {/* Phone Number Input */}
       <input
         type="tel"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        value={displayNumber}
+        onChange={(e) => handleChange(e.target.value)}
         placeholder={placeholder}
+        maxLength={maxLen}
         className="flex-1 h-12 rounded-r-lg border border-l-0 border-input bg-background px-4 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 transition-colors"
       />
     </div>
   );
+}
+
+// Format: "+8801712345678"
+function formatFullNumber(localDigits: string, country: Country): string {
+  if (!localDigits) return "";
+  return `${country.dial}${localDigits}`;
+}
+
+// Strip any known dial code from the full number to get local digits
+function stripDialCode(fullNumber: string, allCountries: Country[]): string {
+  if (!fullNumber) return "";
+  // Sort by dial length descending to match longest first
+  const sorted = [...allCountries].sort((a, b) => b.dial.length - a.dial.length);
+  for (const c of sorted) {
+    if (fullNumber.startsWith(c.dial)) {
+      return fullNumber.slice(c.dial.length);
+    }
+  }
+  // Fallback: strip leading +
+  return fullNumber.replace(/^\+/, "");
+}
+
+// For when country changes: try to keep the local number
+function stripCountryCode(value: string, newCountry: Country): string {
+  return stripDialCode(value, countries);
 }
