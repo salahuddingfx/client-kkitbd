@@ -32,15 +32,7 @@ export const DASHBOARD_CONFIG = {
 
 export const COURSE_CONFIG = {
   levels: ["Beginner", "Intermediate", "Advanced"] as const,
-  categories: [
-    "App Development",
-    "Web Development",
-    "Software Development",
-    "AI/ML",
-    "Frontend Development",
-    "Backend Development",
-    "Others",
-  ] as const,
+  categories: [] as const,
   maxProgress: 100,
   certificateThreshold: 100,
 } as const;

@@ -162,7 +162,7 @@ export default function MyCoursesPage() {
                     </div>
                     <CardContent className="p-5">
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                        <span className="px-2 py-0.5 rounded bg-muted">{course.category || "General"}</span>
+                        <span className="px-2 py-0.5 rounded bg-muted">{typeof course.category === "object" ? course.category?.name : (course.category || "General")}</span>
                         <span>&bull;</span>
                         <Clock className="h-3 w-3" />
                         <span>{course.duration || "Self-paced"}</span>

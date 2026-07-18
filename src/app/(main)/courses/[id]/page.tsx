@@ -106,7 +106,7 @@ export default function CourseDetailPage() {
             {/* Left — Info */}
             <div className="lg:col-span-2 space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary">{course.category}</Badge>
+                <Badge variant="secondary">{typeof course.category === "object" ? course.category?.name : course.category}</Badge>
                 <Badge>{course.level}</Badge>
               </div>
 

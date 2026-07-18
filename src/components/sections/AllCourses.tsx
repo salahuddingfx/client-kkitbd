@@ -7,12 +7,13 @@ import { ArrowRight, Clock, Users, Star, Loader2, ChevronDown } from "lucide-rea
 import { GlowCard, Badge, Button } from "@/components/ui";
 import { Container, SectionHeader } from "@/components/common";
 import { StaggerReveal, ScrollReveal } from "@/components/animations";
-import { coursesApi, Course } from "@/services/api";
+import { coursesApi, categoriesApi, Course, Category } from "@/services/api";
 
 const BATCH_SIZE = 6;
 
 export function AllCourses() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
   const [showCount, setShowCount] = useState(BATCH_SIZE);
@@ -20,10 +21,15 @@ export function AllCourses() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const res = await coursesApi.getAll({ status: "published", limit: "200" });
-        setCourses(res.data || []);
+        const [coursesRes, catsRes] = await Promise.all([
+          coursesApi.getAll({ status: "published", limit: "200" }),
+          categoriesApi.getAll({ isActive: "true" }),
+        ]);
+        setCourses(coursesRes.data || []);
+        setCategories(catsRes.data || []);
       } catch {
         setCourses([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -31,14 +37,12 @@ export function AllCourses() {
     fetchAll();
   }, []);
 
-  const categories = useMemo(() => {
-    const cats = new Set(courses.map((c) => c.category).filter(Boolean));
-    return ["All", ...Array.from(cats)];
-  }, [courses]);
-
   const filtered = useMemo(() => {
     if (activeCategory === "All") return courses;
-    return courses.filter((c) => c.category === activeCategory);
+    return courses.filter((c) => {
+      const catId = typeof c.category === "object" ? c.category?._id : c.category;
+      return catId === activeCategory;
+    });
   }, [courses, activeCategory]);
 
   const visible = filtered.slice(0, showCount);
@@ -81,22 +85,34 @@ export function AllCourses() {
         {/* Category filter pills */}
         <ScrollReveal direction="up" distance={30} delay={0.1}>
           <div className="flex flex-wrap items-center justify-center gap-2 mb-10">
+            <button
+              onClick={() => setActiveCategory("All")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                activeCategory === "All"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105"
+                  : "bg-background border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+              }`}
+            >
+              All
+              <span className="ml-1.5 text-xs opacity-70">({courses.length})</span>
+            </button>
             {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+                key={cat._id}
+                onClick={() => setActiveCategory(cat._id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                  activeCategory === cat
+                  activeCategory === cat._id
                     ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105"
                     : "bg-background border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                 }`}
               >
-                {cat}
-                {cat !== "All" && (
-                  <span className="ml-1.5 text-xs opacity-70">
-                    ({courses.filter((c) => c.category === cat).length})
-                  </span>
-                )}
+                {cat.name}
+                <span className="ml-1.5 text-xs opacity-70">
+                  ({courses.filter((c) => {
+                    const catId = typeof c.category === "object" ? c.category?._id : c.category;
+                    return catId === cat._id;
+                  }).length})
+                </span>
               </button>
             ))}
           </div>
@@ -145,7 +161,7 @@ export function AllCourses() {
                             </Badge>
                             {course.category && (
                               <Badge variant="outline" className="backdrop-blur-sm bg-background/80 border-white/20 text-foreground">
-                                {course.category}
+                                {typeof course.category === "object" ? course.category?.name : course.category}
                               </Badge>
                             )}
                           </div>

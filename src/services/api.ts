@@ -32,7 +32,7 @@ export interface Course {
   shortDescription?: string;
   thumbnail?: { url: string; publicId: string };
   instructor: User;
-  category: string;
+  category: { _id: string; name: string; slug: string } | string;
   tags: string[];
   level: string;
   price: number;
@@ -183,6 +183,32 @@ export const coursesApi = {
 
   getCoursesByUser: (userId: string) =>
     api.get<ApiResponse<Course[]>>(`/courses/user/${userId}`),
+};
+
+// Categories API
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  order: number;
+  isActive: boolean;
+  courseCount: number;
+}
+
+export const categoriesApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<Category[]>>(`/categories${query}`);
+  },
+
+  getById: (id: string) =>
+    api.get<ApiResponse<Category>>(`/categories/${id}`),
+
+  getBySlug: (slug: string) =>
+    api.get<ApiResponse<Category>>(`/categories/slug/${slug}`),
 };
 
 // Enrollments API

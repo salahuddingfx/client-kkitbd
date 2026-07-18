@@ -7,12 +7,11 @@ import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
 import { Breadcrumb, Pagination, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Clock, Users, Star, Search, Filter, Loader2 } from "lucide-react";
-import { coursesApi, Course } from "@/services/api";
-
-const categories = ["All", "Web Development", "Mobile Development", "Design", "Data Science"];
+import { coursesApi, categoriesApi, Course, Category } from "@/services/api";
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,10 +20,15 @@ export default function CoursesPage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await coursesApi.getAll({ status: "published" });
-        setCourses(res.data || []);
+        const [coursesRes, catsRes] = await Promise.all([
+          coursesApi.getAll({ status: "published" }),
+          categoriesApi.getAll({ isActive: "true" }),
+        ]);
+        setCourses(coursesRes.data || []);
+        setCategories(catsRes.data || []);
       } catch {
         setCourses([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -33,8 +37,9 @@ export default function CoursesPage() {
   }, []);
 
   const filteredCourses = courses.filter((course) => {
+    const catId = typeof course.category === "object" ? course.category?._id : course.category;
     const matchesCategory =
-      selectedCategory === "All" || course.category === selectedCategory;
+      selectedCategory === "All" || catId === selectedCategory;
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (course.description && course.description.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -78,13 +83,19 @@ export default function CoursesPage() {
               />
             </div>
             <div className="flex flex-wrap gap-2">
+              <Button
+                variant={selectedCategory === "All" ? "default" : "outline"}
+                onClick={() => setSelectedCategory("All")}
+              >
+                All
+              </Button>
               {categories.map((category) => (
                 <Button
-                  key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(category)}
+                  key={category._id}
+                  variant={selectedCategory === category._id ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(category._id)}
                 >
-                  {category}
+                  {category.name}
                 </Button>
               ))}
             </div>
@@ -105,7 +116,7 @@ export default function CoursesPage() {
                         <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
                         <CardContent className="p-6">
                           <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary">{course.category}</Badge>
+                            <Badge variant="secondary">{typeof course.category === "object" ? course.category?.name : course.category}</Badge>
                             <Badge>{course.level}</Badge>
                           </div>
                           <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
