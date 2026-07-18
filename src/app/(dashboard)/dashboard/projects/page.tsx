@@ -1,101 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FolderGit2,
   Upload,
   CheckCircle2,
   Clock,
   XCircle,
-  Eye,
-  ExternalLink,
   Calendar,
+  Loader2,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  courseName: string;
-  status: "approved" | "pending_review" | "revision_requested" | "not_submitted";
-  submittedAt?: string;
-  reviewedAt?: string;
-  feedback?: string;
-  grade?: string;
-  repoUrl?: string;
-  liveUrl?: string;
-  milestones: { title: string; completed: boolean }[];
-}
-
-const projects: Project[] = [
-  {
-    id: "p1",
-    title: "E-Commerce Frontend",
-    description: "Build a complete e-commerce frontend with product listing, cart, checkout flow, and responsive design using React.",
-    courseName: "Complete Web Development Bootcamp",
-    status: "approved",
-    submittedAt: "2026-06-20",
-    reviewedAt: "2026-06-22",
-    feedback: "Excellent implementation! Clean component structure, good state management, and polished UI. The responsive design works perfectly across all breakpoints.",
-    grade: "A",
-    repoUrl: "https://github.com/user/ecommerce-frontend",
-    liveUrl: "https://ecommerce-demo.vercel.app",
-    milestones: [
-      { title: "Product listing page", completed: true },
-      { title: "Shopping cart", completed: true },
-      { title: "Checkout flow", completed: true },
-      { title: "Responsive design", completed: true },
-    ],
-  },
-  {
-    id: "p2",
-    title: "RESTful Blog API",
-    description: "Design and implement a complete blog API with authentication, CRUD, pagination, filtering, and rate limiting.",
-    courseName: "Complete Web Development Bootcamp",
-    status: "pending_review",
-    submittedAt: "2026-07-10",
-    milestones: [
-      { title: "Authentication system", completed: true },
-      { title: "CRUD operations", completed: true },
-      { title: "Pagination & filtering", completed: true },
-      { title: "Rate limiting", completed: true },
-      { title: "API documentation", completed: true },
-    ],
-  },
-  {
-    id: "p3",
-    title: "Task Management Dashboard",
-    description: "Build a Kanban-style task management dashboard with drag-and-drop, user auth, and real-time updates.",
-    courseName: "React & Next.js Masterclass",
-    status: "revision_requested",
-    submittedAt: "2026-07-05",
-    feedback: "Good foundation but needs improvements: 1) Add error boundaries, 2) Improve loading states, 3) Add optimistic updates for drag-and-drop. Please resubmit with these fixes.",
-    repoUrl: "https://github.com/user/task-dashboard",
-    milestones: [
-      { title: "Kanban board layout", completed: true },
-      { title: "Drag and drop", completed: true },
-      { title: "User authentication", completed: true },
-      { title: "Real-time updates", completed: false },
-      { title: "Error boundaries", completed: false },
-    ],
-  },
-  {
-    id: "p4",
-    title: "Personal Portfolio Website",
-    description: "Design and build a personal portfolio site with animations, dark mode, and contact form.",
-    courseName: "UI/UX Design Fundamentals",
-    status: "not_submitted",
-    milestones: [
-      { title: "Wireframe & design", completed: true },
-      { title: "Hero & about section", completed: false },
-      { title: "Project showcase", completed: false },
-      { title: "Contact form", completed: false },
-    ],
-  },
-];
+import { projectsApi, Project } from "@/services/api";
+import { toast } from "sonner";
 
 const statusConfig = {
   approved: { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10", label: "Approved" },
@@ -105,7 +24,39 @@ const statusConfig = {
 };
 
 export default function ProjectsPage() {
-  const [selectedProject, setSelectedProject] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState<string | null>(null);
+
+  useEffect(() => {
+    projectsApi.getMy()
+      .then((res) => setProjects(res.data || []))
+      .catch(() => setProjects([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleSubmit = async (id: string, repoUrl: string, liveUrl: string) => {
+    setSubmitting(id);
+    try {
+      const res = await projectsApi.submit(id, { repoUrl, liveUrl });
+      if (res.success) {
+        setProjects((prev) => prev.map((p) => p._id === id ? { ...p, status: "pending_review", submittedAt: new Date().toISOString() } : p));
+        toast.success("Project submitted for review!");
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to submit project.");
+    } finally {
+      setSubmitting(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -116,10 +67,6 @@ export default function ProjectsPage() {
             Submit projects for instructor review and feedback.
           </p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors">
-          <Upload className="h-4 w-4" />
-          Submit New Project
-        </button>
       </div>
 
       {/* Stats */}
@@ -140,129 +87,138 @@ export default function ProjectsPage() {
       </div>
 
       {/* Projects List */}
-      <div className="space-y-4">
-        {projects.map((project, i) => {
-          const config = statusConfig[project.status];
-          const completedMilestones = project.milestones.filter((m) => m.completed).length;
+      {projects.length === 0 ? (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <FolderGit2 className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
+            <p className="text-muted-foreground">No projects yet. Start a course to begin working on projects.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {projects.map((project, i) => {
+            const config = statusConfig[project.status];
+            const completedMilestones = project.milestones?.filter((m) => m.completed).length || 0;
+            const totalMilestones = project.milestones?.length || 0;
 
-          return (
-            <FadeIn key={project.id} delay={i * 0.1}>
-              <Card className="overflow-hidden hover:shadow-md transition-all">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="flex items-start gap-4">
-                      <div className={cn("p-2.5 rounded-xl", config.bg)}>
-                        <FolderGit2 className={cn("h-5 w-5", config.color)} />
+            return (
+              <FadeIn key={project._id} delay={i * 0.1}>
+                <Card className="overflow-hidden hover:shadow-md transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <div className="flex items-start gap-4">
+                        <div className={cn("p-2.5 rounded-xl", config.bg)}>
+                          <FolderGit2 className={cn("h-5 w-5", config.color)} />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground">{project.title}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">{project.courseName || "General Project"}</p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground">{project.title}</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">{project.courseName}</p>
-                      </div>
-                    </div>
-                    <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0", config.bg, config.color)}>
-                      {config.label}
-                    </span>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
-
-                  {/* Milestones Progress */}
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="text-muted-foreground">Milestones</span>
-                      <span className="font-medium text-foreground">
-                        {completedMilestones}/{project.milestones.length}
+                      <span className={cn("text-xs font-medium px-2.5 py-1 rounded-full flex-shrink-0", config.bg, config.color)}>
+                        {config.label}
                       </span>
                     </div>
-                    <div className="h-2 rounded-full bg-muted overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{
-                          width: `${(completedMilestones / project.milestones.length) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {project.milestones.map((m) => (
-                        <span
-                          key={m.title}
-                          className={cn(
-                            "text-xs px-2 py-0.5 rounded-full",
-                            m.completed
-                              ? "bg-green-500/10 text-green-600"
-                              : "bg-muted text-muted-foreground"
-                          )}
-                        >
-                          {m.completed ? "✓ " : ""}{m.title}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* Feedback */}
-                  {project.feedback && (
-                    <div className="p-3 rounded-lg bg-muted/50 mb-4">
-                      <p className="text-xs font-medium text-muted-foreground mb-1">Instructor Feedback</p>
-                      <p className="text-sm text-foreground">{project.feedback}</p>
-                      {project.grade && (
-                        <p className="text-sm font-semibold text-primary mt-1">Grade: {project.grade}</p>
-                      )}
-                    </div>
-                  )}
+                    <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
 
-                  {/* Actions */}
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      {project.submittedAt && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          Submitted {formatDate(project.submittedAt)}
-                        </span>
-                      )}
+                    {/* Milestones Progress */}
+                    {totalMilestones > 0 && (
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <span className="text-muted-foreground">Milestones</span>
+                          <span className="font-medium text-foreground">
+                            {completedMilestones}/{totalMilestones}
+                          </span>
+                        </div>
+                        <div className="h-2 rounded-full bg-muted overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{ width: `${(completedMilestones / totalMilestones) * 100}%` }}
+                          />
+                        </div>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {project.milestones.map((m) => (
+                            <span
+                              key={m.title}
+                              className={cn(
+                                "text-xs px-2 py-0.5 rounded-full",
+                                m.completed ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"
+                              )}
+                            >
+                              {m.completed ? "✓ " : ""}{m.title}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Feedback */}
+                    {project.feedback && (
+                      <div className="p-3 rounded-lg bg-muted/50 mb-4">
+                        <p className="text-xs font-medium text-muted-foreground mb-1">Instructor Feedback</p>
+                        <p className="text-sm text-foreground">{project.feedback}</p>
+                        {project.grade && (
+                          <p className="text-sm font-semibold text-primary mt-1">Grade: {project.grade}</p>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-between pt-3 border-t border-border">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        {project.submittedAt && (
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            Submitted {formatDate(project.submittedAt)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-2">
+                        {project.repoUrl && (
+                          <a
+                            href={project.repoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                          >
+                            <FolderGit2 className="h-3 w-3" />
+                            Code
+                          </a>
+                        )}
+                        {project.liveUrl && (
+                          <a
+                            href={project.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
+                          >
+                            Live
+                          </a>
+                        )}
+                        {(project.status === "not_submitted" || project.status === "revision_requested") && (
+                          <button
+                            onClick={() => handleSubmit(project._id, project.repoUrl || "", project.liveUrl || "")}
+                            disabled={submitting === project._id}
+                            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+                          >
+                            {submitting === project._id ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Upload className="h-3 w-3" />
+                            )}
+                            {project.status === "revision_requested" ? "Resubmit" : "Submit"}
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {project.repoUrl && (
-                        <a
-                          href={project.repoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
-                        >
-                          <FolderGit2 className="h-3 w-3" />
-                          Code
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a
-                          href={project.liveUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition-colors"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                          Live
-                        </a>
-                      )}
-                      {project.status === "not_submitted" && (
-                        <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors">
-                          <Upload className="h-3 w-3" />
-                          Submit
-                        </button>
-                      )}
-                      {project.status === "revision_requested" && (
-                        <button className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors">
-                          <Upload className="h-3 w-3" />
-                          Resubmit
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </FadeIn>
-          );
-        })}
-      </div>
+                  </CardContent>
+                </Card>
+              </FadeIn>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

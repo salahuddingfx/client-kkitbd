@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Camera, Save, User, Mail, Phone, MapPin, Globe, Loader2 } from "lucide-react";
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { getInitials } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { authApi, userApi } from "@/services/api";
+import { authApi, userApi, uploadApi } from "@/services/api";
 import { toast } from "sonner";
 import { setUser } from "@/redux/slices/authSlice";
 
@@ -17,6 +17,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -78,6 +80,33 @@ export default function ProfilePage() {
       toast.error(err.message || "Failed to update profile.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !userProfile?._id) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB.");
+      return;
+    }
+    setUploadingAvatar(true);
+    try {
+      const uploadRes = await uploadApi.single(file);
+      if (uploadRes.success && uploadRes.data) {
+        const res = await userApi.update(userProfile._id, {
+          avatar: { url: uploadRes.data.url, publicId: uploadRes.data.publicId },
+        } as any);
+        if (res.success) {
+          setUserProfile((prev: any) => prev ? { ...prev, avatar: { url: uploadRes.data.url, publicId: uploadRes.data.publicId } } : prev);
+          toast.success("Profile picture updated!");
+        }
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload image.");
+    } finally {
+      setUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -160,9 +189,21 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-                <button className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-colors">
-                  <Camera className="h-4 w-4" />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                  {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                 </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-foreground">{user.name}</h2>

@@ -14,6 +14,23 @@ import { OTPInput } from "@/components/ui/OTPInput";
 import { useAppDispatch } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 import { authApi } from "@/services/api";
+
+async function getBrowserFingerprint(): Promise<string> {
+  const components = [
+    navigator.userAgent,
+    navigator.language,
+    screen.colorDepth.toString(),
+    screen.width + "x" + screen.height,
+    new Date().getTimezoneOffset().toString(),
+    navigator.hardwareConcurrency?.toString() || "0",
+    navigator.platform,
+  ];
+  const raw = components.join("|||");
+  const encoder = new TextEncoder();
+  const data = encoder.encode(raw);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 import {
   SiReact,
   SiNextdotjs,
@@ -108,9 +125,11 @@ export default function LoginPage() {
     if (!formData?.email) return;
     setIsSubmitting(true);
     try {
+      const fp = await getBrowserFingerprint();
       const response = await authApi.verifyLogin({
         email: formData.email,
         otp,
+        fingerprint: fp,
       });
       if (response.success) {
         const payload = response.data;

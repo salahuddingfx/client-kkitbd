@@ -85,11 +85,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <SecurityWrapper>
-          <PreloaderWrapper />
-          <Providers>{children}</Providers>
-          <CookieConsent />
-        </SecurityWrapper>
+        <Providers>
+          <SecurityWrapper>
+            <PreloaderWrapper />
+            {children}
+            <CookieConsent />
+          </SecurityWrapper>
+        </Providers>
       </body>
     </html>
   );

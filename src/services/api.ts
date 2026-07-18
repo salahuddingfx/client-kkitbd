@@ -655,3 +655,63 @@ export const noticesApi = {
   getUnreadCount: () =>
     api.get<ApiResponse<{ count: number }>>("/notices/unread/count"),
 };
+
+// Leaderboard API
+export interface LeaderboardEntry {
+  _id: string;
+  name: string;
+  avatar?: { url: string; publicId: string };
+  coursesEnrolled: number;
+  coursesCompleted: number;
+  lessonsCompleted: number;
+  points: number;
+  rank: number;
+  joinedAt: string;
+}
+
+export interface MyStats {
+  rank: number;
+  points: number;
+  coursesEnrolled: number;
+  coursesCompleted: number;
+  lessonsCompleted: number;
+  streak: number;
+  weeklyRank: number;
+}
+
+export const leaderboardApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<LeaderboardEntry[]>>(`/leaderboard${query}`);
+  },
+  getMyStats: () =>
+    api.get<ApiResponse<MyStats>>("/leaderboard/me"),
+};
+
+// Projects API
+export interface Project {
+  _id: string;
+  user: string;
+  title: string;
+  description: string;
+  course?: string;
+  courseName?: string;
+  status: "pending_review" | "approved" | "revision_requested" | "not_submitted";
+  submittedAt?: string;
+  reviewedAt?: string;
+  feedback?: string;
+  grade?: string;
+  repoUrl?: string;
+  liveUrl?: string;
+  milestones: { title: string; completed: boolean }[];
+  createdAt: string;
+}
+
+export const projectsApi = {
+  getMy: () =>
+    api.get<ApiResponse<Project[]>>("/projects"),
+  create: (data: Partial<Project>) =>
+    api.post<ApiResponse<Project>>("/projects", data),
+  submit: (id: string, data: { repoUrl?: string; liveUrl?: string }) =>
+    api.post<ApiResponse<Project>>(`/projects/${id}/submit`, data),
+};
