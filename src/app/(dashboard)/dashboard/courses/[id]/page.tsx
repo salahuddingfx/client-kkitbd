@@ -263,8 +263,21 @@ export default function DashboardCourseViewerPage() {
             )}
           </div>
         </div>
-        <Button variant="outline" size="sm" className="lg:hidden" onClick={() => setShowMobileMenu(true)}>
-          <List className="h-4 w-4 mr-1" /> Lessons
+        <Button
+          variant="outline"
+          size="icon"
+          className="lg:hidden relative h-9 w-9"
+          onClick={() => setShowMobileMenu(!showMobileMenu)}
+          aria-label={showMobileMenu ? "Close lessons" : "Open lessons"}
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" className="transition-all duration-300 ease-in-out"
+              style={{ transform: showMobileMenu ? "translateY(6px) rotate(45deg)" : "translateY(0) rotate(0deg)", transformOrigin: "center" }} />
+            <line x1="7" y1="12" x2="17" y2="12" className="transition-all duration-300 ease-in-out"
+              style={{ opacity: showMobileMenu ? 0 : 1, transform: showMobileMenu ? "scaleX(0)" : "scaleX(1)", transformOrigin: "center" }} />
+            <line x1="3" y1="18" x2="21" y2="18" className="transition-all duration-300 ease-in-out"
+              style={{ transform: showMobileMenu ? "translateY(-6px) rotate(-45deg)" : "translateY(0) rotate(0deg)", transformOrigin: "center" }} />
+          </svg>
         </Button>
       </div>
 
@@ -422,18 +435,24 @@ export default function DashboardCourseViewerPage() {
 
         {/* RIGHT — Module/Lesson sidebar */}
         <div className="lg:col-span-4 order-1 lg:order-2">
+          {/* Mobile backdrop */}
+          {showMobileMenu && (
+            <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" onClick={() => setShowMobileMenu(false)} />
+          )}
           <div className={cn(
             "border rounded-xl border-border bg-card overflow-hidden",
-            showMobileMenu ? "fixed inset-0 z-50 bg-background/80 backdrop-blur-sm lg:relative lg:bg-card" : ""
+            showMobileMenu ? "fixed inset-y-0 right-0 z-50 w-80 shadow-2xl lg:relative lg:w-auto lg:inset-auto lg:z-auto lg:shadow-none" : "hidden lg:block"
           )}>
             {showMobileMenu && (
               <div className="flex items-center justify-between p-3 border-b lg:hidden">
                 <span className="font-semibold text-sm">Course Lessons</span>
-                <button onClick={() => setShowMobileMenu(false)} className="p-1"><X className="h-5 w-5" /></button>
+                <button onClick={() => setShowMobileMenu(false)} className="p-1.5 rounded-lg hover:bg-muted transition-colors" aria-label="Close lessons">
+                  <X className="h-5 w-5" />
+                </button>
               </div>
             )}
 
-            <div className={cn(showMobileMenu && "absolute right-0 top-0 h-full w-80 bg-card border-l shadow-2xl overflow-hidden flex flex-col")}>
+            <div className="flex flex-col h-full overflow-hidden">
               {/* Search */}
               <div className="p-3 border-b border-border sticky top-0 bg-card z-10">
                 <div className="relative">
