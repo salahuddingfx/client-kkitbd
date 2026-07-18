@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 import { GlowCard } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-const CONSENT_KEY = "cookie-consent";
+const CONSENT_KEY = "kkit_cookie_consent";
 
 interface CookiePreferences {
   essential: boolean;
@@ -56,9 +56,14 @@ export function CookieConsent() {
   const [prefs, setPrefs] = useState<CookiePreferences>(defaultPreferences);
 
   useEffect(() => {
+    // Clear any old consent data from previous keys
+    localStorage.removeItem("cookie-consent");
+
     const stored = localStorage.getItem(CONSENT_KEY);
     if (!stored) {
-      setVisible(true);
+      // Delay showing until preloader finishes (~4s)
+      const timer = setTimeout(() => setVisible(true), 4500);
+      return () => clearTimeout(timer);
     }
   }, []);
 
