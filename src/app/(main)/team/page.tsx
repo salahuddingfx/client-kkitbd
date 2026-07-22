@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Card, CardContent, Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
+import { Card, CardContent, Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/components/ui";
 import { Breadcrumb, Container } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { teamApi, TeamMember } from "@/services/api";
@@ -55,8 +55,23 @@ export default function TeamPage() {
       <section className="py-12 sm:py-20">
         <Container>
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-8 text-center space-y-4">
+                    <Skeleton className="w-24 h-24 rounded-full mx-auto" />
+                    <Skeleton className="h-5 w-36 mx-auto" />
+                    <Skeleton className="h-4 w-24 mx-auto" />
+                    <Skeleton className="h-3 w-full" />
+                    <Skeleton className="h-3 w-5/6 mx-auto" />
+                    <div className="flex justify-center gap-2 pt-2">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

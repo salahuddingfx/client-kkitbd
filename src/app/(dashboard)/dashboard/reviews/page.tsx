@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Star, MessageSquare, Calendar, BookOpen, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
 import { reviewsApi, Review, enrollmentsApi, Enrollment } from "@/services/api";
@@ -68,12 +68,31 @@ export default function ReviewsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">My Reviews</h1>
-          <p className="text-muted-foreground mt-1">Loading...</p>
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-36" />
+          <Skeleton className="h-4 w-56" />
         </div>
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-12 w-12 rounded-lg shrink-0" />
+                  <div className="space-y-1.5 flex-1">
+                    <Skeleton className="h-5 w-1/2" />
+                    <div className="flex gap-1">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <Skeleton key={j} className="h-4 w-4 rounded-sm" />
+                      ))}
+                    </div>
+                  </div>
+                  <Skeleton className="h-4 w-20 shrink-0" />
+                </div>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );

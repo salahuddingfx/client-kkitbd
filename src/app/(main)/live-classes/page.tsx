@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Container, Breadcrumb } from "@/components/common";
 import { GlowCard, Badge, Button } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { Calendar, Clock, Users, Video, ExternalLink, Loader2 } from "lucide-react";
 import { liveClassesApi, LiveClass } from "@/services/api";
@@ -68,8 +69,27 @@ export default function LiveClassesPage() {
       <section className="py-12 sm:py-20">
         <Container>
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-6 w-16 rounded-full" />
+                      <Skeleton className="h-5 w-20" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <div className="flex items-center gap-4">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                    <div className="flex items-center justify-between pt-2">
+                      <Skeleton className="h-4 w-28" />
+                      <Skeleton className="h-9 w-20 rounded-lg" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : classes.length === 0 ? (
             <div className="text-center py-16">

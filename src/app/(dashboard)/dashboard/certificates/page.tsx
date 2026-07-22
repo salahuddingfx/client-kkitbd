@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Award, Download, ExternalLink, Loader2, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Award, Download, ExternalLink, ArrowRight } from "lucide-react";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { formatDate } from "@/utils";
 import { certificatesApi, Certificate } from "@/services/api";
@@ -29,12 +29,29 @@ export default function CertificatesPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Certificates</h1>
-          <p className="text-muted-foreground mt-1">Loading...</p>
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-4 w-32" />
         </div>
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-16 w-16 rounded-xl shrink-0" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-3.5 w-1/2" />
+                    <Skeleton className="h-3 w-28" />
+                  </div>
+                </div>
+                <div className="flex gap-2 pt-2">
+                  <Skeleton className="h-9 flex-1 rounded-lg" />
+                  <Skeleton className="h-9 w-9 rounded-lg" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );

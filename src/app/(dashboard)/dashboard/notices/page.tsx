@@ -16,7 +16,7 @@ import {
   Video,
   ExternalLink,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
 import { noticesApi, Notice } from "@/services/api";
@@ -135,8 +135,16 @@ export default function NoticesPage() {
           {/* Notice List */}
           <div className="lg:col-span-1 space-y-2 max-h-[600px] overflow-y-auto">
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              <div className="space-y-2">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="p-3 rounded-lg border border-border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4 rounded-sm shrink-0" />
+                      <Skeleton className="h-4 flex-1" />
+                    </div>
+                    <Skeleton className="h-3 w-2/3" />
+                  </div>
+                ))}
               </div>
             ) : filtered.length === 0 ? (
               <Card>

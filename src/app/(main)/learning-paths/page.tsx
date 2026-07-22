@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { learningPathsApi, LearningPath } from "@/services/api";
 import { Container, Breadcrumb, SectionHeader } from "@/components/common";
-import { GlowCard, Badge, Button } from "@/components/ui";
+import { GlowCard, Badge, Button, Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn, StaggerReveal } from "@/components/animations";
 import { Route, Clock, BookOpen, ArrowRight, Loader2, Filter } from "lucide-react";
 
@@ -86,8 +86,25 @@ export default function LearningPathsPage() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-6 w-20 rounded-full" />
+                      <Skeleton className="h-5 w-16" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <div className="flex gap-4">
+                      <Skeleton className="h-3.5 w-20" />
+                      <Skeleton className="h-3.5 w-20" />
+                    </div>
+                    <Skeleton className="h-10 w-full rounded-lg" />
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="text-center py-12">

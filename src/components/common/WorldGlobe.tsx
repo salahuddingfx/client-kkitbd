@@ -701,12 +701,15 @@ function MilitaryMap(props: MilitaryMapProps) {
   const countryIndex = React.useMemo(() => {
     if (!feats) return [];
     const out = [];
+    const seen = new Set<string>();
     for (const f of feats) {
       const pad3 = String(f.id).padStart(3, "0");
       const e = CD[pad3];
       const a3 = e ? e[0] : pad3;
       const nm = e ? e[1] : a3;
       if (a3 === "ATA") continue;
+      if (seen.has(a3)) continue;
+      seen.add(a3);
 
       const rings: any[] = [];
       let minLng = Infinity,

@@ -20,8 +20,11 @@ export interface User {
   role: string;
   avatar?: { url: string; publicId: string };
   phone?: string;
+  designation?: string;
   isActive: boolean;
   createdAt: string;
+  wishlist?: string[];
+  deviceTokens?: { deviceId: string; deviceName: string; lastActive: string }[];
 }
 
 export interface Course {
@@ -32,6 +35,8 @@ export interface Course {
   shortDescription?: string;
   thumbnail?: { url: string; publicId: string };
   instructor: User;
+  mentors?: { user: User; assignedAt?: string }[];
+  trainers?: { user: User; assignedAt?: string }[];
   category: { _id: string; name: string; slug: string } | string;
   tags: string[];
   level: string;
@@ -44,6 +49,13 @@ export interface Course {
   status: string;
   isFeatured: boolean;
   modules: CourseModule[];
+  prerequisites?: string[];
+  learningOutcomes?: string[];
+  techStack?: { name: string; icon?: string; color?: string }[];
+  projects?: { title: string; description?: string; techUsed?: string[]; link?: string }[];
+  highlights?: string[];
+  language?: string;
+  certificateIncluded?: boolean;
 }
 
 export interface CourseModule {
@@ -90,6 +102,8 @@ export interface Assignment {
   dueDate: string;
   submissionType: string;
   status: string;
+  rubricCriteria?: { criterion: string; maxPoints: number; description?: string }[];
+  milestones?: { title: string; description?: string; maxPoints?: number; order?: number }[];
 }
 
 export interface Submission {
@@ -115,6 +129,18 @@ export interface Submission {
     givenAt: string;
     givenBy: User;
   };
+  milestoneProgress?: {
+    milestoneTitle: string;
+    completed: boolean;
+    completedAt?: string;
+    awardedPoints?: number;
+  }[];
+  rubricScores?: {
+    criterion: string;
+    maxPoints: number;
+    awardedPoints: number;
+    comment?: string;
+  }[];
 }
 
 // Auth API
@@ -211,6 +237,86 @@ export const categoriesApi = {
     api.get<ApiResponse<Category>>(`/categories/slug/${slug}`),
 };
 
+// Partners API
+export interface Partner {
+  _id: string;
+  name: string;
+  slug: string;
+  logo?: { url: string; publicId: string };
+  icon?: string;
+  color?: string;
+  website?: string;
+  description?: string;
+  order: number;
+  isActive: boolean;
+  type: string;
+}
+
+export const partnersApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<Partner[]>>(`/partners${query}`);
+  },
+};
+
+// Home Stats API
+export interface HomeStat {
+  _id: string;
+  label: string;
+  value: string;
+  suffix: string;
+  icon: string;
+  color: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+  section: string;
+}
+
+export const homeStatsApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<HomeStat[]>>(`/home-stats${query}`);
+  },
+};
+
+// Offers API
+export interface Offer {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  shortDescription?: string;
+  badge?: string;
+  discountType: string;
+  discountValue: number;
+  couponCode?: string;
+  courses: Course[];
+  bannerImage?: { url: string; publicId: string };
+  startDate?: string;
+  endDate?: string;
+  isActive: boolean;
+  isFeatured: boolean;
+  priority: number;
+  usageLimit: number;
+  usedCount: number;
+  termsAndConditions?: string;
+}
+
+export const offersApi = {
+  getActive: () =>
+    api.get<ApiResponse<Offer[]>>("/offers/active"),
+
+  getById: (id: string) =>
+    api.get<ApiResponse<Offer>>(`/offers/${id}`),
+
+  getBySlug: (slug: string) =>
+    api.get<ApiResponse<Offer>>(`/offers/slug/${slug}`),
+
+  validateCoupon: (code: string) =>
+    api.post<ApiResponse<Offer>>("/offers/validate-coupon", { code }),
+};
+
 // Enrollments API
 export const enrollmentsApi = {
   getAll: (params?: Record<string, string>) => {
@@ -272,6 +378,9 @@ export const submissionsApi = {
     return api.get<ApiResponse<Submission[]>>(`/submissions/my${query}`);
   },
 
+  getMyGrades: () =>
+    api.get<ApiResponse<any>>("/submissions/my/grades"),
+
   submit: (data: { assignment: string; courseId: string; textContent?: string; files?: unknown[]; links?: unknown[] }) =>
     api.post<ApiResponse<Submission>>("/submissions", data),
 
@@ -280,6 +389,9 @@ export const submissionsApi = {
 
   return: (id: string, returnNote: string) =>
     api.post<ApiResponse<Submission>>(`/submissions/${id}/return`, { returnNote }),
+
+  completeMilestone: (submissionId: string, milestoneIndex: number) =>
+    api.post<ApiResponse<Submission>>(`/submissions/${submissionId}/milestone/${milestoneIndex}`),
 
   delete: (id: string) =>
     api.delete<ApiResponse<null>>(`/submissions/${id}`),
@@ -350,7 +462,7 @@ export const dashboardApi = {
 };
 
 // Payment API
-export type PaymentMethod = "bkash" | "nagad" | "bank_transfer" | "stripe" | "sslcommerz" | "manual";
+export type PaymentMethod = "bkash" | "nagad" | "bank_transfer" | "manual";
 export type PaymentStatus = "pending" | "completed" | "failed" | "refunded" | "cancelled";
 
 export interface PaymentProof {
@@ -390,6 +502,7 @@ export const paymentApi = {
     course: string;
     method: PaymentMethod;
     amount: number;
+    couponCode?: string;
     billingDetails?: Record<string, string>;
     paymentProof?: PaymentProof;
   }) => api.post<ApiResponse<Payment>>("/payments", data),
@@ -728,14 +841,17 @@ export interface Project {
   description: string;
   course?: string;
   courseName?: string;
-  status: "pending_review" | "approved" | "revision_requested" | "not_submitted";
+  deadline?: string;
+  allowLateSubmission?: boolean;
+  latePenaltyPerDay?: number;
+  status: "not_submitted" | "in_progress" | "pending_review" | "approved" | "revision_requested";
   submittedAt?: string;
   reviewedAt?: string;
   feedback?: string;
   grade?: string;
   repoUrl?: string;
   liveUrl?: string;
-  milestones: { title: string; completed: boolean }[];
+  milestones: { title: string; description?: string; completed: boolean; completedAt?: string; maxPoints?: number; order?: number }[];
   createdAt: string;
 }
 
@@ -746,4 +862,280 @@ export const projectsApi = {
     api.post<ApiResponse<Project>>("/projects", data),
   submit: (id: string, data: { repoUrl?: string; liveUrl?: string }) =>
     api.post<ApiResponse<Project>>(`/projects/${id}/submit`, data),
+  completeMilestone: (id: string, milestoneIndex: number) =>
+    api.post<ApiResponse<Project>>(`/projects/${id}/milestone/${milestoneIndex}`),
+};
+
+// Portfolio API
+export interface PortfolioItem {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  shortDescription?: string;
+  category: string;
+  client?: string;
+  duration?: string;
+  technologies: string[];
+  liveUrl?: string;
+  repoUrl?: string;
+  image?: { url: string; publicId: string };
+  status: string;
+  featured: boolean;
+}
+
+export const portfolioApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<PortfolioItem[]>>(`/portfolio${query}`);
+  },
+};
+
+// Services API
+export interface ServiceItem {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  shortDescription?: string;
+  icon?: string;
+  features: string[];
+  price?: number;
+  status: string;
+}
+
+export const servicesApi = {
+  getAll: () =>
+    api.get<ApiResponse<ServiceItem[]>>("/services"),
+};
+
+// FAQs API
+export interface FaqItem {
+  _id: string;
+  question: string;
+  answer: string;
+  category?: string;
+  order: number;
+}
+
+export const faqsApi = {
+  getAll: () =>
+    api.get<ApiResponse<FaqItem[]>>("/faqs"),
+};
+
+// Live Classes API
+export interface LiveClass {
+  _id: string;
+  title: string;
+  course: { _id: string; title: string; slug: string } | string;
+  instructor: { _id: string; name: string; avatar?: { url: string } };
+  scheduledAt: string;
+  duration: number;
+  meetingUrl?: string;
+  meetingId?: string;
+  description?: string;
+  status: "scheduled" | "live" | "completed" | "cancelled";
+  attendees: string[];
+  maxAttendees: number;
+  recording?: string;
+}
+
+export const liveClassesApi = {
+  getAll: (params?: Record<string, string>) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<LiveClass[]>>(`/live-classes${q}`);
+  },
+  getUpcoming: () => api.get<ApiResponse<LiveClass[]>>(`/live-classes/upcoming`),
+  getById: (id: string) => api.get<ApiResponse<LiveClass>>(`/live-classes/${id}`),
+  join: (id: string) => api.post<ApiResponse<LiveClass>>(`/live-classes/${id}/join`),
+};
+
+// Learning Paths API
+export interface LearningPath {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  shortDescription?: string;
+  image?: { url: string; publicId: string };
+  courses: { course: Course; order: number }[];
+  difficulty: string;
+  estimatedDuration?: string;
+  category?: string;
+  tags: string[];
+  enrolledStudents: number;
+  isFeatured: boolean;
+  status: string;
+}
+
+export const learningPathsApi = {
+  getAll: (params?: Record<string, string>) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<LearningPath[]>>(`/learning-paths${q}`);
+  },
+  getBySlug: (slug: string) => api.get<ApiResponse<LearningPath>>(`/learning-paths/${slug}`),
+};
+
+// Discussions API
+export interface DiscussionReply {
+  _id?: string;
+  author: User;
+  content: string;
+  likes: string[];
+  createdAt: string;
+}
+
+export interface Discussion {
+  _id: string;
+  title: string;
+  content: string;
+  course: { _id: string; title: string } | string;
+  author: User;
+  type: "question" | "discussion" | "announcement";
+  tags: string[];
+  replies: DiscussionReply[];
+  isResolved: boolean;
+  isPinned: boolean;
+  views: number;
+  createdAt: string;
+}
+
+export const discussionsApi = {
+  getAll: (params?: Record<string, string>) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<Discussion[]>>(`/discussions${q}`);
+  },
+  getById: (id: string) => api.get<ApiResponse<Discussion>>(`/discussions/${id}`),
+  create: (data: any) => api.post<ApiResponse<Discussion>>("/discussions", data),
+  addReply: (id: string, data: { content: string }) => api.post<ApiResponse<Discussion>>(`/discussions/${id}/replies`, data),
+  toggleResolved: (id: string) => api.put<ApiResponse<Discussion>>(`/discussions/${id}/resolve`),
+  likeReply: (id: string, replyId: string) => api.post<ApiResponse<Discussion>>(`/discussions/${id}/replies/${replyId}/like`),
+};
+
+// Email Campaigns API (admin)
+export interface EmailCampaign {
+  _id: string;
+  name: string;
+  subject: string;
+  content: string;
+  template: string;
+  targetAudience: string;
+  status: string;
+  scheduledAt?: string;
+  sentAt?: string;
+  totalSent: number;
+  totalOpened: number;
+  totalClicked: number;
+}
+
+export const emailCampaignsApi = {
+  getAll: (params?: Record<string, string>) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<EmailCampaign[]>>(`/email-campaigns${q}`);
+  },
+  getById: (id: string) => api.get<ApiResponse<EmailCampaign>>(`/email-campaigns/${id}`),
+  create: (data: any) => api.post<ApiResponse<EmailCampaign>>("/email-campaigns", data),
+  update: (id: string, data: any) => api.put<ApiResponse<EmailCampaign>>(`/email-campaigns/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse<void>>(`/email-campaigns/${id}`),
+  send: (id: string) => api.post<ApiResponse<EmailCampaign>>(`/email-campaigns/${id}/send`),
+  getStats: (id: string) => api.get<ApiResponse<any>>(`/email-campaigns/${id}/stats`),
+};
+
+// Revenue Analytics API (admin)
+export const revenueAnalyticsApi = {
+  getSummary: (period?: string) => {
+    const q = period ? `?period=${period}` : "";
+    return api.get<ApiResponse<any>>(`/revenue-analytics/summary${q}`);
+  },
+  getByMonth: (months?: number) => {
+    const q = months ? `?months=${months}` : "";
+    return api.get<ApiResponse<any>>(`/revenue-analytics/by-month${q}`);
+  },
+  getByCourse: () => api.get<ApiResponse<any>>("/revenue-analytics/by-course"),
+  getByMethod: () => api.get<ApiResponse<any>>("/revenue-analytics/by-method"),
+  getDashboardStats: () => api.get<ApiResponse<any>>("/revenue-analytics/dashboard-stats"),
+  getFunnel: () => api.get<ApiResponse<any>>("/revenue-analytics/funnel"),
+  getTopCourses: (limit?: number) => {
+    const q = limit ? `?limit=${limit}` : "";
+    return api.get<ApiResponse<any>>(`/revenue-analytics/top-courses${q}`);
+  },
+  getGrowth: () => api.get<ApiResponse<any>>("/revenue-analytics/growth"),
+};
+
+// Notes API
+export interface Note {
+  _id: string;
+  user: string;
+  course: string;
+  lessonId: string;
+  timestamp: number | null;
+  content: string;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const notesApi = {
+  getAll: (params: { course: string; lessonId?: string }) => {
+    const q = new URLSearchParams(params).toString();
+    return api.get<ApiResponse<Note[]>>(`/notes?${q}`);
+  },
+  create: (data: { course: string; lessonId: string; content: string; timestamp?: number | null }) =>
+    api.post<ApiResponse<Note>>("/notes", data),
+  update: (id: string, data: { content: string }) =>
+    api.put<ApiResponse<Note>>(`/notes/${id}`, data),
+  delete: (id: string) =>
+    api.delete<ApiResponse<void>>(`/notes/${id}`),
+  togglePin: (id: string) =>
+    api.patch<ApiResponse<Note>>(`/notes/${id}/pin`),
+};
+
+// Gamification API
+export interface GamificationBadge {
+  badgeId: string;
+  name: string;
+  description: string;
+  icon: string;
+  earnedAt?: string;
+}
+
+export interface GamificationData {
+  _id: string;
+  user: string;
+  points: number;
+  level: number;
+  badges: GamificationBadge[];
+  stats: {
+    lessonsCompleted: number;
+    coursesCompleted: number;
+    assignmentsSubmitted: number;
+    projectsSubmitted: number;
+    reviewsWritten: number;
+    discussionsCreated: number;
+    totalWatchTime: number;
+  };
+  pointsHistory: { amount: number; reason: string; date: string }[];
+}
+
+export interface BadgeDefinition {
+  badgeId: string;
+  name: string;
+  description: string;
+  icon: string;
+}
+
+export const gamificationApi = {
+  getMe: () => api.get<ApiResponse<GamificationData>>("/gamification/me"),
+  getBadges: () => api.get<ApiResponse<BadgeDefinition[]>>("/gamification/badges"),
+  getLeaderboard: (limit?: number) => {
+    const q = limit ? `?limit=${limit}` : "";
+    return api.get<ApiResponse<any[]>>(`/gamification/leaderboard${q}`);
+  },
+};
+
+export const siteSettingsApi = {
+  getPublic: (keys?: string[]) => {
+    const q = keys ? `?keys=${keys.join(",")}` : "";
+    return api.get<ApiResponse<Record<string, any>>>(`/public/settings${q}`);
+  },
 };

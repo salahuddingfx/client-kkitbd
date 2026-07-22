@@ -10,12 +10,13 @@ import {
   ChevronRight,
   FileText,
   Calendar,
-  Loader2,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
 import { assignmentsApi, submissionsApi, Assignment, Submission } from "@/services/api";
+import { CountdownTimer } from "@/components/common/CountdownTimer";
+import { MilestoneTracker } from "@/components/common/MilestoneTracker";
 
 const statusConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
   completed: { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10", label: "Completed" },
@@ -75,12 +76,32 @@ export default function AssignmentsPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Assignments</h1>
-          <p className="text-muted-foreground mt-1">Loading assignments...</p>
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-44" />
+          <Skeleton className="h-4 w-36" />
         </div>
-        <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <div className="flex justify-between">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-4 w-12" />
+            </div>
+            <Skeleton className="h-3 w-full rounded-full" />
+          </CardContent>
+        </Card>
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-5 flex items-center gap-4">
+                <Skeleton className="h-10 w-10 rounded-xl shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-5 w-1/2" />
+                  <Skeleton className="h-3.5 w-1/3" />
+                </div>
+                <Skeleton className="h-6 w-20 rounded-full shrink-0" />
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
@@ -162,6 +183,11 @@ export default function AssignmentsPage() {
                           </span>
                         )}
                       </div>
+                      {assignment.dueDate && status === "pending" && (
+                        <div className="mt-2">
+                          <CountdownTimer deadline={assignment.dueDate} size="sm" />
+                        </div>
+                      )}
                     </div>
                     {isExpanded ? (
                       <ChevronDown className="h-5 w-5 text-muted-foreground" />
@@ -171,8 +197,24 @@ export default function AssignmentsPage() {
                   </button>
 
                   {isExpanded && (
-                    <div className="border-t border-border p-5">
-                      <p className="text-sm text-muted-foreground mb-3">{assignment.description}</p>
+                    <div className="border-t border-border p-5 space-y-4">
+                      <p className="text-sm text-muted-foreground">{assignment.description}</p>
+
+                      {/* Milestones */}
+                      {assignment.milestones && assignment.milestones.length > 0 && (
+                        <MilestoneTracker
+                          milestones={assignment.milestones}
+                          progress={sub?.milestoneProgress}
+                          submissionId={sub?._id}
+                          type="assignment"
+                          onMilestoneComplete={() => {
+                            submissionsApi.getMySubmissions().then((res) => {
+                              if (res.success) setSubmissions(res.data || []);
+                            });
+                          }}
+                        />
+                      )}
+
                       {sub?.grade && (
                         <div className="p-3 rounded-lg bg-green-500/5 border border-green-500/20">
                           <div className="flex items-center gap-2 mb-1">

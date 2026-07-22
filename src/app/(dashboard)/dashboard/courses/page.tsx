@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Play, Clock, BookOpen, Search, Filter, Loader2 } from "lucide-react";
-import { Card, CardContent, Badge, Skeleton } from "@/components/ui";
+import { Play, Clock, Search } from "lucide-react";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
 import { enrollmentsApi } from "@/services/api";

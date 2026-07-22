@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
-  CreditCard,
   Smartphone,
   Building2,
   CheckCircle2,
@@ -12,11 +11,13 @@ import {
   Copy,
   AlertCircle,
   Banknote,
+  Tag,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 import { cn } from "@/lib/utils";
-import { paymentApi, PaymentMethod, PaymentProof } from "@/services/api";
+import { paymentApi, offersApi, PaymentMethod, PaymentProof } from "@/services/api";
 import { toast } from "sonner";
 
 interface PaymentModalProps {
@@ -61,14 +62,6 @@ const paymentMethods: {
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     description: "Direct bank transfer",
-  },
-  {
-    id: "stripe",
-    label: "Credit / Debit Card",
-    icon: CreditCard,
-    color: "text-indigo-600",
-    bg: "bg-indigo-500/10",
-    description: "Pay securely with Stripe",
   },
   {
     id: "manual",
@@ -131,6 +124,45 @@ export function PaymentModal({
   // For screenshot upload
   const [screenshotUrl, setScreenshotUrl] = useState("");
 
+  // Coupon state
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState("");
+
+  const discount = appliedCoupon
+    ? appliedCoupon.discountType === "percentage"
+      ? Math.round((amount * appliedCoupon.discountValue) / 100)
+      : appliedCoupon.discountType === "fixed"
+      ? appliedCoupon.discountValue
+      : 0
+    : 0;
+  const finalAmount = Math.max(0, amount - discount);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    setCouponError("");
+    try {
+      const res = await offersApi.validateCoupon(couponCode);
+      if (res.success && res.data) {
+        setAppliedCoupon(res.data);
+        toast.success(`Coupon applied! ${res.data.discountType === "percentage" ? res.data.discountValue + "% off" : "৳" + res.data.discountValue + " off"}`);
+      }
+    } catch (err: any) {
+      setCouponError(err?.message || "Invalid coupon code");
+      setAppliedCoupon(null);
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    setCouponError("");
+  };
+
   const reset = () => {
     setStep("method");
     setSelectedMethod(null);
@@ -143,6 +175,9 @@ export function PaymentModal({
     setAccountNumber("");
     setBranchName("");
     setScreenshotUrl("");
+    setCouponCode("");
+    setAppliedCoupon(null);
+    setCouponError("");
   };
 
   const handleClose = () => {
@@ -152,12 +187,7 @@ export function PaymentModal({
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
-    if (method === "stripe") {
-      // Stripe will redirect — for now just proceed
-      setStep("details");
-    } else {
-      setStep("details");
-    }
+    setStep("details");
   };
 
   const handleDetailsSubmit = () => {
@@ -165,12 +195,10 @@ export function PaymentModal({
       toast.error("Please fill in your name and email");
       return;
     }
-    if (selectedMethod === "bkash" || selectedMethod === "nagad") {
-      setStep("proof");
-    } else if (selectedMethod === "bank_transfer") {
+    if (selectedMethod === "bkash" || selectedMethod === "nagad" || selectedMethod === "bank_transfer") {
       setStep("proof");
     } else {
-      // Manual or Stripe — submit directly
+      // Manual — submit directly
       handleSubmitPayment();
     }
   };
@@ -205,7 +233,8 @@ export function PaymentModal({
       await paymentApi.create({
         course: courseId,
         method: selectedMethod,
-        amount,
+        amount: finalAmount,
+        couponCode: appliedCoupon?.couponCode || undefined,
         billingDetails: {
           name: billingName,
           email: billingEmail,
@@ -333,12 +362,55 @@ export function PaymentModal({
                     ))}
 
                     {/* Price summary */}
-                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-muted-foreground">Total Amount</span>
-                        <span className="text-xl font-bold text-primary">
-                          ৳{amount.toLocaleString("en-BD")}
-                        </span>
+                    <div className="mt-4 p-4 rounded-xl bg-muted/50 border border-border space-y-3">
+                      {/* Coupon input */}
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1.5">Have a coupon code?</p>
+                        {appliedCoupon ? (
+                          <div className="flex items-center justify-between p-2 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="h-4 w-4 text-green-600" />
+                              <span className="font-mono font-bold text-sm text-green-700 dark:text-green-400">{appliedCoupon.couponCode}</span>
+                              <span className="text-xs text-green-600">
+                                ({appliedCoupon.discountType === "percentage" ? `${appliedCoupon.discountValue}% off` : `৳${appliedCoupon.discountValue} off`})
+                              </span>
+                            </div>
+                            <button onClick={handleRemoveCoupon} className="text-xs text-muted-foreground hover:text-foreground">Remove</button>
+                          </div>
+                        ) : (
+                          <div className="flex gap-2">
+                            <input
+                              type="text"
+                              value={couponCode}
+                              onChange={(e) => { setCouponCode(e.target.value.toUpperCase()); setCouponError(""); }}
+                              placeholder="Enter coupon code"
+                              className="flex-1 h-9 px-3 rounded-lg border bg-background text-sm font-mono focus:outline-none focus:ring-2 focus:ring-ring"
+                            />
+                            <Button type="button" variant="outline" size="sm" onClick={handleApplyCoupon} disabled={couponLoading || !couponCode.trim()}>
+                              {couponLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Tag className="h-4 w-4" />}
+                            </Button>
+                          </div>
+                        )}
+                        {couponError && <p className="text-xs text-destructive mt-1">{couponError}</p>}
+                      </div>
+
+                      <div className="border-t border-border pt-3 space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Course Price</span>
+                          <span>৳{amount.toLocaleString("en-BD")}</span>
+                        </div>
+                        {discount > 0 && (
+                          <div className="flex justify-between text-sm text-green-600">
+                            <span>Coupon Discount</span>
+                            <span>-৳{discount.toLocaleString("en-BD")}</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between items-center pt-1">
+                          <span className="text-sm font-medium">Total</span>
+                          <span className="text-xl font-bold text-primary">
+                            ৳{finalAmount.toLocaleString("en-BD")}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -354,7 +426,7 @@ export function PaymentModal({
                     className="space-y-4"
                   >
                     {/* Payment method info */}
-                    {info && selectedMethod !== "stripe" && (
+                    {info && (
                       <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
                         <p className="text-sm font-medium mb-2">{info.instructions}</p>
                         <div className="flex items-center gap-2 p-2 rounded-lg bg-background border border-border">
@@ -373,9 +445,21 @@ export function PaymentModal({
                     )}
 
                     {/* Amount */}
-                    <div className="p-3 rounded-lg bg-muted/50 border border-border flex justify-between">
-                      <span className="text-sm text-muted-foreground">Amount</span>
-                      <span className="font-bold">৳{amount.toLocaleString("en-BD")}</span>
+                    <div className="p-3 rounded-lg bg-muted/50 border border-border space-y-1">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Course Price</span>
+                        <span>৳{amount.toLocaleString("en-BD")}</span>
+                      </div>
+                      {discount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span className="flex items-center gap-1"><Tag className="h-3 w-3" /> {appliedCoupon?.couponCode}</span>
+                          <span>-৳{discount.toLocaleString("en-BD")}</span>
+                        </div>
+                      )}
+                      <div className="flex justify-between font-bold pt-1 border-t border-border">
+                        <span className="text-sm">Total</span>
+                        <span>৳{finalAmount.toLocaleString("en-BD")}</span>
+                      </div>
                     </div>
 
                     {/* Billing form */}

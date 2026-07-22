@@ -10,13 +10,16 @@ import {
   Calendar,
   Loader2,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatDate } from "@/utils";
 import { projectsApi, Project } from "@/services/api";
+import { CountdownTimer } from "@/components/common/CountdownTimer";
+import { MilestoneTracker } from "@/components/common/MilestoneTracker";
 import { toast } from "sonner";
 
 const statusConfig = {
+  in_progress: { icon: Clock, color: "text-blue-500", bg: "bg-blue-500/10", label: "In Progress" },
   approved: { icon: CheckCircle2, color: "text-green-500", bg: "bg-green-500/10", label: "Approved" },
   pending_review: { icon: Clock, color: "text-yellow-500", bg: "bg-yellow-500/10", label: "Pending Review" },
   revision_requested: { icon: XCircle, color: "text-orange-500", bg: "bg-orange-500/10", label: "Revision Requested" },
@@ -50,10 +53,46 @@ export default function ProjectsPage() {
     }
   };
 
+  const handleMilestoneComplete = async (projectId: string, milestoneIndex: number) => {
+    try {
+      const res = await projectsApi.completeMilestone(projectId, milestoneIndex);
+      if (res.success) {
+        setProjects((prev) => prev.map((p) => p._id === projectId ? res.data : p));
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Failed to complete milestone");
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6 space-y-4">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                  <div className="space-y-1.5 flex-1">
+                    <Skeleton className="h-5 w-1/3" />
+                    <Skeleton className="h-3.5 w-1/4" />
+                  </div>
+                  <Skeleton className="h-6 w-20 rounded-full shrink-0" />
+                </div>
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-4/5" />
+                <div className="flex gap-3 pt-2">
+                  <Skeleton className="h-9 w-32 rounded-lg" />
+                  <Skeleton className="h-9 w-28 rounded-lg" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -98,8 +137,6 @@ export default function ProjectsPage() {
         <div className="space-y-4">
           {projects.map((project, i) => {
             const config = statusConfig[project.status];
-            const completedMilestones = project.milestones?.filter((m) => m.completed).length || 0;
-            const totalMilestones = project.milestones?.length || 0;
 
             return (
               <FadeIn key={project._id} delay={i * 0.1}>
@@ -122,34 +159,32 @@ export default function ProjectsPage() {
 
                     <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
 
-                    {/* Milestones Progress */}
-                    {totalMilestones > 0 && (
+                    {/* Deadline countdown */}
+                    {project.deadline && project.status !== "approved" && (
                       <div className="mb-4">
-                        <div className="flex items-center justify-between text-xs mb-1.5">
-                          <span className="text-muted-foreground">Milestones</span>
-                          <span className="font-medium text-foreground">
-                            {completedMilestones}/{totalMilestones}
-                          </span>
-                        </div>
-                        <div className="h-2 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-primary transition-all"
-                            style={{ width: `${(completedMilestones / totalMilestones) * 100}%` }}
-                          />
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {project.milestones.map((m) => (
-                            <span
-                              key={m.title}
-                              className={cn(
-                                "text-xs px-2 py-0.5 rounded-full",
-                                m.completed ? "bg-green-500/10 text-green-600" : "bg-muted text-muted-foreground"
-                              )}
-                            >
-                              {m.completed ? "✓ " : ""}{m.title}
-                            </span>
-                          ))}
-                        </div>
+                        <CountdownTimer deadline={project.deadline} size="sm" />
+                      </div>
+                    )}
+
+                    {/* Milestones */}
+                    {project.milestones && project.milestones.length > 0 && (
+                      <div className="mb-4">
+                        <MilestoneTracker
+                          milestones={project.milestones}
+                          progress={project.milestones.map((m) => ({
+                            milestoneTitle: m.title,
+                            completed: m.completed,
+                            completedAt: m.completedAt,
+                            awardedPoints: m.maxPoints,
+                          }))}
+                          type="project"
+                          projectId={project._id}
+                          onMilestoneComplete={() => {
+                            projectsApi.getMy().then((res) => {
+                              if (res.success) setProjects(res.data || []);
+                            });
+                          }}
+                        />
                       </div>
                     )}
 

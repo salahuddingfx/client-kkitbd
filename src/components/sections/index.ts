@@ -1,8 +1,11 @@
 export { Hero } from "./Hero";
 export { TrustedCompanies } from "./TrustedCompanies";
+export { Partners } from "./Partners";
 export { FeaturedServices } from "./FeaturedServices";
 export { FeaturedCourses } from "./FeaturedCourses";
+export { AllCourses } from "./AllCourses";
 export { WhyChooseUs } from "./WhyChooseUs";
+export { Stats } from "./Stats";
 export { Testimonials } from "./Testimonials";
 export { FAQ } from "./FAQ";
 export { CallToAction } from "./CallToAction";

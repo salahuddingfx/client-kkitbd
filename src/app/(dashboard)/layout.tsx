@@ -25,6 +25,9 @@ import {
   Sun,
   Moon,
   Loader2,
+  MessagesSquare,
+  Zap,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
@@ -39,7 +42,10 @@ const sidebarLinks = [
   { label: "My Courses", href: "/dashboard/courses", icon: BookOpen },
   { label: "Assignments", href: "/dashboard/assignments", icon: ClipboardList },
   { label: "Projects", href: "/dashboard/projects", icon: FolderGit2 },
+  { label: "Grades", href: "/dashboard/grades", icon: GraduationCap },
+  { label: "Discussions", href: "/discussions", icon: MessagesSquare, external: true },
   { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
+  { label: "Achievements", href: "/dashboard/gamification", icon: Zap },
   { label: "Reviews", href: "/dashboard/reviews", icon: MessageSquare },
   { label: "Notices", href: "/dashboard/notices", icon: Bell },
   { label: "Certificates", href: "/dashboard/certificates", icon: Award },
@@ -68,6 +74,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               email: u.email,
               avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url
             }));
+          } else {
+            dispatch(logout());
+            router.push("/login");
           }
         })
         .catch((err) => {
@@ -144,11 +153,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               const isActive =
                 link.href === "/dashboard"
                   ? pathname === "/dashboard"
+                  : link.external
+                  ? pathname === link.href || pathname.startsWith(link.href + "/")
                   : pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.href}
                   href={link.href}
+                  target={link.external ? "_blank" : undefined}
+                  rel={link.external ? "noopener noreferrer" : undefined}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
                     "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all",

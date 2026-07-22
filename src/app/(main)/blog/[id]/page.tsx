@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ArrowLeft, Calendar, Clock, User, Loader2 } from "lucide-react";
-import { Badge, Button } from "@/components/ui";
+import { Badge, Button, Card, CardContent, Skeleton } from "@/components/ui";
 import { Breadcrumb, Container, ShareButtons } from "@/components/common";
 import { ScrollReveal } from "@/components/animations";
 import { blogApi } from "@/services/api";
@@ -46,8 +46,29 @@ export default function BlogPostPage() {
     return (
       <div className="pt-12 sm:pt-20">
         <Container>
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="max-w-4xl mx-auto space-y-8 py-12">
+            <Skeleton className="h-4 w-40" />
+            <div className="space-y-4">
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+              <Skeleton className="h-10 w-3/4" />
+              <Skeleton className="h-7 w-2/3" />
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+            <Skeleton className="h-72 w-full rounded-2xl" />
+            <div className="space-y-3">
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-5/6" />
+              <Skeleton className="h-5 w-4/5" />
+              <Skeleton className="h-5 w-full" />
+              <Skeleton className="h-5 w-3/4" />
+            </div>
           </div>
         </Container>
       </div>

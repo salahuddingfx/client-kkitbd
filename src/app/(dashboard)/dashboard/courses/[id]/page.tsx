@@ -24,7 +24,8 @@ import {
 import { Button, Badge, Skeleton } from "@/components/ui";
 import { cn } from "@/utils";
 import { coursesApi, enrollmentsApi, Course } from "@/services/api";
-import { VideoPlayer } from "@/components/common/VideoPlayer";
+import { VideoPlayer, VideoPlayerHandle } from "@/components/common/VideoPlayer";
+import { VideoNotes } from "@/components/common/VideoNotes";
 import { toast } from "sonner";
 
 export default function DashboardCourseViewerPage() {
@@ -45,6 +46,8 @@ export default function DashboardCourseViewerPage() {
   const lessonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
+  const videoRef = useRef<VideoPlayerHandle>(null);
+  const [videoCurrentTime, setVideoCurrentTime] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -297,7 +300,12 @@ export default function DashboardCourseViewerPage() {
               {/* Video player — smaller on mobile */}
               <div className="aspect-video sm:aspect-[16/9] bg-black max-h-[50vh] sm:max-h-[60vh]">
                 {currentLesson.videoUrl ? (
-                  <VideoPlayer url={currentLesson.videoUrl} title={currentLesson.title} />
+                  <VideoPlayer
+                    ref={videoRef}
+                    url={currentLesson.videoUrl}
+                    title={currentLesson.title}
+                    onTimeUpdate={(t) => setVideoCurrentTime(t)}
+                  />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
                     <Film className="h-10 w-10 sm:h-12 sm:w-12 mb-2 sm:mb-3 opacity-40" />
@@ -333,16 +341,38 @@ export default function DashboardCourseViewerPage() {
               {/* Tab content — compact on mobile */}
               <div className="p-3 sm:p-5 max-h-[35vh] sm:max-h-[45vh] overflow-y-auto">
                 {lessonTab === "notes" && (
-                  currentLesson.notes ? (
-                    <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed">
-                      {currentLesson.notes}
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                      <FileText className="h-10 w-10 mb-2 opacity-40" />
-                      <p className="text-sm">No notes for this lesson</p>
-                    </div>
-                  )
+                  <div className="space-y-4">
+                    {/* Instructor notes */}
+                    {currentLesson.notes && (
+                      <div>
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-2">Instructor Notes</p>
+                        <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed">
+                          {currentLesson.notes}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Divider if both exist */}
+                    {currentLesson.notes && <div className="border-t border-border" />}
+
+                    {/* Student notes */}
+                    {currentLessonId && (
+                      <VideoNotes
+                        courseId={id}
+                        lessonId={currentLessonId}
+                        currentTime={videoCurrentTime}
+                        onSeek={(seconds) => videoRef.current?.seek(seconds)}
+                      />
+                    )}
+
+                    {/* Empty state if no instructor notes and we can't show student notes */}
+                    {!currentLesson.notes && !currentLessonId && (
+                      <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                        <FileText className="h-10 w-10 mb-2 opacity-40" />
+                        <p className="text-sm">No notes for this lesson</p>
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {lessonTab === "code" && (

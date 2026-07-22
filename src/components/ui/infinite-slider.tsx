@@ -1,7 +1,7 @@
 'use client';
 import { cn } from '@/lib/utils';
 import { useMotionValue, animate, motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import useMeasure from 'react-use-measure';
 
 type InfiniteSliderProps = {
@@ -23,11 +23,11 @@ export function InfiniteSlider({
   reverse = false,
   className,
 }: InfiniteSliderProps) {
-  const [currentDuration, setCurrentDuration] = useState(duration);
   const [ref, { width, height }] = useMeasure();
   const translation = useMotionValue(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [key, setKey] = useState(0);
+  const isHovering = useRef(false);
+  const hoverDuration = durationOnHover ?? duration * 4;
 
   useEffect(() => {
     let controls;
@@ -35,52 +35,31 @@ export function InfiniteSlider({
     const contentSize = size + gap;
     const from = reverse ? -contentSize / 2 : 0;
     const to = reverse ? 0 : -contentSize / 2;
+    const d = isHovering.current ? hoverDuration : duration;
 
-    if (isTransitioning) {
-      controls = animate(translation, [translation.get(), to], {
-        ease: 'linear',
-        duration:
-          currentDuration * Math.abs((translation.get() - to) / contentSize),
-        onComplete: () => {
-          setIsTransitioning(false);
-          setKey((prevKey) => prevKey + 1);
-        },
-      });
-    } else {
-      controls = animate(translation, [from, to], {
-        ease: 'linear',
-        duration: currentDuration,
-        repeat: Infinity,
-        repeatType: 'loop',
-        repeatDelay: 0,
-        onRepeat: () => {
-          translation.set(from);
-        },
-      });
-    }
+    controls = animate(translation, [from, to], {
+      ease: 'linear',
+      duration: d,
+      repeat: Infinity,
+      repeatType: 'loop',
+      repeatDelay: 0,
+      onRepeat: () => {
+        translation.set(from);
+      },
+    });
 
     return controls?.stop;
-  }, [
-    key,
-    translation,
-    currentDuration,
-    width,
-    height,
-    gap,
-    isTransitioning,
-    direction,
-    reverse,
-  ]);
+  }, [key, translation, width, height, gap, direction, reverse, duration, hoverDuration]);
 
   const hoverProps = durationOnHover
     ? {
         onHoverStart: () => {
-          setIsTransitioning(true);
-          setCurrentDuration(durationOnHover);
+          isHovering.current = true;
+          setKey((k) => k + 1);
         },
         onHoverEnd: () => {
-          setIsTransitioning(true);
-          setCurrentDuration(duration);
+          isHovering.current = false;
+          setKey((k) => k + 1);
         },
       }
     : {};

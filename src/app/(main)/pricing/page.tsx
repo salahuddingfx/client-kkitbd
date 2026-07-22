@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Card, CardContent, Badge, Button, Separator } from "@/components/ui";
+import { Card, CardContent, Badge, Button, Separator, Skeleton } from "@/components/ui";
 import { Breadcrumb, Container, SectionHeader, CourseComparison, GuaranteeBadge } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Check, Loader2 } from "lucide-react";
@@ -54,8 +54,25 @@ export default function PricingPage() {
       <section className="py-12 sm:py-20">
         <Container>
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Card key={i} className="h-full">
+                  <CardContent className="p-8 text-center space-y-4">
+                    <Skeleton className="h-6 w-28 mx-auto" />
+                    <Skeleton className="h-10 w-24 mx-auto" />
+                    <Skeleton className="h-4 w-full" />
+                    <div className="space-y-2 pt-4">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <div key={j} className="flex items-center gap-2">
+                          <Skeleton className="h-4 w-4 rounded-full shrink-0" />
+                          <Skeleton className="h-3.5 w-full" />
+                        </div>
+                      ))}
+                    </div>
+                    <Skeleton className="h-11 w-full rounded-lg mt-4" />
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">

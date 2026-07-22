@@ -17,13 +17,22 @@ import {
   ChevronDown,
   ChevronRight,
   Lock,
+  Target,
+  Lightbulb,
+  Layers,
+  FolderKanban,
+  Award,
+  GraduationCap,
+  Globe,
 } from "lucide-react";
-import { Button, Badge, GlowCard } from "@/components/ui";
+import { Button, Badge, GlowCard, Skeleton } from "@/components/ui";
 import { Breadcrumb, Container, ShareButtons, PaymentModal } from "@/components/common";
+import { CourseOfferBanner } from "@/components/common/CourseOfferBanner";
 import { CourseOutlineForm } from "@/components/common/CourseOutlineForm";
 import { HowItWorksSection } from "@/components/common/HowItWorksSection";
 import { coursesApi, Course } from "@/services/api";
 import { useAppSelector } from "@/redux/hooks";
+import { getSkillIcon } from "@/lib/icons";
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -67,8 +76,48 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="pt-20 pb-16 min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="pt-20 pb-16 min-h-screen">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 py-12">
+            <div className="lg:col-span-2 space-y-8">
+              <Skeleton className="h-4 w-48" />
+              <div className="space-y-3">
+                <Skeleton className="h-10 w-3/4" />
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-5 w-2/3" />
+                <div className="flex items-center gap-4 flex-wrap pt-2">
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+              </div>
+              <Skeleton className="h-64 w-full rounded-2xl" />
+              <div className="space-y-4">
+                <Skeleton className="h-6 w-40" />
+                <div className="grid grid-cols-2 gap-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <Skeleton className="h-4 w-4 rounded-sm shrink-0" />
+                      <Skeleton className="h-4 flex-1" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <Skeleton className="h-72 w-full rounded-2xl" />
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 rounded-sm shrink-0" />
+                    <Skeleton className="h-4 flex-1" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Container>
       </div>
     );
   }
@@ -159,6 +208,11 @@ export default function CourseDetailPage() {
                   <p className="text-xs text-muted-foreground">One-time payment &bull; Lifetime access</p>
                 </div>
 
+                {/* Active offers */}
+                <div className="mb-4">
+                  <CourseOfferBanner courseId={id} />
+                </div>
+
                 <Button
                   className="w-full h-12" size="lg"
                   onClick={() => {
@@ -175,11 +229,11 @@ export default function CourseDetailPage() {
                   {[
                     `${course.totalDuration}h of on-demand video`,
                     `${totalLessons} comprehensive lessons`,
-                    "Certificate of completion",
+                    course.certificateIncluded !== false && "Certificate of completion",
                     "Lifetime access & updates",
                     "Downloadable resources",
-                    "Mobile & TV access",
-                  ].map((item) => (
+                    course.language || "Bangla",
+                  ].filter((item): item is string => Boolean(item)).map((item) => (
                     <div key={item} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> {item}
                     </div>
@@ -187,6 +241,200 @@ export default function CourseDetailPage() {
                 </div>
               </GlowCard>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Instructor & Team */}
+      <section className="py-12 border-b border-border">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2"><GraduationCap className="h-6 w-6 text-primary" /> Meet Your Instructors</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Instructor */}
+              <div className="p-4 rounded-xl border border-border bg-background">
+                <div className="flex items-center gap-3 mb-2">
+                  {course.instructor?.avatar?.url ? (
+                    <img src={course.instructor.avatar.url} alt="" className="h-12 w-12 rounded-full object-cover" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">
+                      {instructorInitials}
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-semibold text-foreground text-sm">{instructorName}</div>
+                    <div className="text-xs text-primary font-medium">Instructor</div>
+                    {course.instructor?.designation && <div className="text-xs text-muted-foreground">{course.instructor.designation}</div>}
+                  </div>
+                </div>
+              </div>
+              {/* Mentors */}
+              {course.mentors?.map((m, i) => (
+                <div key={i} className="p-4 rounded-xl border border-border bg-background">
+                  <div className="flex items-center gap-3">
+                    {m.user?.avatar?.url ? (
+                      <img src={m.user.avatar.url} alt="" className="h-12 w-12 rounded-full object-cover" />
+                    ) : (
+                      <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-lg font-bold text-indigo-600">
+                        {m.user?.name?.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold text-foreground text-sm">{m.user?.name}</div>
+                      <div className="text-xs text-indigo-600 font-medium">Mentor</div>
+                      {m.user?.designation && <div className="text-xs text-muted-foreground">{m.user.designation}</div>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {/* Trainers */}
+              {course.trainers?.map((t, i) => (
+                <div key={i} className="p-4 rounded-xl border border-border bg-background">
+                  <div className="flex items-center gap-3">
+                    {t.user?.avatar?.url ? (
+                      <img src={t.user.avatar.url} alt="" className="h-12 w-12 rounded-full object-cover" />
+                    ) : (
+                      <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-lg font-bold text-purple-600">
+                        {t.user?.name?.charAt(0)}
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-semibold text-foreground text-sm">{t.user?.name}</div>
+                      <div className="text-xs text-purple-600 font-medium">Trainer</div>
+                      {t.user?.designation && <div className="text-xs text-muted-foreground">{t.user.designation}</div>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* What You'll Learn + Prerequisites */}
+      {(course.learningOutcomes?.length || course.prerequisites?.length) && (
+        <section className="py-12 border-b border-border">
+          <Container>
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* What You'll Learn */}
+              {course.learningOutcomes && course.learningOutcomes.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><Target className="h-5 w-5 text-primary" /> What You'll Learn</h3>
+                  <div className="space-y-2">
+                    {course.learningOutcomes.map((outcome, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                        <span className="text-sm text-muted-foreground">{outcome}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {/* Prerequisites */}
+              {course.prerequisites && course.prerequisites.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><Lightbulb className="h-5 w-5 text-yellow-500" /> Prerequisites</h3>
+                  <div className="space-y-2">
+                    {course.prerequisites.map((prereq, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <span className="text-yellow-500 mt-0.5">•</span>
+                        <span className="text-sm text-muted-foreground">{prereq}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Tech Stack */}
+      {course.techStack && course.techStack.length > 0 && (
+        <section className="py-12 border-b border-border">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><Layers className="h-5 w-5 text-primary" /> Tech Stack</h3>
+              <div className="flex flex-wrap gap-3">
+                {course.techStack.map((tech, i) => {
+                  const skillIcon = getSkillIcon(tech.name);
+                  const IconComp = skillIcon?.icon;
+                  const color = tech.color || skillIcon?.color || "#6b7280";
+                  return (
+                    <div
+                      key={i}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border bg-background hover:shadow-md transition-shadow"
+                      style={{ borderColor: `${color}40` }}
+                    >
+                      {IconComp ? (
+                        <IconComp className="h-5 w-5" style={{ color }} />
+                      ) : (
+                        <div className="h-5 w-5 rounded" style={{ backgroundColor: color }} />
+                      )}
+                      <span className="text-sm font-medium" style={{ color }}>{tech.name}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Projects */}
+      {course.projects && course.projects.length > 0 && (
+        <section className="py-12 border-b border-border">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><FolderKanban className="h-5 w-5 text-primary" /> Projects You'll Build</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {course.projects.map((project, i) => (
+                  <div key={i} className="p-4 rounded-xl border border-border bg-background">
+                    <h4 className="font-semibold text-foreground text-sm mb-1">{project.title}</h4>
+                    {project.description && <p className="text-xs text-muted-foreground mb-2">{project.description}</p>}
+                    {project.techUsed && project.techUsed.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {project.techUsed.map((t, j) => (
+                          <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">{t}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Highlights */}
+      {course.highlights && course.highlights.length > 0 && (
+        <section className="py-12 border-b border-border">
+          <Container>
+            <div className="max-w-4xl mx-auto">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><Award className="h-5 w-5 text-primary" /> Course Highlights</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {course.highlights.map((h, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> {h}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Language & Certificate */}
+      <section className="py-8 border-b border-border">
+        <Container>
+          <div className="max-w-4xl mx-auto flex flex-wrap gap-6 text-sm text-muted-foreground">
+            {course.language && (
+              <div className="flex items-center gap-2"><Globe className="h-4 w-4" /> Language: <span className="font-medium text-foreground">{course.language}</span></div>
+            )}
+            {course.certificateIncluded !== undefined && (
+              <div className="flex items-center gap-2"><Award className="h-4 w-4" /> Certificate: <span className="font-medium text-foreground">{course.certificateIncluded ? "Included" : "Not included"}</span></div>
+            )}
           </div>
         </Container>
       </section>

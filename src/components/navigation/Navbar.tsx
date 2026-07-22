@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Sun, Moon, LogOut, LayoutDashboard, Trophy } from "lucide-react";
+import { Sun, Moon, LogOut, LayoutDashboard, Trophy, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ import { Button } from "@/components/ui";
 import { Container } from "@/components/common";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleMobileMenu, closeMobileMenu } from "@/redux/slices/uiSlice";
-import { authApi, leaderboardApi } from "@/services/api";
+import { authApi, leaderboardApi, siteSettingsApi } from "@/services/api";
 import { setUser, logout } from "@/redux/slices/authSlice";
 import { getInitials } from "@/utils";
 
@@ -65,6 +65,15 @@ export function Navbar() {
   const { user: authUser, isAuthenticated } = useAppSelector((state) => state.auth);
   const [scrolled, setScrolled] = useState(false);
   const [userRank, setUserRank] = useState<number | null>(null);
+  const [showOffers, setShowOffers] = useState(false);
+
+  useEffect(() => {
+    siteSettingsApi.getPublic(["show_offers_banner"])
+      .then((res) => {
+        if (res.success && res.data) setShowOffers(!!(res.data as any).show_offers_banner);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!authUser) {
@@ -216,7 +225,7 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Right — Tablet: Theme toggle + Hamburger (md to lg) */}
+          {/* Right — Tablet: Theme toggle + Offer + Hamburger (md to lg) */}
           <div className="flex lg:hidden items-center gap-1">
             <ThemeToggle />
 

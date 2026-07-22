@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, Badge, Button, Input } from "@/components/ui";
+import { Card, CardContent, Badge, Button, Input, Skeleton } from "@/components/ui";
 import { Breadcrumb, Pagination, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Clock, Users, Star, Search, Filter, Loader2 } from "lucide-react";
@@ -102,8 +102,26 @@ export default function CoursesPage() {
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="h-48 w-full" />
+                  <CardContent className="p-6 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-5 w-20" />
+                      <Skeleton className="h-5 w-16" />
+                    </div>
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <div className="flex gap-4 pt-2">
+                      <Skeleton className="h-3.5 w-16" />
+                      <Skeleton className="h-3.5 w-16" />
+                      <Skeleton className="h-3.5 w-16" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           ) : (
             <>

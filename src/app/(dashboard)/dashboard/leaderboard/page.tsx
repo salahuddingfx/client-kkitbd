@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Trophy, Flame, Target, Star, TrendingUp, Crown, Medal, Award, Loader2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui";
+import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn } from "@/utils";
 import { leaderboardApi, LeaderboardEntry, MyStats } from "@/services/api";
@@ -29,8 +29,36 @@ export default function LeaderboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-5 flex items-center gap-3">
+                <Skeleton className="h-11 w-11 rounded-xl shrink-0" />
+                <div className="space-y-1.5 flex-1">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-6 w-16" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardContent className="p-5 space-y-3">
+            <Skeleton className="h-5 w-32" />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 py-2 border-b border-border/30 last:border-none">
+                <Skeleton className="h-8 w-8 rounded-full shrink-0" />
+                <Skeleton className="h-9 w-9 rounded-full shrink-0" />
+                <div className="space-y-1 flex-1">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+                <Skeleton className="h-5 w-16 shrink-0" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -38,12 +66,12 @@ export default function LeaderboardPage() {
   const statsCards = myStats ? [
     { label: "Overall Rank", value: `#${myStats.rank}`, icon: Trophy, color: "text-yellow-500", bg: "bg-yellow-500/10" },
     { label: "Total Points", value: myStats.points.toLocaleString(), icon: Star, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Courses Done", value: myStats.coursesCompleted.toString(), icon: Target, color: "text-green-500", bg: "bg-green-500/10" },
+    { label: "Current Streak", value: `${myStats.streak} day${myStats.streak !== 1 ? "s" : ""}`, icon: Flame, color: "text-orange-500", bg: "bg-orange-500/10" },
     { label: "Lessons Done", value: myStats.lessonsCompleted.toString(), icon: TrendingUp, color: "text-blue-500", bg: "bg-blue-500/10" },
   ] : [
     { label: "Overall Rank", value: "-", icon: Trophy, color: "text-yellow-500", bg: "bg-yellow-500/10" },
     { label: "Total Points", value: "0", icon: Star, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Courses Done", value: "0", icon: Target, color: "text-green-500", bg: "bg-green-500/10" },
+    { label: "Current Streak", value: "0 days", icon: Flame, color: "text-orange-500", bg: "bg-orange-500/10" },
     { label: "Lessons Done", value: "0", icon: TrendingUp, color: "text-blue-500", bg: "bg-blue-500/10" },
   ];
 
@@ -151,12 +179,9 @@ export default function LeaderboardPage() {
                 </div>
                 <div className="space-y-3">
                   {[
+                    { action: "Enroll in a course", points: "+5" },
                     { action: "Complete a lesson", points: "+10" },
                     { action: "Complete a course", points: "+100" },
-                    { action: "Enroll in a course", points: "+5" },
-                    { action: "Submit assignment", points: "+25" },
-                    { action: "Project approved", points: "+75" },
-                    { action: "Write a review", points: "+15" },
                   ].map((item) => (
                     <div key={item.action} className="flex items-center justify-between py-1.5">
                       <span className="text-sm text-muted-foreground">{item.action}</span>
