@@ -421,6 +421,9 @@ export const blogApi = {
     return api.get<ApiResponse<unknown[]>>(`/blogs${query}`);
   },
 
+  getMyBlogs: () =>
+    api.get<ApiResponse<unknown[]>>("/blogs/my-blogs"),
+
   getBySlug: (slug: string) =>
     api.get<ApiResponse<unknown>>(`/blogs/${slug}`),
 

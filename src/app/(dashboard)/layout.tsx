@@ -28,6 +28,7 @@ import {
   MessagesSquare,
   Zap,
   GraduationCap,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
@@ -43,6 +44,7 @@ const sidebarLinks = [
   { label: "Assignments", href: "/dashboard/assignments", icon: ClipboardList },
   { label: "Projects", href: "/dashboard/projects", icon: FolderGit2 },
   { label: "Grades", href: "/dashboard/grades", icon: GraduationCap },
+  { label: "My Blogs", href: "/dashboard/blogs", icon: Newspaper },
   { label: "Discussions", href: "/discussions", icon: MessagesSquare, external: true },
   { label: "Leaderboard", href: "/dashboard/leaderboard", icon: Trophy },
   { label: "Achievements", href: "/dashboard/gamification", icon: Zap },
