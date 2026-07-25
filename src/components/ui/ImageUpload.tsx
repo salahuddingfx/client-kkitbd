@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { Upload, X, Image, Loader2 } from "lucide-react";
+import { getImageUrl } from "@/utils";
 
 interface ImageUploadProps {
   value?: string;
@@ -35,8 +36,9 @@ export function ImageUpload({
       formData.append("folder", folder);
       const { default: apiClient } = await import("@/lib/api");
       const res: any = await apiClient.upload("/upload/single", formData);
-      if (res.success) {
-        onChange(res.data.url, res.data);
+      if (res.success && res.data) {
+        const url = getImageUrl(res.data.url || res.data.path);
+        onChange(url, res.data);
       }
     } catch {
       // silent
@@ -53,9 +55,10 @@ export function ImageUpload({
   }, [upload]);
 
   if (value) {
+    const displaySrc = getImageUrl(value);
     return (
       <div className={`relative group rounded-lg border overflow-hidden ${className}`}>
-        <img src={value} alt="" className="w-full h-32 object-contain bg-muted/30" />
+        <img src={displaySrc} alt="" className="w-full h-32 object-contain bg-muted/30" />
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
           <button
             type="button"

@@ -70,3 +70,14 @@ export function getProgressBg(progress: number) {
   if (progress >= 25) return "bg-orange-500";
   return "bg-red-500";
 }
+
+export function getImageUrl(url?: string | null): string {
+  if (!url) return "";
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
+    return url;
+  }
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "";
+  if (!apiBase) return url;
+  const origin = apiBase.replace(/\/api\/v1\/?$/, "").replace(/\/api\/?$/, "");
+  return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
+}

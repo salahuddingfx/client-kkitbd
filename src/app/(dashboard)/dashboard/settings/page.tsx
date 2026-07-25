@@ -342,24 +342,30 @@ export default function SettingsPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {devices.map((device) => {
+                {devices.map((device, idx) => {
                   const parsed = parseUserAgent(device.userAgent || "");
                   const Icon = getDeviceIcon(parsed.device);
                   const label = getDeviceLabel(parsed.device);
+                  const isCurrent = idx === 0;
 
                   return (
                     <div
                       key={device._id}
-                      className="flex items-center gap-4 p-4 rounded-lg border border-border hover:bg-muted/30 transition-colors"
+                      className="flex items-center gap-4 p-4 rounded-xl border border-border hover:bg-muted/30 transition-colors"
                     >
                       <div className="p-2.5 rounded-lg bg-primary/10">
                         <Icon className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium text-foreground">
+                          <p className="text-sm font-semibold text-foreground">
                             {label} - {parsed.browser}
                           </p>
+                          {isCurrent && (
+                            <span className="px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full">
+                              Current Device
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {parsed.os} &middot; {device.ip || "Unknown IP"}
@@ -368,18 +374,33 @@ export default function SettingsPage() {
                           Last active: {formatDate(device.lastActivity)}
                         </p>
                       </div>
-                      <button
-                        onClick={() => handleRemoveDevice(device._id)}
-                        disabled={removingDevice === device._id}
-                        className="p-2 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
-                        title="Remove device"
-                      >
-                        {removingDevice === device._id ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="h-4 w-4" />
-                        )}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleRemoveDevice(device._id)}
+                          disabled={removingDevice === device._id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-red-500/30 text-red-500 text-xs font-medium hover:bg-red-500/10 transition-colors disabled:opacity-50 cursor-pointer"
+                          title="Logout device session"
+                        >
+                          {removingDevice === device._id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <LogOut className="h-3.5 w-3.5" />
+                          )}
+                          <span>Logout</span>
+                        </button>
+                        <button
+                          onClick={() => handleRemoveDevice(device._id)}
+                          disabled={removingDevice === device._id}
+                          className="p-2 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-50 cursor-pointer"
+                          title="Delete device session"
+                        >
+                          {removingDevice === device._id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3.5 w-3.5" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   );
                 })}

@@ -732,10 +732,14 @@ export const devicesApi = {
 // Upload API
 export interface UploadResult {
   url: string;
-  publicId: string;
-  format: string;
-  resourceType: string;
-  bytes: number;
+  publicId?: string;
+  filename?: string;
+  path?: string;
+  originalname?: string;
+  mimetype?: string;
+  format?: string;
+  resourceType?: string;
+  bytes?: number;
   thumbnail?: string;
 }
 

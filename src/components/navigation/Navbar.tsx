@@ -1,9 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Sun, Moon, LogOut, LayoutDashboard, Trophy, Heart } from "lucide-react";
+import {
+  Sun,
+  Moon,
+  LogOut,
+  LayoutDashboard,
+  Trophy,
+  Heart,
+  User,
+  Settings,
+  BookOpen,
+  ChevronDown,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -14,7 +25,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleMobileMenu, closeMobileMenu } from "@/redux/slices/uiSlice";
 import { authApi, leaderboardApi, siteSettingsApi } from "@/services/api";
 import { setUser, logout } from "@/redux/slices/authSlice";
-import { getInitials } from "@/utils";
+import { getInitials, getImageUrl } from "@/utils";
 
 function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
@@ -66,6 +77,18 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [userRank, setUserRank] = useState<number | null>(null);
   const [showOffers, setShowOffers] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     siteSettingsApi.getPublic(["show_offers_banner"])
@@ -76,22 +99,20 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (!authUser) {
-      authApi.getMe()
-        .then((res) => {
-          if (res.success) {
-            const u = res.data as any;
-            dispatch(setUser({
-              id: u._id,
-              name: u.name,
-              email: u.email,
-              avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url,
-            }));
-          }
-        })
-        .catch(() => {});
-    }
-  }, [authUser, dispatch]);
+    authApi.getMe()
+      .then((res) => {
+        if (res.success) {
+          const u = res.data as any;
+          dispatch(setUser({
+            id: u._id,
+            name: u.name,
+            email: u.email,
+            avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, [dispatch]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -122,6 +143,7 @@ export function Navbar() {
 
   useEffect(() => {
     dispatch(closeMobileMenu());
+    setIsUserMenuOpen(false);
   }, [pathname, dispatch]);
 
   useEffect(() => {
@@ -138,6 +160,8 @@ export function Navbar() {
   const handleBackdropClick = useCallback(() => {
     dispatch(closeMobileMenu());
   }, [dispatch]);
+
+  const avatarUrl = authUser?.avatar ? getImageUrl(authUser.avatar) : "";
 
   return (
     <header
@@ -182,37 +206,113 @@ export function Navbar() {
             <ThemeToggle />
 
             {isAuthenticated && authUser ? (
-              <>
-                <Button variant="ghost" asChild>
-                  <Link href="/dashboard">
-                    <LayoutDashboard className="h-4 w-4 mr-1.5" />
-                    Dashboard
-                  </Link>
-                </Button>
-                <Link href="/dashboard/profile" className="flex items-center gap-2.5 group">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
-                    {authUser.avatar ? (
-                      <img src={authUser.avatar} alt={authUser.name} className="h-full w-full object-cover" />
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                  className="flex items-center gap-2.5 p-1.5 rounded-xl hover:bg-muted/60 transition-all border border-transparent hover:border-border cursor-pointer focus:outline-none"
+                >
+                  <div className="h-9 w-9 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20 hover:ring-primary/40 transition-all shrink-0">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={authUser.name}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       <div className="h-full w-full flex items-center justify-center text-xs font-bold text-primary">
                         {getInitials(authUser.name)}
                       </div>
                     )}
                   </div>
-                  <div className="hidden xl:block">
-                    <div className="text-sm font-medium text-foreground leading-tight">{authUser.name}</div>
+                  <div className="hidden xl:flex flex-col text-left">
+                    <div className="text-sm font-semibold text-foreground leading-tight flex items-center gap-1">
+                      <span>{authUser.name}</span>
+                      <ChevronDown
+                        className={cn(
+                          "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
+                          isUserMenuOpen && "rotate-180"
+                        )}
+                      />
+                    </div>
                     {userRank && (
-                      <div className="flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400">
+                      <div className="flex items-center gap-1 text-[11px] font-medium text-yellow-600 dark:text-yellow-400 mt-0.5">
                         <Trophy className="h-3 w-3" />
                         Rank #{userRank}
                       </div>
                     )}
                   </div>
-                </Link>
-                <Button variant="ghost" size="icon" onClick={handleLogout} title="Logout">
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </>
+                </button>
+
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-60 rounded-2xl border border-border bg-background/95 backdrop-blur-md p-2 shadow-2xl z-50"
+                    >
+                      <div className="px-3 py-2.5 border-b border-border/60 mb-1">
+                        <p className="text-sm font-bold text-foreground truncate">{authUser.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{authUser.email}</p>
+                        {userRank && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 mt-1.5 rounded-full text-[10px] font-bold bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border border-yellow-500/20">
+                            <Trophy className="h-3 w-3" /> Rank #{userRank}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="space-y-0.5">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl hover:bg-primary/10 hover:text-primary transition-colors text-foreground"
+                        >
+                          <LayoutDashboard className="h-4 w-4 text-primary" />
+                          <span>Dashboard</span>
+                        </Link>
+                        <Link
+                          href="/dashboard/courses"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl hover:bg-muted transition-colors text-foreground/80 hover:text-foreground"
+                        >
+                          <BookOpen className="h-4 w-4 text-muted-foreground" />
+                          <span>My Courses</span>
+                        </Link>
+                        <Link
+                          href="/dashboard/profile"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl hover:bg-muted transition-colors text-foreground/80 hover:text-foreground"
+                        >
+                          <User className="h-4 w-4 text-muted-foreground" />
+                          <span>My Profile</span>
+                        </Link>
+                        <Link
+                          href="/dashboard/settings"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl hover:bg-muted transition-colors text-foreground/80 hover:text-foreground"
+                        >
+                          <Settings className="h-4 w-4 text-muted-foreground" />
+                          <span>Settings</span>
+                        </Link>
+                      </div>
+
+                      <div className="my-1 border-t border-border/60" />
+
+                      <button
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          handleLogout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             ) : (
               <>
                 <Button variant="ghost" asChild>
@@ -228,50 +328,17 @@ export function Navbar() {
           {/* Right — Tablet: Theme toggle + Offer + Hamburger (md to lg) */}
           <div className="flex lg:hidden items-center gap-1">
             <ThemeToggle />
-
-            {/* Hamburger — lines morph into X */}
             <Button
               variant="ghost"
               size="icon"
               onClick={() => dispatch(toggleMobileMenu())}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileMenuOpen}
-              className="relative"
+              aria-label="Toggle menu"
             >
-              <svg
-                className="h-5 w-5"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <line
-                  x1="3" y1="6" x2="21" y2="6"
-                  className="transition-all duration-300 ease-in-out"
-                  style={{
-                    transform: isMobileMenuOpen ? "translateY(6px) rotate(45deg)" : "translateY(0) rotate(0deg)",
-                    transformOrigin: "center",
-                  }}
-                />
-                <line
-                  x1="7" y1="12" x2="17" y2="12"
-                  className="transition-all duration-300 ease-in-out"
-                  style={{
-                    opacity: isMobileMenuOpen ? 0 : 1,
-                    transform: isMobileMenuOpen ? "scaleX(0)" : "scaleX(1)",
-                    transformOrigin: "center",
-                  }}
-                />
-                <line
-                  x1="3" y1="18" x2="21" y2="18"
-                  className="transition-all duration-300 ease-in-out"
-                  style={{
-                    transform: isMobileMenuOpen ? "translateY(-6px) rotate(-45deg)" : "translateY(0) rotate(0deg)",
-                    transformOrigin: "center",
-                  }}
-                />
-              </svg>
+              {isMobileMenuOpen ? (
+                <span className="text-xl">✕</span>
+              ) : (
+                <span className="text-xl">☰</span>
+              )}
             </Button>
           </div>
         </nav>
@@ -324,9 +391,9 @@ export function Navbar() {
                 {isAuthenticated && authUser ? (
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 px-4">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20">
-                        {authUser.avatar ? (
-                          <img src={authUser.avatar} alt={authUser.name} className="h-full w-full object-cover" />
+                      <div className="h-10 w-10 rounded-full bg-primary/10 overflow-hidden ring-2 ring-primary/20 shrink-0">
+                        {avatarUrl ? (
+                          <img src={avatarUrl} alt={authUser.name} className="h-full w-full object-cover" />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center text-sm font-bold text-primary">
                             {getInitials(authUser.name)}
@@ -343,16 +410,19 @@ export function Navbar() {
                         )}
                       </div>
                     </div>
-                    <Button variant="outline" asChild className="w-full">
+                    <Button variant="outline" asChild className="w-full justify-start">
                       <Link href="/dashboard">
                         <LayoutDashboard className="h-4 w-4 mr-2" />
                         Dashboard
                       </Link>
                     </Button>
-                    <Button variant="ghost" asChild className="w-full">
-                      <Link href="/dashboard/profile">Profile</Link>
+                    <Button variant="ghost" asChild className="w-full justify-start">
+                      <Link href="/dashboard/profile">
+                        <User className="h-4 w-4 mr-2" />
+                        Profile
+                      </Link>
                     </Button>
-                    <Button variant="ghost" onClick={handleLogout} className="w-full text-destructive">
+                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-destructive">
                       <LogOut className="h-4 w-4 mr-2" />
                       Logout
                     </Button>

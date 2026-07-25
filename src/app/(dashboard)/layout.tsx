@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -30,13 +30,11 @@ import {
   GraduationCap,
   Newspaper,
 } from "lucide-react";
-import { cn } from "@/utils";
+import { cn, getInitials, getImageUrl } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
-import { getInitials } from "@/utils";
 import { useAppSelector, useAppDispatch } from "@/redux/hooks";
-import { authApi } from "@/services/api";
+import { authApi, noticesApi } from "@/services/api";
 import { setUser, logout } from "@/redux/slices/authSlice";
-import { useRouter } from "next/navigation";
 
 const sidebarLinks = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -63,31 +61,54 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const dispatch = useAppDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user: authUser } = useAppSelector((state) => state.auth);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notices, setNotices] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!authUser) {
-      authApi.getMe()
-        .then((res) => {
-          if (res.success) {
-            const u = res.data as any;
-            dispatch(setUser({
-              id: u._id,
-              name: u.name,
-              email: u.email,
-              avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url
-            }));
-          } else {
-            dispatch(logout());
-            router.push("/login");
-          }
-        })
-        .catch((err) => {
-          console.error("Failed to load user profile in layout:", err);
+    noticesApi.getAll()
+      .then((res) => {
+        if (res.success && res.data) {
+          setNotices(res.data.slice(0, 5));
+          setUnreadCount(res.data.filter((n: any) => !n.isRead).length || res.data.length);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    authApi.getMe()
+      .then((res) => {
+        if (res.success) {
+          const u = res.data as any;
+          dispatch(setUser({
+            id: u._id,
+            name: u.name,
+            email: u.email,
+            avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url
+          }));
+        } else {
           dispatch(logout());
           router.push("/login");
-        });
-    }
-  }, [authUser, dispatch, router]);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load user profile in layout:", err);
+        dispatch(logout());
+        router.push("/login");
+      });
+  }, [dispatch, router]);
 
   const handleLogout = async () => {
     try {
@@ -109,6 +130,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </div>
     );
   }
+
+  const avatarSrc = getImageUrl(user.avatar);
 
   return (
     <div className="min-h-screen bg-background-secondary">
@@ -185,9 +208,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {/* User card */}
           <div className="p-4 border-t border-border">
             <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback className="text-xs bg-primary/10 text-primary">
+              <Avatar className="h-9 w-9 ring-2 ring-primary/20">
+                <AvatarImage src={avatarSrc} alt={user.name} />
+                <AvatarFallback className="text-xs bg-primary/10 text-primary font-bold">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -198,6 +221,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <button
                 onClick={handleLogout}
                 className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                title="Logout"
               >
                 <LogOut className="h-4 w-4" />
               </button>
@@ -228,16 +252,87 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="relative p-2 rounded-lg hover:bg-muted">
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary" />
-              </button>
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                  {getInitials(user.name)}
-                </AvatarFallback>
-              </Avatar>
+              {/* Functional Notification Bell with Dropdown */}
+              <div className="relative" ref={notifRef}>
+                <button
+                  onClick={() => setNotifOpen((prev) => !prev)}
+                  className="relative p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer focus:outline-none"
+                  title="Notifications"
+                >
+                  <Bell className="h-5 w-5 text-muted-foreground hover:text-foreground transition-colors" />
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary ring-2 ring-card animate-pulse" />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {notifOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl border border-border bg-card/95 backdrop-blur-md p-4 shadow-2xl z-50"
+                    >
+                      <div className="flex items-center justify-between pb-3 border-b border-border">
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-sm font-bold text-foreground">Notifications</h4>
+                          {unreadCount > 0 && (
+                            <span className="px-2 py-0.5 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20 rounded-full">
+                              {unreadCount} New
+                            </span>
+                          )}
+                        </div>
+                        <Link
+                          href="/dashboard/notices"
+                          onClick={() => setNotifOpen(false)}
+                          className="text-xs text-primary font-medium hover:underline"
+                        >
+                          View all
+                        </Link>
+                      </div>
+
+                      <div className="py-2 divide-y divide-border/50 max-h-72 overflow-y-auto">
+                        {notices.length === 0 ? (
+                          <div className="py-6 text-center text-xs text-muted-foreground">
+                            No recent notices found.
+                          </div>
+                        ) : (
+                          notices.map((n) => (
+                            <div key={n._id} className="py-2.5 px-1 hover:bg-muted/50 rounded-lg transition-colors">
+                              <p className="text-xs font-semibold text-foreground leading-snug">{n.title}</p>
+                              <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{n.content}</p>
+                              <span className="text-[10px] text-muted-foreground/70 mt-1 block">
+                                {n.createdAt ? new Date(n.createdAt).toLocaleDateString() : "Recent"}
+                              </span>
+                            </div>
+                          ))
+                        )}
+                      </div>
+
+                      <div className="pt-2 border-t border-border">
+                        <Link
+                          href="/dashboard/notices"
+                          onClick={() => setNotifOpen(false)}
+                          className="block text-center w-full py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-xs font-semibold transition-colors"
+                        >
+                          See All Notices & Announcements
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* User Avatar linking to Profile */}
+              <Link href="/dashboard/profile" title="View Profile" className="relative group cursor-pointer">
+                <Avatar className="h-8 w-8 ring-2 ring-primary/20 group-hover:ring-primary/50 transition-all">
+                  <AvatarImage src={avatarSrc} alt={user.name} />
+                  <AvatarFallback className="text-xs bg-primary/10 text-primary font-bold">
+                    {getInitials(user.name)}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
             </div>
           </div>
         </header>

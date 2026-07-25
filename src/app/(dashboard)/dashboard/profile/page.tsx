@@ -5,7 +5,7 @@ import { Camera, Save, User, Mail, Phone, MapPin, Globe, Loader2 } from "lucide-
 import { socialIcons } from "@/lib/icons";
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
-import { getInitials } from "@/utils";
+import { getInitials, getImageUrl } from "@/utils";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { authApi, userApi, uploadApi } from "@/services/api";
 import { toast } from "sonner";
@@ -28,33 +28,49 @@ export default function ProfilePage() {
     bio: "",
     location: "",
     designation: "",
-    github: "",
-    linkedin: "",
-    facebook: "",
+    socialLinks: {
+      github: "",
+      linkedin: "",
+      twitter: "",
+      facebook: "",
+      website: "",
+    },
   });
 
   useEffect(() => {
     authApi.getMe()
-      .then((res) => {
-        if (res.success) {
+      .then((res: any) => {
+        if (res.success && res.data) {
           const u = res.data as any;
           setUserProfile(u);
+          
+          const parsedLocation =
+            typeof u.address === "object" && u.address !== null
+              ? u.address.city || u.address.street || u.address.country || ""
+              : typeof u.address === "string"
+              ? u.address
+              : "";
+
           setForm({
             name: u.name || "",
             email: u.email || "",
             phone: u.phone || "",
             bio: u.bio || "",
-            location: u.address?.city || "",
+            location: parsedLocation,
             designation: u.designation || "",
-            github: u.socialLinks?.github || "",
-            linkedin: u.socialLinks?.linkedin || "",
-            facebook: u.socialLinks?.facebook || "",
+            socialLinks: {
+              github: u.socialLinks?.github || "",
+              linkedin: u.socialLinks?.linkedin || "",
+              twitter: u.socialLinks?.twitter || "",
+              facebook: u.socialLinks?.facebook || "",
+              website: u.socialLinks?.website || u.website || "",
+            },
           });
         }
       })
-      .catch((err) => {
-        console.error("Failed to load profile:", err);
-        toast.error(err.message || "Failed to load profile data.");
+      .catch((err: any) => {
+        console.error(err);
+        toast.error("Failed to load profile details.");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -69,16 +85,12 @@ export default function ProfilePage() {
         phone: form.phone,
         bio: form.bio,
         designation: form.designation,
-        address: {
-          city: form.location,
-        },
-        socialLinks: {
-          github: form.github,
-          linkedin: form.linkedin,
-          facebook: form.facebook,
-        }
+        address: typeof userProfile?.address === "object" && userProfile.address !== null
+          ? { ...userProfile.address, city: form.location }
+          : form.location,
+        socialLinks: form.socialLinks,
       };
-      const res = await userApi.update(userProfile._id, updateData);
+      const res: any = await userApi.update(userProfile._id, updateData);
       if (res.success) {
         toast.success("Profile updated successfully!");
         if (authUser) {
@@ -102,13 +114,20 @@ export default function ProfilePage() {
     }
     setUploadingAvatar(true);
     try {
-      const uploadRes = await uploadApi.single(file);
+      const uploadRes: any = await uploadApi.single(file, "users");
       if (uploadRes.success && uploadRes.data) {
-        const res = await userApi.update(userProfile._id, {
-          avatar: { url: uploadRes.data.url, publicId: uploadRes.data.publicId },
+        const rawUrl = uploadRes.data.url || uploadRes.data.path;
+        const avatarUrl = getImageUrl(rawUrl);
+        const res: any = await userApi.update(userProfile._id, {
+          avatar: { url: avatarUrl, publicId: uploadRes.data.publicId || uploadRes.data.filename || "" },
         } as any);
         if (res.success) {
-          setUserProfile((prev: any) => prev ? { ...prev, avatar: { url: uploadRes.data.url, publicId: uploadRes.data.publicId } } : prev);
+          setUserProfile((prev: any) =>
+            prev ? { ...prev, avatar: { url: avatarUrl, publicId: uploadRes.data.publicId || uploadRes.data.filename || "" } } : prev
+          );
+          if (authUser) {
+            dispatch(setUser({ ...authUser, avatar: avatarUrl }));
+          }
           toast.success("Profile picture updated!");
         }
       }
@@ -129,49 +148,20 @@ export default function ProfilePage() {
           <Skeleton className="h-8 w-48" />
           <Skeleton className="h-4 w-64" />
         </div>
-
-        {/* Avatar skeleton card */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-              <Skeleton className="h-16 w-16 sm:h-24 sm:w-24 rounded-full" />
-              <div className="space-y-2 flex-1">
-                <Skeleton className="h-5 w-48" />
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-3 w-40" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Form skeleton card */}
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <Skeleton className="h-5 w-48" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-3 w-20" />
-                  <Skeleton className="h-10 w-full rounded-lg" />
-                </div>
-              ))}
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-10 w-full rounded-lg" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-3 w-16" />
-              <Skeleton className="h-24 w-full rounded-lg" />
-            </div>
-            <div className="flex justify-end pt-2">
-              <Skeleton className="h-10 w-32 rounded-lg" />
-            </div>
+          <CardContent className="p-6 space-y-4">
+            <Skeleton className="h-20 w-20 rounded-full" />
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-10 w-full" />
           </CardContent>
         </Card>
       </div>
     );
   }
+
+  const avatarDisplayUrl = user?.avatar
+    ? getImageUrl(typeof user.avatar === "string" ? user.avatar : user.avatar.url)
+    : "";
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -187,9 +177,9 @@ export default function ProfilePage() {
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
               <div className="relative">
                 <div className="h-16 w-16 sm:h-24 sm:w-24 rounded-full bg-muted overflow-hidden ring-4 ring-primary/20">
-                  {user.avatar ? (
+                  {avatarDisplayUrl ? (
                     <img
-                      src={typeof user.avatar === "string" ? user.avatar : user.avatar.url}
+                      src={avatarDisplayUrl}
                       alt={user.name}
                       className="h-full w-full object-cover"
                     />
@@ -204,6 +194,7 @@ export default function ProfilePage() {
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingAvatar}
                   className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  title="Upload profile picture"
                 >
                   {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
                 </button>
@@ -219,7 +210,7 @@ export default function ProfilePage() {
                 <h2 className="text-lg font-semibold text-foreground">{user.name}</h2>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Member since {new Date(user.createdAt || user.joinedAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })}
+                  Member since {new Date(user.createdAt || user.joinedAt || Date.now()).toLocaleDateString("en-US", { year: "numeric", month: "long" })}
                 </p>
               </div>
             </div>
@@ -227,7 +218,7 @@ export default function ProfilePage() {
         </Card>
       </FadeIn>
 
-      {/* Personal Info */}
+      {/* Personal Info Form */}
       <FadeIn delay={0.1}>
         <Card>
           <form onSubmit={handleSave}>
@@ -263,26 +254,26 @@ export default function ProfilePage() {
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                     <Phone className="h-3.5 w-3.5 text-muted-foreground" />
-                    Phone
+                    Phone Number
                   </label>
                   <input
                     type="tel"
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="Optional"
+                    placeholder="+880 1700-000000"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                    Location
+                    Location / City
                   </label>
                   <input
                     type="text"
                     value={form.location}
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    placeholder="Optional"
+                    placeholder="e.g. Dhaka, Bangladesh"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                   />
                 </div>
@@ -291,18 +282,18 @@ export default function ProfilePage() {
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                  Designation
+                  Designation / Role Title
                 </label>
                 <input
                   type="text"
                   value={form.designation}
                   onChange={(e) => setForm({ ...form, designation: e.target.value })}
-                  placeholder="e.g. Frontend Developer"
+                  placeholder="e.g. Full Stack Software Engineer"
                   className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                 />
               </div>
 
-              <h4 className="text-sm font-semibold text-foreground pt-2">Social Links</h4>
+              <h4 className="text-sm font-semibold text-foreground pt-2">Social & Portfolio Links</h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -312,12 +303,18 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="url"
-                    value={form.github}
-                    onChange={(e) => setForm({ ...form, github: e.target.value })}
+                    value={form.socialLinks.github}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        socialLinks: { ...form.socialLinks, github: e.target.value },
+                      })
+                    }
                     placeholder="https://github.com/username"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                   />
                 </div>
+
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                     <socialIcons.linkedin.icon className="h-3.5 w-3.5 text-muted-foreground" />
@@ -325,12 +322,37 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="url"
-                    value={form.linkedin}
-                    onChange={(e) => setForm({ ...form, linkedin: e.target.value })}
+                    value={form.socialLinks.linkedin}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        socialLinks: { ...form.socialLinks, linkedin: e.target.value },
+                      })
+                    }
                     placeholder="https://linkedin.com/in/username"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                   />
                 </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <socialIcons.twitter.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    Twitter / X
+                  </label>
+                  <input
+                    type="url"
+                    value={form.socialLinks.twitter}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        socialLinks: { ...form.socialLinks, twitter: e.target.value },
+                      })
+                    }
+                    placeholder="https://twitter.com/username"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
+                  />
+                </div>
+
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
                     <socialIcons.facebook.icon className="h-3.5 w-3.5 text-muted-foreground" />
@@ -338,12 +360,36 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="url"
-                    value={form.facebook}
-                    onChange={(e) => setForm({ ...form, facebook: e.target.value })}
+                    value={form.socialLinks.facebook}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        socialLinks: { ...form.socialLinks, facebook: e.target.value },
+                      })
+                    }
                     placeholder="https://facebook.com/username"
                     className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
                   />
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                  <socialIcons.globe.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                  Portfolio / Personal Website
+                </label>
+                <input
+                  type="url"
+                  value={form.socialLinks.website}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      socialLinks: { ...form.socialLinks, website: e.target.value },
+                    })
+                  }
+                  placeholder="https://yourportfolio.com"
+                  className="w-full h-10 px-3 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-muted-foreground"
+                />
               </div>
 
               <div className="space-y-1.5">
