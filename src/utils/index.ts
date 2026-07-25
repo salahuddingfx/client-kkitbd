@@ -71,13 +71,21 @@ export function getProgressBg(progress: number) {
   return "bg-red-500";
 }
 
-export function getImageUrl(url?: string | null): string {
+export function getImageUrl(url?: any): string {
   if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
-    return url;
+  let target = "";
+  if (typeof url === "string") {
+    target = url;
+  } else if (typeof url === "object" && url !== null) {
+    target = url.url || url.path || "";
+  }
+  if (!target || typeof target !== "string") return "";
+
+  if (target.startsWith("http://") || target.startsWith("https://") || target.startsWith("data:")) {
+    return target;
   }
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "";
-  if (!apiBase) return url;
+  if (!apiBase) return target;
   const origin = apiBase.replace(/\/api\/v1\/?$/, "").replace(/\/api\/?$/, "");
-  return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
+  return `${origin}${target.startsWith("/") ? "" : "/"}${target}`;
 }
