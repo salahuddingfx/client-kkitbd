@@ -746,16 +746,18 @@ export interface UploadResult {
 export const uploadApi = {
   single: (file: File, folder?: string) => {
     const formData = new FormData();
-    formData.append("file", file);
     if (folder) formData.append("folder", folder);
-    return api.upload<ApiResponse<UploadResult>>("/upload/single", formData);
+    formData.append("file", file);
+    const query = folder ? `?folder=${encodeURIComponent(folder)}` : "";
+    return api.upload<ApiResponse<UploadResult>>(`/upload/single${query}`, formData);
   },
 
   multiple: (files: File[], folder?: string) => {
     const formData = new FormData();
-    files.forEach((f) => formData.append("files", f));
     if (folder) formData.append("folder", folder);
-    return api.upload<ApiResponse<UploadResult[]>>("/upload/multiple", formData);
+    files.forEach((f) => formData.append("files", f));
+    const query = folder ? `?folder=${encodeURIComponent(folder)}` : "";
+    return api.upload<ApiResponse<UploadResult[]>>(`/upload/multiple${query}`, formData);
   },
 
   remove: (publicId: string, resourceType?: string) =>
