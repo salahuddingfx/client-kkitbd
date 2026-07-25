@@ -319,6 +319,9 @@ export const offersApi = {
 
 // Enrollments API
 export const enrollmentsApi = {
+  getRecentPublic: (limit = 8) =>
+    api.get<ApiResponse<any[]>>(`/enrollments/recent?limit=${limit}`),
+
   getAll: (params?: Record<string, string>) => {
     const query = params ? "?" + new URLSearchParams(params).toString() : "";
     return api.get<ApiResponse<Enrollment[]>>(`/enrollments${query}`);
