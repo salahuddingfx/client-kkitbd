@@ -20,12 +20,14 @@ import {
   Loader2,
   Check,
   Circle,
+  MessageSquare,
 } from "lucide-react";
 import { Button, Badge, Skeleton } from "@/components/ui";
 import { cn } from "@/utils";
 import { coursesApi, enrollmentsApi, Course } from "@/services/api";
 import { VideoPlayer, VideoPlayerHandle } from "@/components/common/VideoPlayer";
 import { VideoNotes } from "@/components/common/VideoNotes";
+import { VideoComments } from "@/components/common/VideoComments";
 import { toast } from "sonner";
 
 export default function DashboardCourseViewerPage() {
@@ -40,7 +42,7 @@ export default function DashboardCourseViewerPage() {
 
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set([0]));
   const [selectedLesson, setSelectedLesson] = useState<{ moduleIndex: number; lessonIndex: number } | null>(null);
-  const [lessonTab, setLessonTab] = useState<"video" | "notes" | "code" | "attachments">("video");
+  const [lessonTab, setLessonTab] = useState<"video" | "notes" | "code" | "attachments" | "discussion">("video");
   const [searchQuery, setSearchQuery] = useState("");
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const lessonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
@@ -321,6 +323,7 @@ export default function DashboardCourseViewerPage() {
                   { key: "notes" as const, icon: FileText, label: "Notes" },
                   { key: "code" as const, icon: Code2, label: "Code" },
                   { key: "attachments" as const, icon: Paperclip, label: "Files" },
+                  { key: "discussion" as const, icon: MessageSquare, label: "Discussion" },
                 ].map((t) => (
                   <button
                     key={t.key}
@@ -339,7 +342,17 @@ export default function DashboardCourseViewerPage() {
               </div>
 
               {/* Tab content — compact on mobile */}
-              <div className="p-3 sm:p-5 max-h-[35vh] sm:max-h-[45vh] overflow-y-auto">
+              <div className="p-3 sm:p-5 max-h-[45vh] sm:max-h-[55vh] overflow-y-auto">
+                {lessonTab === "discussion" && (
+                  currentLessonId ? (
+                    <VideoComments courseId={id} lessonId={currentLessonId} />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                      <MessageSquare className="h-10 w-10 mb-2 opacity-40" />
+                      <p className="text-sm">Select a lesson to view comments</p>
+                    </div>
+                  )
+                )}
                 {lessonTab === "notes" && (
                   <div className="space-y-4">
                     {/* Instructor notes */}
