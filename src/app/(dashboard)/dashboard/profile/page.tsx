@@ -116,17 +116,17 @@ export default function ProfilePage() {
     try {
       const uploadRes: any = await uploadApi.single(file, "users");
       if (uploadRes.success && uploadRes.data) {
-        const rawUrl = uploadRes.data.url || uploadRes.data.path;
-        const avatarUrl = getImageUrl(rawUrl);
+        const relativePath = uploadRes.data.path || `/uploads/users/${uploadRes.data.filename}`;
+        const avatarUrl = getImageUrl(relativePath);
         const res: any = await userApi.update(userProfile._id, {
-          avatar: { url: avatarUrl, publicId: uploadRes.data.publicId || uploadRes.data.filename || "" },
+          avatar: { url: relativePath, publicId: uploadRes.data.filename || "" },
         } as any);
         if (res.success) {
           setUserProfile((prev: any) =>
-            prev ? { ...prev, avatar: { url: avatarUrl, publicId: uploadRes.data.publicId || uploadRes.data.filename || "" } } : prev
+            prev ? { ...prev, avatar: { url: relativePath, publicId: uploadRes.data.filename || "" } } : prev
           );
           if (authUser) {
-            dispatch(setUser({ ...authUser, avatar: avatarUrl }));
+            dispatch(setUser({ ...authUser, avatar: relativePath }));
           }
           toast.success("Profile picture updated!");
         }
@@ -135,11 +135,14 @@ export default function ProfilePage() {
       toast.error(err.message || "Failed to upload image.");
     } finally {
       setUploadingAvatar(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const user = userProfile;
+  const rawAvatar = userProfile?.avatar || userProfile?.avatar;
+  const avatarPath = typeof rawAvatar === "string"
+    ? rawAvatar
+    : (rawAvatar?.url || rawAvatar?.path || "");
+  const avatarDisplayUrl = avatarPath ? getImageUrl(avatarPath) : "";
 
   if (loading) {
     return (
@@ -159,9 +162,7 @@ export default function ProfilePage() {
     );
   }
 
-  const avatarDisplayUrl = user?.avatar
-    ? getImageUrl(typeof user.avatar === "string" ? user.avatar : user.avatar.url)
-    : "";
+  const user = userProfile;
 
   return (
     <div className="space-y-6 max-w-3xl">
