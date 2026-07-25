@@ -1,4 +1,4 @@
-const CACHE_NAME = "kkit-v1";
+const CACHE_NAME = "kkit-v2";
 const STATIC_ASSETS = ["/", "/offline"];
 
 const PRECACHE_ASSETS = [
@@ -34,6 +34,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
 
   if (request.method !== "GET") return;
+  if (!url.protocol.startsWith("http")) return;
 
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(
@@ -50,9 +51,11 @@ self.addEventListener("fetch", (event) => {
     caches.match(request).then((cached) => {
       const fetchPromise = fetch(request)
         .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          if (response && response.status === 200 && request.url.startsWith("http")) {
+            try {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => {});
+            } catch (e) {}
           }
           return response;
         })
