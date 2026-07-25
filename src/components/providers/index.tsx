@@ -4,14 +4,17 @@ import { Toaster } from "sonner";
 import ReduxProvider from "./ReduxProvider";
 import QueryProvider from "./QueryProvider";
 import ThemeProvider from "./ThemeProvider";
+import SmoothScrollProvider from "./SmoothScrollProvider";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider>
       <QueryProvider>
         <ThemeProvider>
-          {children}
-          <Toaster richColors position="top-right" />
+          <SmoothScrollProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </QueryProvider>
     </ReduxProvider>
