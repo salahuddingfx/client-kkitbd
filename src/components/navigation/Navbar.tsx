@@ -101,13 +101,14 @@ export function Navbar() {
   useEffect(() => {
     authApi.getMe()
       .then((res) => {
-        if (res.success) {
+        if (res.success && res.data) {
           const u = res.data as any;
+          const userAvatar = typeof u.avatar === "string" ? u.avatar : (u.avatar?.url || u.avatar?.path || "");
           dispatch(setUser({
             id: u._id,
             name: u.name,
             email: u.email,
-            avatar: typeof u.avatar === "string" ? u.avatar : u.avatar?.url,
+            avatar: userAvatar,
           }));
         }
       })
