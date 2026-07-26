@@ -25,7 +25,7 @@ class ApiClient {
   async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
       credentials: "include",
       ...options,
     });
@@ -35,7 +35,7 @@ class ApiClient {
   async post<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -46,7 +46,7 @@ class ApiClient {
   async put<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -57,7 +57,7 @@ class ApiClient {
   async patch<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -68,7 +68,7 @@ class ApiClient {
   async delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
       credentials: "include",
       ...options,
     });
@@ -78,6 +78,7 @@ class ApiClient {
   async upload<T>(endpoint: string, formData: FormData, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
+      headers: { "x-app-context": "client", ...(options?.headers || {}) },
       body: formData,
       credentials: "include",
       ...options,
