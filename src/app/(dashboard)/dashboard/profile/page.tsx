@@ -122,11 +122,12 @@ export default function ProfilePage() {
           avatar: { url: relativePath, publicId: uploadRes.data.filename || "" },
         } as any);
         if (res.success) {
+          const updatedAvatarPath = relativePath || uploadRes.data?.url || uploadRes.data?.path;
           setUserProfile((prev: any) =>
-            prev ? { ...prev, avatar: { url: relativePath, publicId: uploadRes.data.filename || "" } } : prev
+            prev ? { ...prev, avatar: { url: updatedAvatarPath, publicId: uploadRes.data?.filename || "" } } : prev
           );
           if (authUser) {
-            dispatch(setUser({ ...authUser, avatar: relativePath }));
+            dispatch(setUser({ ...authUser, avatar: updatedAvatarPath }));
           }
           toast.success("Profile picture updated!");
         }

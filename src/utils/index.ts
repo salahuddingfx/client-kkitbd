@@ -10,11 +10,9 @@ export function formatDate(date: string | Date) {
   }).format(new Date(date));
 }
 
-export function formatCurrency(amount: number, currency = "USD") {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-  }).format(amount);
+export function formatCurrency(amount: number, currency = "BDT") {
+  if (isNaN(amount) || amount === undefined || amount === null) return "৳0";
+  return `৳${new Intl.NumberFormat("en-BD").format(amount)}`;
 }
 
 export function formatNumber(num: number) {

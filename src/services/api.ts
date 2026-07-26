@@ -694,8 +694,16 @@ export const invoiceApi = {
     api.get<ApiResponse<Invoice>>(`/invoices/${id}`),
 
   downloadPdf: async (id: string) => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const token = typeof window !== "undefined" ? localStorage.getItem("client_accessToken") || localStorage.getItem("token") : null;
+    const headers: Record<string, string> = {
+      "x-app-context": "client",
+    };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     const response = await fetch(`${baseUrl}/invoices/${id}/pdf`, {
+      headers,
       credentials: "include",
     });
     if (!response.ok) throw new Error("Failed to download PDF");
