@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { ArrowRight, ArrowLeft, Mail, Lock, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { Button, Label } from "@/components/ui";
 import { OTPInput } from "@/components/ui/OTPInput";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 import { authApi } from "@/services/api";
 
@@ -64,7 +64,7 @@ const techStack = [
 
 export default function LoginPage() {
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard";
+  const redirectTo = searchParams.get("redirect") || searchParams.get("from") || "/dashboard";
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [formData, setFormData] = useState<CredentialsFormData | null>(null);
   const [otp, setOtp] = useState("");
@@ -100,16 +100,34 @@ export default function LoginPage() {
         email: data.email,
         password: data.password,
       });
-      if (response.success && response.data.otpRequired) {
+      if (response.success && response.data?.otpRequired) {
         toast.success(response.message || "OTP sent to your email!");
         setTimer(OTP_EXPIRY);
         setStep("otp");
+      } else if (response.success && (response.data?.user || response.data?.accessToken)) {
+        const payload = response.data;
+        if (payload.accessToken) {
+          localStorage.setItem("client_accessToken", payload.accessToken);
+        }
+        if (payload.user) {
+          dispatch(
+            login({
+              user: {
+                id: payload.user._id || (payload.user as any).id,
+                name: payload.user.name,
+                email: payload.user.email,
+              },
+            })
+          );
+        }
+        toast.success("Login successful!");
+        window.location.href = redirectTo;
       } else {
-        toast.error(response.message || "Failed to send OTP. Please try again.");
+        toast.error(response.message || "Failed to login. Please try again.");
       }
     } catch (error: any) {
       console.error(error);
-      const errMsg = error.message || "Failed to send OTP. Please try again.";
+      const errMsg = error.message || "Failed to login. Please try again.";
       toast.error(errMsg);
     } finally {
       setIsSubmitting(false);
@@ -133,15 +151,20 @@ export default function LoginPage() {
       });
       if (response.success) {
         const payload = response.data;
-        dispatch(
-          login({
-            user: {
-              id: payload.user._id,
-              name: payload.user.name,
-              email: payload.user.email,
-            },
-          })
-        );
+        if (payload?.accessToken) {
+          localStorage.setItem("client_accessToken", payload.accessToken);
+        }
+        if (payload?.user) {
+          dispatch(
+            login({
+              user: {
+                id: payload.user._id || (payload.user as any).id,
+                name: payload.user.name,
+                email: payload.user.email,
+              },
+            })
+          );
+        }
         toast.success("Login successful!");
         window.location.href = redirectTo;
       } else {

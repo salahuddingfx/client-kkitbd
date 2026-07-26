@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { Button, Label, PhoneInput } from "@/components/ui";
 import { OTPInput } from "@/components/ui/OTPInput";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { login } from "@/redux/slices/authSlice";
 import { authApi } from "@/services/api";
 
@@ -146,6 +146,9 @@ export default function RegisterPage() {
       });
       if (response.success) {
         const payload = response.data;
+        if (payload?.accessToken) {
+          localStorage.setItem("client_accessToken", payload.accessToken);
+        }
         dispatch(
           login({
             user: {

@@ -1,13 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Code, Smartphone, Palette, TrendingUp } from "lucide-react";
+import { ArrowRight, Code, Smartphone, Palette, TrendingUp, ShoppingBag } from "lucide-react";
 import { GlowCard } from "@/components/ui";
 import { Breadcrumb, Container, SectionHeader } from "@/components/common";
 import { ScrollReveal, StaggerReveal } from "@/components/animations";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
+import { ServiceOrderModal } from "@/components/services/ServiceOrderModal";
 
 const services = [
   {
@@ -46,6 +47,7 @@ const services = [
 
 export default function ServicesPage() {
   const heroRef = useRef<HTMLDivElement>(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
 
   useGSAP(
     () => {
@@ -72,7 +74,7 @@ export default function ServicesPage() {
               Digital Solutions for Your Business
             </h1>
             <p className="svc-hero-desc text-lg text-muted-foreground">
-              We provide comprehensive digital services to help your business succeed in the digital landscape.
+              We provide comprehensive digital services to help your business succeed in the digital landscape. Select a package and order directly online.
             </p>
             <Breadcrumb items={[{ label: "Services" }]} className="justify-center mt-6" />
           </div>
@@ -85,9 +87,8 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {services.map((service) => (
                 <div key={service.title} className="service-card">
-                  <Link href={service.href}>
-                    <div className="animated-border-lg">
-                      <GlowCard variant="glow" className="h-full group border-transparent bg-background">
+                  <div className="animated-border-lg">
+                    <GlowCard variant="glow" className="h-full group border-transparent bg-background">
                       <div className="p-4 sm:p-8">
                         <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-300">
                           <service.icon className="h-7 w-7 text-primary group-hover:text-white" />
@@ -104,14 +105,22 @@ export default function ServicesPage() {
                             </li>
                           ))}
                         </ul>
-                        <span className="inline-flex items-center text-sm font-medium text-primary group-hover:gap-2 transition-all">
-                          Learn More
-                          <ArrowRight className="ml-1 h-4 w-4" />
-                        </span>
+                        <div className="flex items-center justify-between pt-2 border-t border-border">
+                          <Link href={service.href} className="inline-flex items-center text-sm font-medium text-primary hover:underline">
+                            Learn Details
+                            <ArrowRight className="ml-1 h-4 w-4" />
+                          </Link>
+                          <button
+                            onClick={() => setSelectedService(service.title)}
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow-md"
+                          >
+                            <ShoppingBag className="h-3.5 w-3.5" />
+                            Order Service
+                          </button>
+                        </div>
                       </div>
                     </GlowCard>
-                    </div>
-                  </Link>
+                  </div>
                 </div>
               ))}
             </div>
@@ -127,19 +136,25 @@ export default function ServicesPage() {
                 Ready to Start Your Project?
               </h2>
               <p className="text-white/80 mb-8 max-w-2xl mx-auto">
-                Let&apos;s discuss how we can help your business grow with our digital solutions.
+                Let&apos;s discuss how we can help your business grow with our custom digital solutions.
               </p>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors"
+              <button
+                onClick={() => setSelectedService("Custom Digital Solution")}
+                className="inline-flex items-center gap-2 px-8 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-white/90 transition-colors shadow-lg"
               >
-                Get in Touch
+                Order Custom Project
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+              </button>
             </div>
           </ScrollReveal>
         </Container>
       </section>
+
+      <ServiceOrderModal
+        isOpen={!!selectedService}
+        onClose={() => setSelectedService(null)}
+        serviceTitle={selectedService || "Digital Service"}
+      />
     </>
   );
 }

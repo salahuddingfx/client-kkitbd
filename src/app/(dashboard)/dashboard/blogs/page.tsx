@@ -17,6 +17,7 @@ import {
   Search,
 } from "lucide-react";
 import { blogApi } from "@/services/api";
+import { ImageUpload } from "@/components/ui";
 
 interface StudentBlog {
   _id: string;
@@ -359,14 +360,14 @@ export default function StudentBlogsPage() {
 
                 <div>
                   <label className="block text-xs font-bold uppercase text-muted-foreground mb-1">
-                    Cover / Thumbnail Image URL
+                    Article Cover / Thumbnail Image
                   </label>
-                  <input
-                    type="url"
-                    placeholder="https://..."
+                  <ImageUpload
                     value={form.thumbnailUrl}
-                    onChange={(e) => setForm({ ...form, thumbnailUrl: e.target.value })}
-                    className="w-full px-3 py-2 bg-background border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    onChange={(url: string) => setForm({ ...form, thumbnailUrl: url })}
+                    onRemove={() => setForm({ ...form, thumbnailUrl: "" })}
+                    folder="blogs"
+                    label="Upload Article Cover Image"
                   />
                 </div>
               </div>

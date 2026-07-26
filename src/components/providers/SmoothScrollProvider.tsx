@@ -15,6 +15,16 @@ export default function SmoothScrollProvider({ children }: { children: React.Rea
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
+      prevent: (node) => {
+        return (
+          node.hasAttribute("data-lenis-prevent") ||
+          node.closest("[data-lenis-prevent]") !== null ||
+          node.classList.contains("overflow-y-auto") ||
+          node.classList.contains("overflow-auto") ||
+          node.tagName === "SELECT" ||
+          node.tagName === "TEXTAREA"
+        );
+      },
     });
 
     function raf(time: number) {

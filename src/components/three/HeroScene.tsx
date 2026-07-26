@@ -1,43 +1,11 @@
 "use client";
 
-import { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Sphere, MeshDistortMaterial } from "@react-three/drei";
-import * as THREE from "three";
-
-function AnimatedSphere() {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = state.clock.getElapsedTime() * 0.2;
-      meshRef.current.rotation.y = state.clock.getElapsedTime() * 0.3;
-    }
-  });
-
-  return (
-    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={2}>
-      <Sphere ref={meshRef} args={[1, 100, 200]}>
-        <MeshDistortMaterial
-          color="#dc2626"
-          attach="material"
-          distort={0.3}
-          speed={1.5}
-          roughness={0.2}
-        />
-      </Sphere>
-    </Float>
-  );
-}
-
 export function HeroScene() {
   return (
-    <div className="absolute inset-0 -z-10">
-      <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1} />
-        <AnimatedSphere />
-      </Canvas>
+    <div className="absolute inset-0 -z-10 overflow-hidden">
+      <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-primary/[0.07] blur-[120px] animate-[pulse_8s_ease-in-out_infinite]" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-primary/[0.05] blur-[100px] animate-[pulse_10s_ease-in-out_infinite_2s]" />
+      <div className="absolute top-[30%] right-[20%] w-[350px] h-[350px] rounded-full bg-accent/[0.06] blur-[90px] animate-[pulse_7s_ease-in-out_infinite_1s]" />
     </div>
   );
 }

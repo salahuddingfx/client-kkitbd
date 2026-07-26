@@ -22,10 +22,23 @@ class ApiClient {
     return response.json();
   }
 
+  private getAuthHeaders(): Record<string, string> {
+    const headers: Record<string, string> = {
+      "x-app-context": "client",
+    };
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("client_accessToken") || localStorage.getItem("token");
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+    }
+    return headers;
+  }
+
   async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { "Content-Type": "application/json", ...this.getAuthHeaders(), ...(options?.headers || {}) },
       credentials: "include",
       ...options,
     });
@@ -35,7 +48,7 @@ class ApiClient {
   async post<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { "Content-Type": "application/json", ...this.getAuthHeaders(), ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -46,7 +59,7 @@ class ApiClient {
   async put<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { "Content-Type": "application/json", ...this.getAuthHeaders(), ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -57,7 +70,7 @@ class ApiClient {
   async patch<T>(endpoint: string, data?: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { "Content-Type": "application/json", ...this.getAuthHeaders(), ...(options?.headers || {}) },
       body: data ? JSON.stringify(data) : undefined,
       credentials: "include",
       ...options,
@@ -68,7 +81,7 @@ class ApiClient {
   async delete<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json", "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { "Content-Type": "application/json", ...this.getAuthHeaders(), ...(options?.headers || {}) },
       credentials: "include",
       ...options,
     });
@@ -78,7 +91,7 @@ class ApiClient {
   async upload<T>(endpoint: string, formData: FormData, options?: RequestInit): Promise<T> {
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       method: "POST",
-      headers: { "x-app-context": "client", ...(options?.headers || {}) },
+      headers: { ...this.getAuthHeaders(), ...(options?.headers || {}) },
       body: formData,
       credentials: "include",
       ...options,

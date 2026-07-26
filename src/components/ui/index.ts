@@ -60,3 +60,4 @@ export { PasswordInput } from "./PasswordInput";
 export { OTPInput } from "./OTPInput";
 export { PhoneInput } from "./PhoneInput";
 export { GlowCard } from "./GlowCard";
+export { ImageUpload } from "./ImageUpload";

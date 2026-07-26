@@ -149,13 +149,13 @@ export const authApi = {
     api.post<ApiResponse<any>>("/auth/register", data),
 
   verifyRegister: (data: { email: string; otp: string }) =>
-    api.post<ApiResponse<{ user: User }>>("/auth/verify-register", data),
+    api.post<ApiResponse<{ user: User; accessToken?: string; refreshToken?: string }>>("/auth/verify-register", data),
 
   login: (data: { email: string; password: string }) =>
     api.post<ApiResponse<any>>("/auth/login", data),
 
   verifyLogin: (data: { email: string; otp: string; fingerprint?: string }) =>
-    api.post<ApiResponse<{ user: User; deviceInfo?: any }>>("/auth/verify-login", data),
+    api.post<ApiResponse<{ user: User; accessToken?: string; refreshToken?: string; deviceInfo?: any }>>("/auth/verify-login", data),
 
   getMe: () =>
     api.get<ApiResponse<User>>("/auth/me"),
@@ -919,6 +919,31 @@ export interface ServiceItem {
 export const servicesApi = {
   getAll: () =>
     api.get<ApiResponse<ServiceItem[]>>("/services"),
+};
+
+export interface ServiceOrderInput {
+  serviceId?: string;
+  serviceName: string;
+  tier: "basic" | "pro" | "enterprise";
+  customAddons?: { name: string; price: number }[];
+  brief: string;
+  attachments?: { url: string; name: string }[];
+  totalAmount: number;
+  depositAmount?: number;
+  paymentMethod: string;
+  transactionId?: string;
+  deliveryDeadline?: string;
+}
+
+export const serviceOrdersApi = {
+  create: (data: ServiceOrderInput) =>
+    api.post<ApiResponse<any>>("/service-orders", data),
+  getMyOrders: (params?: Record<string, string>) => {
+    const q = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<any>>(`/service-orders/my-orders${q}`);
+  },
+  getById: (id: string) =>
+    api.get<ApiResponse<any>>(`/service-orders/${id}`),
 };
 
 // FAQs API

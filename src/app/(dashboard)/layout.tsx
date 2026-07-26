@@ -29,6 +29,7 @@ import {
   Zap,
   GraduationCap,
   Newspaper,
+  ShoppingBag,
 } from "lucide-react";
 import { cn, getInitials, getImageUrl } from "@/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
@@ -39,6 +40,7 @@ import { setUser, logout } from "@/redux/slices/authSlice";
 const sidebarLinks = [
   { label: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { label: "My Courses", href: "/dashboard/courses", icon: BookOpen },
+  { label: "Service Orders", href: "/dashboard/services", icon: ShoppingBag },
   { label: "Assignments", href: "/dashboard/assignments", icon: ClipboardList },
   { label: "Projects", href: "/dashboard/projects", icon: FolderGit2 },
   { label: "Grades", href: "/dashboard/grades", icon: GraduationCap },
@@ -117,6 +119,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     } catch {
       // ignore logout API errors
     } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("client_accessToken");
+        localStorage.removeItem("token");
+      }
       dispatch(logout());
       router.push("/login");
     }
@@ -151,14 +157,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Sidebar */}
       <aside
+        data-lenis-prevent
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transition-transform duration-300 lg:translate-x-0",
+          "fixed top-0 left-0 z-50 h-full w-64 bg-card border-r border-border transition-transform duration-300 lg:translate-x-0 overflow-hidden",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
           {/* Logo */}
-          <div className="flex items-center justify-between h-16 px-6 border-b border-border">
+          <div className="flex items-center justify-between h-16 px-6 border-b border-border shrink-0">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
                 <span className="text-white font-bold text-sm">K</span>
@@ -174,7 +181,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          <nav data-lenis-prevent className="flex-1 px-3 py-4 space-y-1 overflow-y-auto min-h-0">
             {sidebarLinks.map((link) => {
               const isActive =
                 link.href === "/dashboard"

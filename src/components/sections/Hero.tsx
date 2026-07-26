@@ -6,9 +6,10 @@ import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Container, StudentTicker } from "@/components/common";
 import { VideoModal } from "@/components/common/VideoModal";
-import { gsap, useGSAP } from "@/hooks/useGSAP";
-import { Counter } from "@/components/animations";
 import { homeStatsApi, HomeStat } from "@/services/api";
+import { Counter } from "@/components/animations";
+import { gsap, useGSAP } from "@/hooks/useGSAP";
+import { HeroScene } from "@/components/three/HeroScene";
 
 const fallbackStats = [
   { value: 10000, suffix: "+", label: "Students Enrolled" },
@@ -88,9 +89,10 @@ export function Hero() {
 
   return (
     <section ref={containerRef} className="relative min-h-screen flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-background-secondary" />
-      <div className="hero-orb-1 absolute top-1/4 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-3xl" />
-      <div className="hero-orb-2 absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background/90 to-background-secondary/90 -z-10" />
+      <HeroScene />
+      <div className="hero-orb-1 absolute top-1/4 left-1/4 w-72 h-72 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="hero-orb-2 absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
       <Container className="relative z-10 py-20">
         <div className="max-w-4xl mx-auto text-center">

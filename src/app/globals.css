@@ -108,6 +108,15 @@ body {
   background: var(--foreground-secondary);
 }
 
+/* Mouse Wheel & Touch Scrolling Fixes for Dropdowns & Modals */
+.overflow-y-auto,
+.overflow-x-auto,
+.overflow-auto {
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* Selection */
 ::selection {
   background-color: var(--accent);
