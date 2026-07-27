@@ -24,7 +24,14 @@ const FALLBACK_LIST: EnrollmentItem[] = [
 export function EnrollmentNotification() {
   const [items, setItems] = useState<EnrollmentItem[]>(FALLBACK_LIST);
   const [current, setCurrent] = useState(0);
+  const [isDismissed, setIsDismissed] = useState(false);
   const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("enrollment_dismissed") === "true") {
+      setIsDismissed(true);
+    }
+  }, []);
 
   useEffect(() => {
     enrollmentsApi
@@ -38,27 +45,41 @@ export function EnrollmentNotification() {
   }, []);
 
   useEffect(() => {
-    if (items.length === 0) return;
+    if (items.length === 0 || isDismissed) return;
 
-    const showTimer = setTimeout(() => setVisible(true), 8000);
+    const showTimer = setTimeout(() => {
+      if (localStorage.getItem("enrollment_dismissed") !== "true") {
+        setVisible(true);
+      }
+    }, 6000);
 
     const interval = setInterval(() => {
+      if (localStorage.getItem("enrollment_dismissed") === "true") {
+        setVisible(false);
+        return;
+      }
       setCurrent((prev) => (prev + 1) % items.length);
       setVisible(true);
-      setTimeout(() => setVisible(false), 5000);
-    }, 16000);
+      setTimeout(() => setVisible(false), 4500);
+    }, 18000);
 
     return () => {
       clearTimeout(showTimer);
       clearInterval(interval);
     };
-  }, [items]);
+  }, [items, isDismissed]);
+
+  const handleDismiss = () => {
+    setVisible(false);
+    setIsDismissed(true);
+    localStorage.setItem("enrollment_dismissed", "true");
+  };
 
   const enrollment = items[current] || FALLBACK_LIST[0];
 
   return (
     <AnimatePresence>
-      {visible && (
+      {visible && !isDismissed && (
         <motion.div
           initial={{ opacity: 0, x: -100, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -67,7 +88,7 @@ export function EnrollmentNotification() {
           className="fixed bottom-20 left-4 sm:left-6 z-50 max-w-xs bg-background/95 backdrop-blur-md border border-border/80 rounded-2xl shadow-2xl p-3.5 ring-1 ring-primary/10"
         >
           <button
-            onClick={() => setVisible(false)}
+            onClick={handleDismiss}
             className="absolute top-2.5 right-2.5 text-muted-foreground/70 hover:text-foreground p-0.5 rounded-lg hover:bg-muted transition-colors"
           >
             <X className="h-3.5 w-3.5" />
