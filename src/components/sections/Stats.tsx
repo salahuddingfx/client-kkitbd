@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Container, SectionHeader } from "@/components/common";
 import { ScrollReveal, StaggerReveal } from "@/components/animations";
 import { homeStatsApi, HomeStat } from "@/services/api";
@@ -72,18 +73,19 @@ export function Stats() {
           />
         </ScrollReveal>
 
-        <StaggerReveal
-          childSelector=".stat-item"
-          stagger={0.08}
-          y={40}
-          duration={0.6}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12">
-            {stats.map((stat) => (
-              <StatCard key={stat._id} stat={stat} />
-            ))}
-          </div>
-        </StaggerReveal>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mt-12">
+          {stats.map((stat, idx) => (
+            <motion.div
+              key={stat._id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: idx * 0.1 }}
+            >
+              <StatCard stat={stat} />
+            </motion.div>
+          ))}
+        </div>
       </Container>
     </section>
   );
