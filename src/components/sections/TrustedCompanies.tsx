@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Container } from "@/components/common";
 import { StaggerReveal, ScrollReveal } from "@/components/animations";
 import dynamic from "next/dynamic";
@@ -42,27 +43,24 @@ export function TrustedCompanies() {
               </div>
 
               {/* Country stats */}
-              <StaggerReveal
-                childSelector=".country-item"
-                stagger={0.05}
-                y={20}
-                duration={0.5}
-              >
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {countries.map((country) => (
-                    <div
-                      key={country.name}
-                      className="country-item flex items-center gap-3 p-3 rounded-xl bg-background/50 border border-border/50 hover:border-primary/30 hover:bg-background transition-all duration-300"
-                    >
-                      <span className="text-2xl">{country.flag}</span>
-                      <div>
-                        <p className="text-sm font-semibold text-foreground">{country.students}</p>
-                        <p className="text-xs text-muted-foreground">{country.name}</p>
-                      </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {countries.map((country, idx) => (
+                  <motion.div
+                    key={country.name}
+                    initial={{ opacity: 0, y: 15 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.35, delay: idx * 0.05 }}
+                    className="country-item flex items-center gap-3 p-3 rounded-xl bg-background border border-border/60 hover:border-primary/40 hover:shadow-md transition-all duration-300"
+                  >
+                    <span className="text-2xl">{country.flag}</span>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">{country.students}</p>
+                      <p className="text-xs text-muted-foreground">{country.name}</p>
                     </div>
-                  ))}
-                </div>
-              </StaggerReveal>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </ScrollReveal>
 
