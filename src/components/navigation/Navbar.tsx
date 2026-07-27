@@ -14,6 +14,8 @@ import {
   Settings,
   BookOpen,
   ChevronDown,
+  Menu,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
@@ -336,9 +338,9 @@ export function Navbar() {
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
-                <span className="text-xl">✕</span>
+                <X className="h-5 w-5 text-foreground" />
               ) : (
-                <span className="text-xl">☰</span>
+                <Menu className="h-5 w-5 text-foreground" />
               )}
             </Button>
           </div>
