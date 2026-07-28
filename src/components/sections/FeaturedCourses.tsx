@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, Clock, Users, Star, Loader2, BookOpen } from "lucide-react";
 import { GlowCard, Badge, Button } from "@/components/ui";
 import { Container, SectionHeader } from "@/components/common";
@@ -138,11 +135,15 @@ export function FeaturedCourses() {
                               src={course.thumbnail.url}
                               alt={course.title}
                               fill
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               className="object-cover transition-transform duration-700 group-hover:scale-110"
                             />
                           ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center text-muted-foreground font-medium text-xs">
-                              {course.title}
+                            <div className="w-full h-full bg-gradient-to-br from-primary/20 via-primary/10 to-background flex flex-col items-center justify-center p-6 text-center group-hover:from-primary/30 transition-colors">
+                              <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mb-2 shadow-inner">
+                                <BookOpen className="h-6 w-6" />
+                              </div>
+                              <span className="text-xs font-semibold text-foreground/80 line-clamp-1">{course.title}</span>
                             </div>
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
