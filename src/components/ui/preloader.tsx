@@ -75,7 +75,7 @@ export default function Preloader({ onComplete }: PreloaderProps) {
       variants={slideUp}
       initial="initial"
       animate={isExiting ? "exit" : "initial"}
-      className="fixed inset-0 w-screen h-screen flex items-center justify-center z-[99999999999]" style={{ backgroundColor: '#0a0a0a' }}
+      className={`fixed inset-0 w-screen h-screen flex items-center justify-center z-[99999999999] ${isExiting ? "pointer-events-none" : ""}`} style={{ backgroundColor: '#0a0a0a' }}
     >
       {dimension.width > 0 && (
         <>

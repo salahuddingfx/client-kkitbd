@@ -3,7 +3,10 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Clock, Users, Star, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowRight, Clock, Users, Star, Loader2, BookOpen } from "lucide-react";
 import { GlowCard, Badge, Button } from "@/components/ui";
 import { Container, SectionHeader } from "@/components/common";
 import { StaggerReveal, ScrollReveal } from "@/components/animations";
@@ -18,7 +21,6 @@ const FALLBACK_COURSES = [
     level: "All Levels",
     totalDuration: 45,
     enrolledStudents: 1420,
-    thumbnail: { url: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80", publicId: "thumb-1" },
     rating: { average: 4.9, count: 128 },
     isFeatured: true,
   },
@@ -30,7 +32,6 @@ const FALLBACK_COURSES = [
     level: "Intermediate",
     totalDuration: 40,
     enrolledStudents: 980,
-    thumbnail: { url: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80", publicId: "thumb-2" },
     rating: { average: 4.8, count: 94 },
     isFeatured: true,
   },
@@ -42,7 +43,6 @@ const FALLBACK_COURSES = [
     level: "Beginner",
     totalDuration: 30,
     enrolledStudents: 1650,
-    thumbnail: { url: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=600&auto=format&fit=crop&q=80", publicId: "thumb-3" },
     rating: { average: 4.9, count: 210 },
     isFeatured: true,
   },
@@ -54,7 +54,6 @@ const FALLBACK_COURSES = [
     level: "Intermediate",
     totalDuration: 50,
     enrolledStudents: 1120,
-    thumbnail: { url: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80", publicId: "thumb-4" },
     rating: { average: 4.7, count: 86 },
     isFeatured: true,
   },
@@ -66,7 +65,6 @@ const FALLBACK_COURSES = [
     level: "Advanced",
     totalDuration: 35,
     enrolledStudents: 750,
-    thumbnail: { url: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=600&auto=format&fit=crop&q=80", publicId: "thumb-5" },
     rating: { average: 4.9, count: 62 },
     isFeatured: true,
   },
@@ -78,7 +76,6 @@ const FALLBACK_COURSES = [
     level: "Intermediate",
     totalDuration: 38,
     enrolledStudents: 890,
-    thumbnail: { url: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&auto=format&fit=crop&q=80", publicId: "thumb-6" },
     rating: { average: 4.8, count: 78 },
     isFeatured: true,
   },

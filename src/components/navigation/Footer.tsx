@@ -69,12 +69,23 @@ export function Footer() {
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !email.trim()) return;
     setLoading(true);
+    
+    // Safety timeout in case fetch hangs
+    const timeoutId = setTimeout(() => {
+      setSubscribed(true);
+      setEmail("");
+      setLoading(false);
+    }, 4000);
+
     try {
-      await api.post("/newsletter", { email });
+      await api.post("/newsletter", { email: email.trim() });
+      clearTimeout(timeoutId);
       setSubscribed(true);
       setEmail("");
     } catch {
+      clearTimeout(timeoutId);
       setSubscribed(true);
       setEmail("");
     } finally {
@@ -198,19 +209,19 @@ export function Footer() {
                 <span className="text-sm font-medium">Thanks for subscribing!</span>
               </div>
             ) : (
-              <form onSubmit={handleSubscribe} className="flex gap-2 w-full md:w-auto">
+              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="flex-1 md:w-64 h-10 px-4 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full sm:w-64 h-10 px-4 rounded-lg border border-border bg-background text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 />
                 <button
                   type="submit"
                   disabled={loading}
-                  className="h-10 px-5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+                  className="h-10 px-5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 w-full sm:w-auto"
                 >
                   <Send className="h-4 w-4" />
                   {loading ? "..." : "Subscribe"}
