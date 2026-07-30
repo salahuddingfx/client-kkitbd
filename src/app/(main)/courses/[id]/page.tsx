@@ -93,8 +93,8 @@ export default function CourseDetailPage() {
   };
 
   const handleEnroll = () => {
-    if (!user) { router.push(`/login?redirect=/courses/${id}`); return; }
-    setShowPayment(true);
+    if (!user) { router.push(`/login?redirect=/checkout/${id}`); return; }
+    router.push(`/checkout/${id}`);
   };
 
   if (loading) {
@@ -313,6 +313,37 @@ export default function CourseDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left content col */}
             <div className="lg:col-span-2 space-y-6">
+
+              {/* Zero to Hero Course Intro */}
+              <div className="bg-gradient-to-br from-primary/10 via-background to-orange-500/10 rounded-2xl border border-primary/20 p-6 shadow-sm space-y-3">
+                <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                  <Zap className="h-4 w-4" /> Complete Learning Roadmap
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-foreground">
+                  Zero to Hero Industrial Mastery Program
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  আমাদের মাধ্যমে কোর্স করলে আপনি শিখবেন একদম জিরো থেকে হিরো লেভেল অব্দি! কোন পূর্ব অভিজ্ঞতা ছাড়াই রিয়েল-ওয়ার্ল্ড প্রজেক্ট, ২-৪ জন ডেডিকেটেড মেন্টর ও ট্রেইনারদের সাপোর্ট এবং সার্টিফিকেট সহ আপনাকে ইন্ডাস্ট্রি-রেডি স্কিল ডেভেলপ করতে সাহায্য করব।
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  <div className="p-2.5 bg-background border rounded-xl text-center">
+                    <p className="text-xs text-muted-foreground">Level</p>
+                    <p className="text-sm font-bold text-primary capitalize">{course.level}</p>
+                  </div>
+                  <div className="p-2.5 bg-background border rounded-xl text-center">
+                    <p className="text-xs text-muted-foreground">Support</p>
+                    <p className="text-sm font-bold text-emerald-600">24/7 Dedicated</p>
+                  </div>
+                  <div className="p-2.5 bg-background border rounded-xl text-center">
+                    <p className="text-xs text-muted-foreground">Access</p>
+                    <p className="text-sm font-bold text-blue-600">Lifetime</p>
+                  </div>
+                  <div className="p-2.5 bg-background border rounded-xl text-center">
+                    <p className="text-xs text-muted-foreground">Certificate</p>
+                    <p className="text-sm font-bold text-purple-600">Included</p>
+                  </div>
+                </div>
+              </div>
 
               {/* What You'll Learn */}
               {course.learningOutcomes && course.learningOutcomes.length > 0 && (
