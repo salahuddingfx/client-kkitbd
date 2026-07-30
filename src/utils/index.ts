@@ -79,11 +79,23 @@ export function getImageUrl(url?: any): string {
   }
   if (!target || typeof target !== "string") return "";
 
-  if (target.startsWith("http://") || target.startsWith("https://") || target.startsWith("data:")) {
+  if (
+    target.startsWith("http://") ||
+    target.startsWith("https://") ||
+    target.startsWith("data:")
+  ) {
     return target;
   }
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "";
-  if (!apiBase) return target;
-  const origin = apiBase.replace(/\/api\/v1\/?$/, "").replace(/\/api\/?$/, "");
-  return `${origin}${target.startsWith("/") ? "" : "/"}${target}`;
+
+  if (target.startsWith("/uploads/") || target.startsWith("uploads/")) {
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://kkitbd.com/api/v1";
+    const origin = apiBase.replace(/\/api\/v1\/?$/, "").replace(/\/api\/?$/, "");
+    return `${origin}${target.startsWith("/") ? "" : "/"}${target}`;
+  }
+
+  if (target.startsWith("/avatars/")) {
+    return "";
+  }
+
+  return target;
 }

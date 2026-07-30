@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Card, CardContent, Avatar, AvatarFallback, AvatarImage, Skeleton } from "@/components/ui";
+import { Avatar, AvatarFallback, AvatarImage, Skeleton, GlowCard } from "@/components/ui";
 import { Breadcrumb, Container } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { teamApi, TeamMember } from "@/services/api";
-import { socialIcons } from "@/lib/icons";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { getSkillIcon } from "@/lib/icons";
+import { getImageUrl } from "@/utils";
+import { ArrowRight, Globe, Users } from "lucide-react";
+import { SiGithub, SiX, SiFacebook } from "react-icons/si";
+import { BsLinkedin } from "react-icons/bs";
 
 export default function TeamPage() {
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -30,7 +33,7 @@ export default function TeamPage() {
 
   return (
     <>
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
+      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary border-b border-border">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -45,7 +48,7 @@ export default function TeamPage() {
               Meet the Experts Behind KKIT
             </h1>
             <p className="text-lg text-muted-foreground">
-              Our team of passionate professionals is dedicated to helping you succeed.
+              Our team of passionate professionals, leaders, and instructors is dedicated to your success.
             </p>
             <Breadcrumb items={[{ label: "Our Team" }]} className="justify-center mt-6" />
           </motion.div>
@@ -57,8 +60,8 @@ export default function TeamPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-8 text-center space-y-4">
+                <GlowCard key={i} variant="glow">
+                  <div className="p-6 text-center space-y-4">
                     <Skeleton className="w-24 h-24 rounded-full mx-auto" />
                     <Skeleton className="h-5 w-36 mx-auto" />
                     <Skeleton className="h-4 w-24 mx-auto" />
@@ -69,67 +72,172 @@ export default function TeamPage() {
                       <Skeleton className="h-8 w-8 rounded-full" />
                       <Skeleton className="h-8 w-8 rounded-full" />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </GlowCard>
               ))}
+            </div>
+          ) : team.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 text-primary">
+                <Users className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">No Team Members Listed Yet</h3>
+              <p className="text-muted-foreground text-sm max-w-md mx-auto">
+                Check back soon as our team members are updated from the admin dashboard.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {team.map((member, index) => (
-                <FadeIn key={member._id} delay={index * 0.1}>
-                  <Link href={`/team/${member.slug || member._id}`}>
-                    <Card className="h-full text-center group hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                      <CardContent className="p-4 sm:p-8">
-                        <Avatar className="w-24 h-24 mx-auto mb-4">
-                          <AvatarImage src={member.avatar?.url} />
-                          <AvatarFallback>
-                            {member.name.split(" ").map((n) => n[0]).join("")}
+              {team.map((member, index) => {
+                const memberId = member.slug || member._id;
+                const avatarSrc = getImageUrl(
+                  typeof member.avatar === "string" ? member.avatar : member.avatar?.url
+                );
+                const initials = member.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("");
+
+                return (
+                  <FadeIn key={member._id} delay={index * 0.08}>
+                    <GlowCard variant="glow" className="h-full flex flex-col">
+                      <div className="p-6 sm:p-8 text-center flex flex-col h-full">
+                        {/* Avatar */}
+                        <Avatar className="w-24 h-24 mx-auto mb-4 border-2 border-primary/20 shadow-md">
+                          <AvatarImage src={avatarSrc} alt={member.name} />
+                          <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">
+                            {initials}
                           </AvatarFallback>
                         </Avatar>
-                        <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {member.name}
-                        </h3>
-                        <p className="text-sm text-primary mb-2">{member.designation}</p>
-                        {member.bio && (
-                          <p className="text-sm text-muted-foreground mb-4">{member.bio}</p>
+
+                        {/* Name & Designation */}
+                        <Link href={`/team/${memberId}`}>
+                          <h3 className="text-xl font-bold text-foreground hover:text-primary transition-colors">
+                            {member.name}
+                          </h3>
+                        </Link>
+                        <p className="text-sm font-semibold text-primary mt-1 mb-2">
+                          {member.designation}
+                        </p>
+
+                        {/* Department Badge */}
+                        {member.department && (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-medium self-center mb-3">
+                            {member.department}
+                          </span>
                         )}
-                        <div className="flex items-center justify-center space-x-3 mb-4">
-                          {member.socialLinks?.linkedin && (
-                            <span
-                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
-                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.linkedin.color; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
-                            >
-                              <socialIcons.linkedin.icon className="h-4 w-4" />
-                            </span>
-                          )}
-                          {member.socialLinks?.twitter && (
-                            <span
-                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
-                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.twitter.color; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
-                            >
-                              <socialIcons.twitter.icon className="h-4 w-4" />
-                            </span>
-                          )}
-                          {member.socialLinks?.github && (
-                            <span
-                              className="w-8 h-8 rounded-full bg-muted flex items-center justify-center transition-all hover:text-white"
-                              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = socialIcons.github.color; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ""; }}
-                            >
-                              <socialIcons.github.icon className="h-4 w-4" />
-                            </span>
-                          )}
+
+                        {/* Bio */}
+                        {member.bio && (
+                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                            {member.bio}
+                          </p>
+                        )}
+
+                        {/* Skill Badges Preview */}
+                        {member.skills && member.skills.length > 0 && (
+                          <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+                            {member.skills.slice(0, 4).map((skillName) => {
+                              const iconData = getSkillIcon(skillName);
+                              const IconComponent = iconData?.icon;
+
+                              return (
+                                <span
+                                  key={skillName}
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-background-secondary border border-border text-[11px] font-medium"
+                                >
+                                  {IconComponent ? (
+                                    <IconComponent
+                                      className="h-3 w-3"
+                                      style={{ color: iconData.color }}
+                                    />
+                                  ) : (
+                                    <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                                  )}
+                                  {skillName}
+                                </span>
+                              );
+                            })}
+                            {member.skills.length > 4 && (
+                              <span className="text-[11px] text-muted-foreground self-center px-1">
+                                +{member.skills.length - 4} more
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Social Links & View Profile */}
+                        <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
+                          <div className="flex items-center gap-2">
+                            {member.socialLinks?.github && (
+                              <a
+                                href={member.socialLinks.github}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                aria-label="GitHub"
+                              >
+                                <SiGithub className="h-4 w-4" />
+                              </a>
+                            )}
+                            {member.socialLinks?.linkedin && (
+                              <a
+                                href={member.socialLinks.linkedin}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                aria-label="LinkedIn"
+                              >
+                                <BsLinkedin className="h-4 w-4" />
+                              </a>
+                            )}
+                            {member.socialLinks?.twitter && (
+                              <a
+                                href={member.socialLinks.twitter}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                aria-label="Twitter"
+                              >
+                                <SiX className="h-4 w-4" />
+                              </a>
+                            )}
+                            {member.socialLinks?.facebook && (
+                              <a
+                                href={member.socialLinks.facebook}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                aria-label="Facebook"
+                              >
+                                <SiFacebook className="h-4 w-4" />
+                              </a>
+                            )}
+                            {member.socialLinks?.website && (
+                              <a
+                                href={member.socialLinks.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                                aria-label="Website"
+                              >
+                                <Globe className="h-4 w-4" />
+                              </a>
+                            )}
+                          </div>
+
+                          <Link
+                            href={`/team/${memberId}`}
+                            className="inline-flex items-center text-xs font-bold text-primary hover:underline gap-1 ml-auto"
+                          >
+                            View Profile <ArrowRight className="h-3.5 w-3.5" />
+                          </Link>
                         </div>
-                        <div className="flex items-center justify-center text-sm text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                          View Profile <ArrowRight className="ml-1 h-4 w-4" />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </FadeIn>
-              ))}
+                      </div>
+                    </GlowCard>
+                  </FadeIn>
+                );
+              })}
             </div>
           )}
         </Container>

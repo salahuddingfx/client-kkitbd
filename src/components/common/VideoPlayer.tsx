@@ -37,6 +37,18 @@ function getVimeoId(url: string): string | null {
   }
   return null;
 }
+function getBunnyStreamInfo(url: string): { libraryId: string; videoId: string } | null {
+  for (const p of [
+    /mediadelivery\.net\/embed\/(\d+)\/([a-zA-Z0-9_-]+)/,
+    /bunny\.net\/embed\/(\d+)\/([a-zA-Z0-9_-]+)/,
+    /iframe\.mediadelivery\.net\/embed\/(\d+)\/([a-zA-Z0-9_-]+)/,
+  ]) {
+    const m = url.match(p);
+    if (m) return { libraryId: m[1], videoId: m[2] };
+  }
+  return null;
+}
+
 function isDirectVideo(url: string): boolean {
   return /\.(mp4|webm|ogg|mov|m3u8)($|\?)/i.test(url) || (url.includes("cloudinary.com") && /\/video\//i.test(url));
 }
@@ -63,11 +75,18 @@ export interface VideoPlayerHandle {
   getCurrentTime: () => number;
 }
 
+export interface VideoChapter {
+  time: number; // In seconds
+  label: string; // E.g. "02:15 - Express Middleware Setup"
+}
+
 interface VideoPlayerProps {
   url: string;
   title?: string;
   className?: string;
   thumbnail?: string;
+  chapters?: VideoChapter[];
+  watermarkText?: string;
   onTimeUpdate?: (currentTime: number) => void;
   onProgress?: (percent: number) => void;
   onEnded?: () => void;
@@ -75,7 +94,7 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
-  function VideoPlayer({ url, title, className = "", thumbnail, onTimeUpdate, onProgress, onEnded, initialTime = 0 }, ref) {
+  function VideoPlayer({ url, title, className = "", thumbnail, chapters = [], watermarkText, onTimeUpdate, onProgress, onEnded, initialTime = 0 }, ref) {
     const videoRef = useRef<HTMLVideoElement>(null);
     const hlsRef = useRef<Hls | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -292,11 +311,65 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       adjustVolume(e.deltaY < 0 ? 0.05 : -0.05);
     };
 
+    const bunnyInfo = getBunnyStreamInfo(url);
+    if (bunnyInfo) {
+      return (
+        <div className="space-y-3">
+          <div className={cn("relative aspect-video rounded-xl overflow-hidden bg-black border border-border shadow-2xl group", className)}>
+            <iframe
+              src={`https://iframe.mediadelivery.net/embed/${bunnyInfo.libraryId}/${bunnyInfo.videoId}?autoplay=false&loop=false&muted=false&preload=true`}
+              title={title || "Bunny Stream Video"}
+              className="w-full h-full border-0 absolute inset-0"
+              allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+              allowFullScreen
+            />
+            {watermarkText && (
+              <div className="absolute bottom-10 right-4 pointer-events-none z-10 select-none opacity-40 text-[10px] font-mono font-bold text-white bg-black/70 px-2 py-1 rounded backdrop-blur-xs">
+                {watermarkText} • KKIT
+              </div>
+            )}
+          </div>
+          {chapters.length > 0 && (
+            <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-card border border-border">
+              <span className="text-xs font-bold text-muted-foreground self-center mr-1">Chapters:</span>
+              {chapters.map((ch, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onTimeUpdate?.(ch.time)}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center gap-1.5"
+                >
+                  <span className="font-mono text-[10px] opacity-80">{formatTime(ch.time)}</span>
+                  <span>{ch.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
     // --- YouTube ---
     if (youtubeId) {
       return (
-        <div className={cn("relative aspect-video rounded-xl overflow-hidden bg-black", className)}>
-          <iframe src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`} title={title || "Video"} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+        <div className="space-y-3">
+          <div className={cn("relative aspect-video rounded-xl overflow-hidden bg-black", className)}>
+            <iframe src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`} title={title || "Video"} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+          </div>
+          {chapters.length > 0 && (
+            <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-card border border-border">
+              <span className="text-xs font-bold text-muted-foreground self-center mr-1">Chapters:</span>
+              {chapters.map((ch, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onTimeUpdate?.(ch.time)}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center gap-1.5"
+                >
+                  <span className="font-mono text-[10px] opacity-80">{formatTime(ch.time)}</span>
+                  <span>{ch.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
@@ -313,8 +386,9 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       const qualityLabel = currentLevel === -1 ? "Auto" : hlsLevels[currentLevel] ? `${hlsLevels[currentLevel].height}p` : "Auto";
 
       return (
-        <div
-          ref={containerRef}
+        <div className="space-y-3">
+          <div
+            ref={containerRef}
           className={cn(
             "relative rounded-xl overflow-hidden bg-black group select-none",
             aspectRatio || "aspect-video",
@@ -550,6 +624,32 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
               {viewMode !== "default" && <span className="px-1.5 py-0.5 bg-white/10 backdrop-blur text-white text-[10px] rounded font-medium capitalize">{viewMode}</span>}
             </div>
           )}
+        </div>
+        {chapters.length > 0 && (
+          <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-card border border-border">
+            <span className="text-xs font-bold text-muted-foreground self-center mr-1">Chapters:</span>
+            {chapters.map((ch, idx) => (
+              <button
+                key={idx}
+                onClick={() => {
+                  if (videoRef.current) {
+                    videoRef.current.currentTime = ch.time;
+                    setCurrentTime(ch.time);
+                    if (!playing) {
+                      videoRef.current.play().catch(() => {});
+                      setPlaying(true);
+                    }
+                  }
+                  onTimeUpdate?.(ch.time);
+                }}
+                className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 transition-all flex items-center gap-1.5"
+              >
+                <span className="font-mono text-[10px] opacity-80">{formatTime(ch.time)}</span>
+                <span>{ch.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
         </div>
       );
     }

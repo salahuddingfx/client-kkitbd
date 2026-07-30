@@ -47,6 +47,7 @@ export const FOOTER_LINKS = {
     { label: "Contact", href: "/contact" },
   ],
   resources: [
+    { label: "Developer Resources", href: "/resources" },
     { label: "Blog", href: "/blog" },
     { label: "Portfolio", href: "/portfolio" },
     { label: "Pricing", href: "/pricing" },

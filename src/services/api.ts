@@ -564,6 +564,10 @@ export interface TeamMember {
   department?: string;
   bio?: string;
   skills?: string[];
+  experience?: string;
+  projects?: number;
+  highlights?: string[];
+  isDeveloper?: boolean;
   avatar?: { url: string; publicId: string };
   email?: string;
   phone?: string;
@@ -572,6 +576,7 @@ export interface TeamMember {
     linkedin?: string;
     twitter?: string;
     github?: string;
+    website?: string;
   };
   user?: User;
   status: "active" | "inactive";
@@ -698,7 +703,7 @@ export const invoiceApi = {
     api.get<ApiResponse<Invoice>>(`/invoices/${id}`),
 
   downloadPdf: async (id: string) => {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://kkitbd.com/api/v1";
     const token = typeof window !== "undefined" ? localStorage.getItem("client_accessToken") || localStorage.getItem("token") : null;
     const headers: Record<string, string> = {
       "x-app-context": "client",

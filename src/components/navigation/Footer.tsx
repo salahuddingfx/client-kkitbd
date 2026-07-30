@@ -233,21 +233,12 @@ export function Footer() {
 
         <Separator className="my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
-          <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
-            <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} KKIT. All rights reserved.
-            </p>
-            <span className="hidden sm:inline text-muted-foreground/30">•</span>
-            <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
-              <span>Crafted with</span>
-              <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500 animate-pulse" />
-              <span>by</span>
-              <span className="text-foreground font-semibold hover:text-primary transition-colors cursor-default">
-                KKIT Engineering Team
-              </span>
-            </p>
-          </div>
+        {/* Legal Policies & Copyright Row */}
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6">
+          <p className="text-xs text-muted-foreground text-center lg:text-left">
+            © {new Date().getFullYear()} KKIT. All rights reserved.
+          </p>
+
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {FOOTER_LINKS.legal.map((link) => (
               <Link
@@ -262,7 +253,7 @@ export function Footer() {
         </div>
 
         {/* Custom Code-based Payment Banner */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 p-4 rounded-xl border border-border bg-card/40 backdrop-blur-sm mt-8 opacity-75 hover:opacity-100 transition-opacity duration-300">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-border bg-card/40 backdrop-blur-sm opacity-85 hover:opacity-100 transition-opacity duration-300">
           <div className="flex items-center gap-3 flex-shrink-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Pay With</span>
             <div className="h-4 w-[1px] bg-border hidden lg:block" />
@@ -300,6 +291,21 @@ export function Footer() {
             <ShieldCheck className="h-3.5 w-3.5" />
             <span>Verified by SSLCommerz</span>
           </div>
+        </div>
+
+        {/* Bottom Bar: Crafted with Love */}
+        <div className="mt-6 pt-4 border-t border-border/40 text-center">
+          <p className="text-xs text-muted-foreground inline-flex items-center justify-center gap-1.5 font-medium">
+            <span>Crafted with</span>
+            <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500 animate-pulse shrink-0" />
+            <span>by</span>
+            <Link
+              href="/developers"
+              className="text-foreground font-bold hover:text-primary transition-colors underline decoration-primary/40 underline-offset-2"
+            >
+              KKIT Engineering Team
+            </Link>
+          </p>
         </div>
       </Container>
     </footer>

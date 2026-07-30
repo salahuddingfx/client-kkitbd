@@ -194,12 +194,14 @@ html {
   position: relative;
   border-radius: 1rem;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .glow-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  border-color: transparent;
 }
 
 .glow-card::before {
@@ -207,12 +209,12 @@ html {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 1.5px;
   background: conic-gradient(
     from var(--glow-angle, 0deg),
-    transparent 20%,
+    transparent 15%,
     var(--primary) 50%,
-    transparent 80%
+    transparent 85%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -236,8 +238,8 @@ html {
   border-radius: inherit;
   background: radial-gradient(
     600px circle at var(--glow-x, 50%) var(--glow-y, 50%),
-    rgba(220, 38, 38, 0.1),
-    transparent 40%
+    rgba(220, 38, 38, 0.12),
+    transparent 45%
   );
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -264,16 +266,9 @@ html {
 .animated-border {
   position: relative;
   border-radius: 1rem;
-  overflow: hidden;
-}
-
-.animated-border::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
+  padding: 2px;
   background: conic-gradient(
-    from 0deg,
+    from var(--border-angle, 0deg),
     transparent 0%,
     var(--primary) 10%,
     transparent 20%,
@@ -286,29 +281,14 @@ html {
     transparent 90%,
     var(--primary) 100%
   );
-  animation: rotate-border 8s linear infinite;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.animated-border::after {
-  content: "";
-  position: absolute;
-  inset: 2px;
-  border-radius: calc(1rem - 2px);
-  background: var(--background);
-  z-index: 1;
-  pointer-events: none;
+  animation: spin-border-angle 8s linear infinite;
 }
 
 .animated-border > * {
+  border-radius: calc(1rem - 2px);
+  overflow: hidden;
   position: relative;
   z-index: 2;
-}
-
-@keyframes rotate-border {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 /* Animated Border — Highlighted (thicker, brighter) */

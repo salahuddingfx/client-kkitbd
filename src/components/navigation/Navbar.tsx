@@ -30,7 +30,22 @@ import { setUser, logout } from "@/redux/slices/authSlice";
 import { getInitials, getImageUrl } from "@/utils";
 
 function ThemeToggle({ className }: { className?: string }) {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className={cn("relative", className)}>
+        <span className="h-5 w-5" />
+        <span className="sr-only">Toggle theme</span>
+      </Button>
+    );
+  }
+
   const isDark = theme === "dark";
 
   return (

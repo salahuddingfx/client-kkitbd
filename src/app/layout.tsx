@@ -21,7 +21,10 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   manifest: "/manifest.json",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://kkitbd.com"),
+  alternates: {
+    canonical: "https://kkitbd.com",
+  },
   title: {
     default: "KKIT - Premium Digital Solutions & Learning Platform",
     template: "%s | KKIT",
@@ -36,9 +39,13 @@ export const metadata: Metadata = {
     "app development",
     "UI/UX design",
     "technology training",
+    "KKIT",
+    "KKIT Bangladesh",
+    "software engineering bootcamp",
   ],
-  authors: [{ name: "KKIT" }],
+  authors: [{ name: "KKIT", url: "https://kkitbd.com" }],
   creator: "KKIT",
+  publisher: "KKIT",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -49,10 +56,10 @@ export const metadata: Metadata = {
       "Transform your career with expert-led courses, innovative digital solutions, and cutting-edge technology services.",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://kkitbd.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "KKIT",
+        alt: "KKIT - Premium Digital Solutions & Learning Platform",
       },
     ],
   },
@@ -61,7 +68,7 @@ export const metadata: Metadata = {
     title: "KKIT - Premium Digital Solutions & Learning Platform",
     description:
       "Transform your career with expert-led courses, innovative digital solutions, and cutting-edge technology services.",
-    images: ["/og-image.png"],
+    images: ["https://kkitbd.com/og-image.png"],
     creator: "@kkitbd",
   },
   robots: {
@@ -89,10 +96,42 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3b82f6",
+  themeColor: "#dc2626",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+};
+
+const jsonLdOrg = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "KKIT",
+  url: "https://kkitbd.com",
+  logo: "https://kkitbd.com/icon-512.png",
+  sameAs: [
+    "https://facebook.com/kkitbd",
+    "https://twitter.com/kkitbd",
+    "https://linkedin.com/company/kkitbd",
+    "https://youtube.com/@kkitbd",
+  ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "info@kkitbd.com",
+    contactType: "customer service",
+    availableLanguage: ["English", "Bengali"],
+  },
+};
+
+const jsonLdWebSite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "KKIT",
+  url: "https://kkitbd.com",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://kkitbd.com/courses?search={search_term_string}",
+    "query-input": "required name=search_term_string",
+  },
 };
 
 export default function RootLayout({
@@ -107,6 +146,16 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Providers>
           <CookieConsentProvider>
