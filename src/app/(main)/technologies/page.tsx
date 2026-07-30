@@ -68,7 +68,26 @@ import {
   SiStorybook,
   SiStrapi,
   SiWordpress,
+  SiBlender,
+  SiMeta,
+  SiFacebook,
+  SiInstagram,
+  SiPinterest,
+  SiBehance,
+  SiDribbble,
+  SiYoutube,
+  SiX,
+  SiTiktok,
 } from "react-icons/si";
+import {
+  BsPalette,
+  BsBrush,
+  BsPen,
+  BsGrid,
+  BsFilm,
+  BsCameraVideo,
+  BsLinkedin,
+} from "react-icons/bs";
 
 const markupStyles = [
   { name: "HTML5", icon: SiHtml5, color: "#E34F26", desc: "Semantic markup language" },
@@ -142,7 +161,7 @@ const toolsTesting = [
 ];
 
 const designMobile = [
-  { name: "Figma", icon: SiFigma, color: "#F24E1E", desc: "Collaborative design" },
+  { name: "Figma", icon: SiFigma, color: "#F24E1E", desc: "Collaborative design tool" },
   { name: "Sketch", icon: SiSketch, color: "#F7B500", desc: "Vector design tool" },
   { name: "Flutter", icon: SiFlutter, color: "#02569B", desc: "Cross-platform mobile" },
   { name: "Swift", icon: SiSwift, color: "#FA7343", desc: "Apple development" },
@@ -157,6 +176,39 @@ const cmsBackend = [
   { name: "Sass", icon: SiSass, color: "#CC6699", desc: "CSS extension language" },
 ];
 
+const designTools = [
+  { name: "Photoshop", icon: BsPalette, color: "#31A8FF", desc: "Industry-standard image editing" },
+  { name: "Illustrator", icon: BsBrush, color: "#FF9A00", desc: "Vector graphics & illustration" },
+  { name: "InDesign", icon: BsPen, color: "#FF3366", desc: "Print & digital publishing" },
+  { name: "Creative Cloud", icon: BsGrid, color: "#DA1F26", desc: "Adobe's full creative suite" },
+  { name: "Canva", icon: BsBrush, color: "#00C4CC", desc: "Easy drag-and-drop design" },
+  { name: "Photopea", icon: BsPalette, color: "#18A0FB", desc: "Free browser-based photo editor" },
+  { name: "Figma", icon: SiFigma, color: "#F24E1E", desc: "Collaborative UI/UX design" },
+  { name: "Sketch", icon: SiSketch, color: "#F7B500", desc: "Mac-first vector design tool" },
+  { name: "Blender", icon: SiBlender, color: "#E87D0D", desc: "3D modeling & animation" },
+];
+
+const videoEditing = [
+  { name: "After Effects", icon: BsFilm, color: "#9999FF", desc: "Motion graphics & VFX" },
+  { name: "Premiere Pro", icon: BsCameraVideo, color: "#9999FF", desc: "Professional video editing" },
+  { name: "DaVinci Resolve", icon: BsCameraVideo, color: "#E54526", desc: "Color grading & editing" },
+  { name: "Adobe Animate", icon: BsFilm, color: "#FF0000", desc: "2D animation & interactive media" },
+  { name: "Blender", icon: SiBlender, color: "#E87D0D", desc: "3D animation & rendering" },
+];
+
+const socialMarketing = [
+  { name: "Meta", icon: SiMeta, color: "#0081FB", desc: "Meta Ads & Business Suite" },
+  { name: "Facebook", icon: SiFacebook, color: "#1877F2", desc: "Social media marketing" },
+  { name: "Instagram", icon: SiInstagram, color: "#E4405F", desc: "Visual content & reels" },
+  { name: "LinkedIn", icon: BsLinkedin, color: "#0A66C2", desc: "Professional networking & B2B" },
+  { name: "Pinterest", icon: SiPinterest, color: "#BD081C", desc: "Visual discovery platform" },
+  { name: "Behance", icon: SiBehance, color: "#1769FF", desc: "Designer portfolio showcase" },
+  { name: "Dribbble", icon: SiDribbble, color: "#EA4C89", desc: "Design community platform" },
+  { name: "YouTube", icon: SiYoutube, color: "#FF0000", desc: "Video marketing & SEO" },
+  { name: "Twitter / X", icon: SiX, color: "#000000", desc: "Real-time engagement & ads" },
+  { name: "TikTok", icon: SiTiktok, color: "#010101", desc: "Short-form video marketing" },
+];
+
 const techCategories = [
   { title: "Markup & Styling", description: "The foundation of every web interface — HTML, CSS, and modern styling tools.", techs: markupStyles },
   { title: "Frontend Frameworks", description: "Powerful libraries and frameworks for building interactive user interfaces.", techs: frontendFrameworks },
@@ -166,6 +218,9 @@ const techCategories = [
   { title: "Tools & Testing", description: "Build tools, package managers, API tools, and testing frameworks.", techs: toolsTesting },
   { title: "Design & Mobile", description: "UI/UX design tools and cross-platform mobile development frameworks.", techs: designMobile },
   { title: "CMS & Backend Tools", description: "Content management systems, headless CMS, and backend utilities.", techs: cmsBackend },
+  { title: "Design Tools", description: "Professional design software for graphics, branding, publishing, and creative work.", techs: designTools },
+  { title: "Video Editing & Animation", description: "Industry-leading tools for motion graphics, video production, and 3D animation.", techs: videoEditing },
+  { title: "Social Media & Marketing", description: "Platforms and tools for digital marketing, SEO, advertising, and portfolio showcasing.", techs: socialMarketing },
 ];
 
 const stats = [
