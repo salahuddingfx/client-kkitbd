@@ -21,6 +21,7 @@ export interface User {
   avatar?: { url: string; publicId: string };
   phone?: string;
   designation?: string;
+  bio?: string;
   isActive: boolean;
   createdAt: string;
   wishlist?: string[];

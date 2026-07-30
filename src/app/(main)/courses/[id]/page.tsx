@@ -330,175 +330,199 @@ export default function CourseDetailPage() {
             {/* Left content col */}
             <div className="lg:col-span-2 space-y-6">
 
-              {/* What You'll Learn */}
-              {course.learningOutcomes && course.learningOutcomes.length > 0 && (
-                <div id="overview" className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <Target className="h-5 w-5 text-primary" /> What You&apos;ll Learn
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {course.learningOutcomes.map((outcome, i) => (
-                      <div key={i} className="flex items-start gap-2.5">
-                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
-                        <span className="text-sm text-muted-foreground">{outcome}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Prerequisites */}
-              {course.prerequisites && course.prerequisites.length > 0 && (
-                <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-yellow-500" /> Prerequisites
-                  </h2>
-                  <div className="space-y-2">
-                    {course.prerequisites.map((prereq, i) => (
-                      <div key={i} className="flex items-start gap-2.5">
-                        <span className="text-yellow-500 font-bold mt-0.5">→</span>
-                        <span className="text-sm text-muted-foreground">{prereq}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Tech Stack */}
-              {course.techStack && course.techStack.length > 0 && (
-                <div id="tech" className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-primary" /> Technologies You&apos;ll Learn
-                  </h2>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                    {course.techStack.map((tech, i) => {
-                      const techInfo = getTechInfo(tech.name);
-                      const IconComp = techInfo?.icon;
-                      const color = tech.color || techInfo?.color || "#6b7280";
-                      return (
-                        <div
-                          key={i}
-                          className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group"
-                          style={{ borderColor: `${color}35` }}
-                        >
-                          <div
-                            className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
-                            style={{ backgroundColor: `${color}18`, boxShadow: `0 0 0 1px ${color}30` }}
-                          >
-                            {IconComp ? (
-                              <IconComp className="h-6 w-6" style={{ color }} />
-                            ) : (
-                              <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: color }} />
-                            )}
+              {/* ─── OVERVIEW TAB VIEW ─── */}
+              {activeSection === "overview" && (
+                <div className="space-y-6">
+                  {/* What You'll Learn */}
+                  {course.learningOutcomes && course.learningOutcomes.length > 0 && (
+                    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+                      <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                        <Target className="h-5 w-5 text-primary" /> What You&apos;ll Learn
+                      </h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {course.learningOutcomes.map((outcome, i) => (
+                          <div key={i} className="flex items-start gap-2.5">
+                            <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 shrink-0" />
+                            <span className="text-sm text-muted-foreground">{outcome}</span>
                           </div>
-                          <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">{tech.name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Prerequisites */}
+                  {course.prerequisites && course.prerequisites.length > 0 && (
+                    <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-2xl p-6">
+                      <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                        <Lightbulb className="h-5 w-5 text-yellow-500" /> Prerequisites
+                      </h2>
+                      <div className="space-y-2">
+                        {course.prerequisites.map((prereq, i) => (
+                          <div key={i} className="flex items-start gap-2.5">
+                            <span className="text-yellow-500 font-bold mt-0.5">→</span>
+                            <span className="text-sm text-muted-foreground">{prereq}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Highlights */}
+                  {course.highlights && course.highlights.length > 0 && (
+                    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+                      <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                        <Award className="h-5 w-5 text-primary" /> Course Highlights
+                      </h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        {course.highlights.map((h, i) => (
+                          <div key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                            <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> {h}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* Course Curriculum */}
-              {course.modules && course.modules.length > 0 && (
-                <div id="curriculum" className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+              {/* ─── CURRICULUM TAB VIEW ─── */}
+              {activeSection === "curriculum" && (
+                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h2 className="text-xl font-bold text-foreground">Course Curriculum</h2>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {course.modules.length} modules • {totalLessons} lessons • {course.totalDuration}h total
+                        {course.modules?.length || 0} modules • {totalLessons} lessons • {course.totalDuration}h total
                       </p>
                     </div>
-                    <button
-                      onClick={() => setExpandedModules(expandedModules.size === course.modules!.length ? new Set() : new Set(course.modules!.map((_, i) => i)))}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      {expandedModules.size === course.modules.length ? "Collapse all" : "Expand all"}
-                    </button>
+                    {course.modules && course.modules.length > 0 && (
+                      <button
+                        onClick={() => setExpandedModules(expandedModules.size === course.modules!.length ? new Set() : new Set(course.modules!.map((_, i) => i)))}
+                        className="text-xs text-primary hover:underline font-semibold"
+                      >
+                        {expandedModules.size === course.modules.length ? "Collapse all" : "Expand all"}
+                      </button>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    {course.modules.map((mod, mi) => {
-                      const isExpanded = expandedModules.has(mi);
-                      const lessonCount = mod.lessons?.length || 0;
-                      return (
-                        <div key={mi} className="border border-border rounded-xl overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => toggleModule(mi)}
-                            className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 text-left transition-colors"
-                          >
-                            <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${isExpanded ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
-                              {mi + 1}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-semibold text-foreground">{mod.title}</div>
-                              {mod.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{mod.description}</p>}
-                            </div>
-                            <div className="flex items-center gap-3 shrink-0">
-                              <span className="text-xs text-muted-foreground">{lessonCount} lessons</span>
-                              {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
-                            </div>
-                          </button>
-
-                          <AnimatePresence>
-                            {isExpanded && mod.lessons && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25, ease: "easeInOut" }}
-                                className="overflow-hidden border-t border-border"
-                              >
-                                {mod.lessons.map((lesson, li) => (
-                                  <div key={li} className="flex items-center gap-3 px-4 py-2.5 border-b border-border/40 last:border-b-0 hover:bg-muted/30 transition-colors">
-                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${lesson.isFree ? "bg-green-500/10" : "bg-muted"}`}>
-                                      {lesson.isFree ? (
-                                        <Play className="h-3 w-3 text-green-500" />
-                                      ) : (
-                                        <Lock className="h-3 w-3 text-muted-foreground" />
-                                      )}
-                                    </div>
-                                    <span className="text-sm text-foreground flex-1 truncate">{lesson.title}</span>
-                                    <div className="flex items-center gap-2 shrink-0">
-                                      {lesson.isFree && <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">Free</Badge>}
-                                      {lesson.duration && <span className="text-xs text-muted-foreground">{lesson.duration}m</span>}
-                                    </div>
-                                  </div>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Projects */}
-              {course.projects && course.projects.length > 0 && (
-                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <FolderKanban className="h-5 w-5 text-primary" /> Projects You&apos;ll Build
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {course.projects.map((project, i) => (
-                      <div key={i} className="p-4 rounded-xl border border-border bg-background hover:shadow-sm transition-shadow">
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                            <Trophy className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-foreground text-sm">{project.title}</h4>
-                            {project.description && <p className="text-xs text-muted-foreground mt-1">{project.description}</p>}
-                            {project.techUsed && project.techUsed.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {project.techUsed.map((t, j) => (
-                                  <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{t}</span>
-                                ))}
+                  {course.modules && course.modules.length > 0 ? (
+                    <div className="space-y-2">
+                      {course.modules.map((mod, mi) => {
+                        const isExpanded = expandedModules.has(mi);
+                        const lessonCount = mod.lessons?.length || 0;
+                        return (
+                          <div key={mi} className="border border-border rounded-xl overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => toggleModule(mi)}
+                              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 text-left transition-colors cursor-pointer"
+                            >
+                              <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${isExpanded ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
+                                {mi + 1}
                               </div>
-                            )}
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-semibold text-foreground">{mod.title}</div>
+                                {mod.description && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{mod.description}</p>}
+                              </div>
+                              <div className="flex items-center gap-3 shrink-0">
+                                <span className="text-xs text-muted-foreground">{lessonCount} lessons</span>
+                                {isExpanded ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}
+                              </div>
+                            </button>
+
+                            <AnimatePresence>
+                              {isExpanded && mod.lessons && (
+                                <motion.div
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  transition={{ duration: 0.25, ease: "easeInOut" }}
+                                  className="overflow-hidden border-t border-border"
+                                >
+                                  {mod.lessons.map((lesson, li) => (
+                                    <div key={li} className="flex items-center gap-3 px-4 py-2.5 border-b border-border/40 last:border-b-0 hover:bg-muted/30 transition-colors">
+                                      <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${lesson.isFree ? "bg-green-500/10" : "bg-muted"}`}>
+                                        {lesson.isFree ? (
+                                          <Play className="h-3 w-3 text-green-500" />
+                                        ) : (
+                                          <Lock className="h-3 w-3 text-muted-foreground" />
+                                        )}
+                                      </div>
+                                      <span className="text-sm text-foreground flex-1 truncate">{lesson.title}</span>
+                                      <div className="flex items-center gap-2 shrink-0">
+                                        {lesson.isFree && <Badge variant="secondary" className="text-[10px] bg-green-500/10 text-green-600 border-green-500/20">Free</Badge>}
+                                        {lesson.duration && <span className="text-xs text-muted-foreground">{lesson.duration}m</span>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="py-8 text-center text-sm text-muted-foreground">
+                      No curriculum modules published yet.
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ─── INSTRUCTOR TAB VIEW ─── */}
+              {activeSection === "instructor" && (
+                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5 text-primary" /> Meet Your Instructors & Mentors
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {/* Main instructor */}
+                    <div className="p-4 rounded-xl border border-primary/20 bg-primary/5">
+                      <div className="flex items-center gap-3 mb-2">
+                        {course.instructor?.avatar?.url ? (
+                          <img src={course.instructor.avatar.url} alt={instructorName} className="h-14 w-14 rounded-full object-cover ring-2 ring-primary/30" />
+                        ) : (
+                          <div className="h-14 w-14 rounded-full bg-primary/10 ring-2 ring-primary/30 flex items-center justify-center text-xl font-bold text-primary">{instructorInitials}</div>
+                        )}
+                        <div>
+                          <div className="font-bold text-foreground">{instructorName}</div>
+                          <div className="text-xs text-primary font-semibold">Lead Instructor</div>
+                          {course.instructor?.designation && <div className="text-xs text-muted-foreground">{course.instructor.designation}</div>}
+                        </div>
+                      </div>
+                      {course.instructor?.bio && <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{course.instructor.bio}</p>}
+                    </div>
+                    {/* Mentors */}
+                    {course.mentors?.map((m, i) => (
+                      <div key={i} className="p-4 rounded-xl border border-border bg-background">
+                        <div className="flex items-center gap-3">
+                          {m.user?.avatar?.url ? (
+                            <img src={m.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
+                          ) : (
+                            <div className="h-14 w-14 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-xl font-bold text-indigo-600">{m.user?.name?.charAt(0) || "M"}</div>
+                          )}
+                          <div>
+                            <div className="font-bold text-foreground">{m.user?.name || "Dedicated Mentor"}</div>
+                            <div className="text-xs text-indigo-600 font-semibold">Mentor</div>
+                            {m.user?.designation && <div className="text-xs text-muted-foreground">{m.user.designation}</div>}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {/* Trainers */}
+                    {course.trainers?.map((t, i) => (
+                      <div key={i} className="p-4 rounded-xl border border-border bg-background">
+                        <div className="flex items-center gap-3">
+                          {t.user?.avatar?.url ? (
+                            <img src={t.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
+                          ) : (
+                            <div className="h-14 w-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-xl font-bold text-purple-600">{t.user?.name?.charAt(0) || "T"}</div>
+                          )}
+                          <div>
+                            <div className="font-bold text-foreground">{t.user?.name || "Technical Trainer"}</div>
+                            <div className="text-xs text-purple-600 font-semibold">Trainer</div>
+                            {t.user?.designation && <div className="text-xs text-muted-foreground">{t.user.designation}</div>}
                           </div>
                         </div>
                       </div>
@@ -507,79 +531,86 @@ export default function CourseDetailPage() {
                 </div>
               )}
 
-              {/* Highlights */}
-              {course.highlights && course.highlights.length > 0 && (
-                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <Award className="h-5 w-5 text-primary" /> Course Highlights
-                  </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {course.highlights.map((h, i) => (
-                      <div key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0" /> {h}
-                      </div>
-                    ))}
+              {/* ─── TECH STACK TAB VIEW ─── */}
+              {activeSection === "tech" && (
+                <div className="space-y-6">
+                  {/* Tech Stack Grid */}
+                  <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+                    <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                      <Layers className="h-5 w-5 text-primary" /> Technologies You&apos;ll Learn
+                    </h2>
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                      {((course.techStack && course.techStack.length > 0)
+                        ? course.techStack
+                        : [
+                            { name: "React", color: "#61dafb" },
+                            { name: "Next.js", color: "#000000" },
+                            { name: "Node.js", color: "#339933" },
+                            { name: "TypeScript", color: "#3178c6" },
+                            { name: "Tailwind CSS", color: "#06b6d4" },
+                            { name: "MongoDB", color: "#47a248" },
+                            { name: "Git", color: "#f05032" },
+                            { name: "VS Code", color: "#007acc" },
+                          ]
+                      ).map((tech, i) => {
+                        const techInfo = getTechInfo(tech.name);
+                        const IconComp = techInfo?.icon;
+                        const color = tech.color || techInfo?.color || "#6b7280";
+                        return (
+                          <div
+                            key={i}
+                            className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group"
+                            style={{ borderColor: `${color}35` }}
+                          >
+                            <div
+                              className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                              style={{ backgroundColor: `${color}18`, boxShadow: `0 0 0 1px ${color}30` }}
+                            >
+                              {IconComp ? (
+                                <IconComp className="h-6 w-6" style={{ color }} />
+                              ) : (
+                                <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: color }} />
+                              )}
+                            </div>
+                            <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">{tech.name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
+
+                  {/* Projects */}
+                  {course.projects && course.projects.length > 0 && (
+                    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
+                      <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
+                        <FolderKanban className="h-5 w-5 text-primary" /> Real-World Projects
+                      </h2>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {course.projects.map((project, i) => (
+                          <div key={i} className="p-4 rounded-xl border border-border bg-background hover:shadow-sm transition-shadow">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                                <Trophy className="h-4 w-4 text-primary" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-foreground text-sm">{project.title}</h4>
+                                {project.description && <p className="text-xs text-muted-foreground mt-1">{project.description}</p>}
+                                {project.techUsed && project.techUsed.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-2">
+                                    {project.techUsed.map((t, j) => (
+                                      <span key={j} className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{t}</span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
-
-              {/* Instructor section */}
-              <div id="instructor" className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-primary" /> Meet Your Instructors
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {/* Main instructor */}
-                  <div className="p-4 rounded-xl border border-primary/20 bg-primary/5">
-                    <div className="flex items-center gap-3 mb-2">
-                      {course.instructor?.avatar?.url ? (
-                        <img src={course.instructor.avatar.url} alt={instructorName} className="h-14 w-14 rounded-full object-cover ring-2 ring-primary/30" />
-                      ) : (
-                        <div className="h-14 w-14 rounded-full bg-primary/10 ring-2 ring-primary/30 flex items-center justify-center text-xl font-bold text-primary">{instructorInitials}</div>
-                      )}
-                      <div>
-                        <div className="font-bold text-foreground">{instructorName}</div>
-                        <div className="text-xs text-primary font-semibold">Lead Instructor</div>
-                        {course.instructor?.designation && <div className="text-xs text-muted-foreground">{course.instructor.designation}</div>}
-                      </div>
-                    </div>
-                  </div>
-                  {/* Mentors */}
-                  {course.mentors?.map((m, i) => (
-                    <div key={i} className="p-4 rounded-xl border border-border bg-background">
-                      <div className="flex items-center gap-3">
-                        {m.user?.avatar?.url ? (
-                          <img src={m.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
-                        ) : (
-                          <div className="h-14 w-14 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-xl font-bold text-indigo-600">{m.user?.name?.charAt(0)}</div>
-                        )}
-                        <div>
-                          <div className="font-bold text-foreground">{m.user?.name}</div>
-                          <div className="text-xs text-indigo-600 font-semibold">Mentor</div>
-                          {m.user?.designation && <div className="text-xs text-muted-foreground">{m.user.designation}</div>}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {/* Trainers */}
-                  {course.trainers?.map((t, i) => (
-                    <div key={i} className="p-4 rounded-xl border border-border bg-background">
-                      <div className="flex items-center gap-3">
-                        {t.user?.avatar?.url ? (
-                          <img src={t.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
-                        ) : (
-                          <div className="h-14 w-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-xl font-bold text-purple-600">{t.user?.name?.charAt(0)}</div>
-                        )}
-                        <div>
-                          <div className="font-bold text-foreground">{t.user?.name}</div>
-                          <div className="text-xs text-purple-600 font-semibold">Trainer</div>
-                          {t.user?.designation && <div className="text-xs text-muted-foreground">{t.user.designation}</div>}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
 
             </div>
 
