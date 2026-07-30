@@ -126,7 +126,7 @@ export function FeaturedCourses() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {courses.map((course) => (
                 <div key={course._id} className="course-card">
-                  <Link href={`/courses/${course._id}`}>
+                  <Link href={`/courses/${course.slug || course._id}`}>
                     <div className="animated-border-lg">
                       <GlowCard variant="glow" className="h-full overflow-hidden group border-transparent bg-background flex flex-col">
                         <div className="relative h-48 overflow-hidden shrink-0">

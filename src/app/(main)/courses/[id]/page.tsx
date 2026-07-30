@@ -67,7 +67,17 @@ export default function CourseDetailPage() {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await coursesApi.getById(id);
+        let res;
+        const isObjectId = /^[0-9a-fA-F]{24}$/.test(id);
+        if (isObjectId) {
+          try {
+            res = await coursesApi.getById(id);
+          } catch {
+            res = await coursesApi.getBySlug(id);
+          }
+        } else {
+          res = await coursesApi.getBySlug(id);
+        }
         setCourse(res.data || null);
       } catch {
         setCourse(null);
@@ -333,6 +343,18 @@ export default function CourseDetailPage() {
               {/* ─── OVERVIEW TAB VIEW ─── */}
               {activeSection === "overview" && (
                 <div className="space-y-6">
+                  {/* Detailed Description */}
+                  {course.description && (
+                    <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-3">
+                      <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-primary" /> Course Overview & Details
+                      </h2>
+                      <div className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line space-y-2">
+                        {course.description}
+                      </div>
+                    </div>
+                  )}
+
                   {/* What You'll Learn */}
                   {course.learningOutcomes && course.learningOutcomes.length > 0 && (
                     <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
@@ -472,61 +494,83 @@ export default function CourseDetailPage() {
 
               {/* ─── INSTRUCTOR TAB VIEW ─── */}
               {activeSection === "instructor" && (
-                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                    <GraduationCap className="h-5 w-5 text-primary" /> Meet Your Instructors & Mentors
+                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-6">
+                  <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                    <GraduationCap className="h-5 w-5 text-primary" /> Dedicated Course Teaching & Support Team
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                    {/* Main instructor */}
-                    <div className="p-4 rounded-xl border border-primary/20 bg-primary/5">
-                      <div className="flex items-center gap-3 mb-2">
-                        {course.instructor?.avatar?.url ? (
-                          <img src={course.instructor.avatar.url} alt={instructorName} className="h-14 w-14 rounded-full object-cover ring-2 ring-primary/30" />
-                        ) : (
-                          <div className="h-14 w-14 rounded-full bg-primary/10 ring-2 ring-primary/30 flex items-center justify-center text-xl font-bold text-primary">{instructorInitials}</div>
-                        )}
-                        <div>
-                          <div className="font-bold text-foreground">{instructorName}</div>
-                          <div className="text-xs text-primary font-semibold">Lead Instructor</div>
-                          {course.instructor?.designation && <div className="text-xs text-muted-foreground">{course.instructor.designation}</div>}
+
+                  {/* Section 1: Lead Instructor */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-primary mb-3">1. Lead Instructor (প্রধান নির্দেশক)</h3>
+                    <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 flex items-start gap-4">
+                      {course.instructor?.avatar?.url ? (
+                        <img src={course.instructor.avatar.url} alt={instructorName} className="h-16 w-16 rounded-full object-cover ring-2 ring-primary/40 shrink-0" />
+                      ) : (
+                        <div className="h-16 w-16 rounded-full bg-primary/10 ring-2 ring-primary/30 flex items-center justify-center text-2xl font-bold text-primary shrink-0">{instructorInitials}</div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-foreground text-base">{instructorName}</span>
+                          <span className="bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/30">Lead Instructor</span>
                         </div>
+                        <p className="text-xs text-muted-foreground font-medium mt-0.5">{course.instructor?.designation || "Senior Technical Lead & Educator"}</p>
+                        {course.instructor?.bio && <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{course.instructor.bio}</p>}
                       </div>
-                      {course.instructor?.bio && <p className="text-xs text-muted-foreground mt-2 line-clamp-3">{course.instructor.bio}</p>}
                     </div>
-                    {/* Mentors */}
-                    {course.mentors?.map((m, i) => (
-                      <div key={i} className="p-4 rounded-xl border border-border bg-background">
-                        <div className="flex items-center gap-3">
-                          {m.user?.avatar?.url ? (
-                            <img src={m.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
-                          ) : (
-                            <div className="h-14 w-14 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-xl font-bold text-indigo-600">{m.user?.name?.charAt(0) || "M"}</div>
-                          )}
-                          <div>
-                            <div className="font-bold text-foreground">{m.user?.name || "Dedicated Mentor"}</div>
-                            <div className="text-xs text-indigo-600 font-semibold">Mentor</div>
-                            {m.user?.designation && <div className="text-xs text-muted-foreground">{m.user.designation}</div>}
+                  </div>
+
+                  {/* Section 2: Dedicated Mentors */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-600 mb-3">2. Dedicated Mentors (২-৪ জন মেন্টর সাপোর্ট)</h3>
+                    {course.mentors && course.mentors.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {course.mentors.map((m, i) => (
+                          <div key={i} className="p-4 rounded-xl border border-border bg-background flex items-center gap-3">
+                            {m.user?.avatar?.url ? (
+                              <img src={m.user.avatar.url} alt="" className="h-12 w-12 rounded-full object-cover ring-1 ring-border shrink-0" />
+                            ) : (
+                              <div className="h-12 w-12 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-lg font-bold text-indigo-600 shrink-0">{m.user?.name?.charAt(0) || "M"}</div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="font-bold text-foreground text-sm truncate">{m.user?.name || `Mentor #${i + 1}`}</div>
+                              <div className="text-[11px] text-indigo-600 font-semibold">Course Mentor</div>
+                              <div className="text-[11px] text-muted-foreground truncate">{m.user?.designation || "Support & Code Review Specialist"}</div>
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                    {/* Trainers */}
-                    {course.trainers?.map((t, i) => (
-                      <div key={i} className="p-4 rounded-xl border border-border bg-background">
-                        <div className="flex items-center gap-3">
-                          {t.user?.avatar?.url ? (
-                            <img src={t.user.avatar.url} alt="" className="h-14 w-14 rounded-full object-cover" />
-                          ) : (
-                            <div className="h-14 w-14 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-xl font-bold text-purple-600">{t.user?.name?.charAt(0) || "T"}</div>
-                          )}
-                          <div>
-                            <div className="font-bold text-foreground">{t.user?.name || "Technical Trainer"}</div>
-                            <div className="text-xs text-purple-600 font-semibold">Trainer</div>
-                            {t.user?.designation && <div className="text-xs text-muted-foreground">{t.user.designation}</div>}
+                    ) : (
+                      <div className="p-4 rounded-xl border border-dashed border-border text-xs text-muted-foreground text-center">
+                        All enrolled students receive 24/7 dedicated mentor 1-on-1 code reviews and support.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Section 3: Co-Trainers & Assistants */}
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600 mb-3">3. Co-Trainers & Assistants (সহকারী ট্রেইনারগণ)</h3>
+                    {course.trainers && course.trainers.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {course.trainers.map((t, i) => (
+                          <div key={i} className="p-4 rounded-xl border border-border bg-background flex items-center gap-3">
+                            {t.user?.avatar?.url ? (
+                              <img src={t.user.avatar.url} alt="" className="h-12 w-12 rounded-full object-cover ring-1 ring-border shrink-0" />
+                            ) : (
+                              <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-lg font-bold text-purple-600 shrink-0">{t.user?.name?.charAt(0) || "T"}</div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="font-bold text-foreground text-sm truncate">{t.user?.name || `Trainer #${i + 1}`}</div>
+                              <div className="text-[11px] text-purple-600 font-semibold">Co-Trainer</div>
+                              <div className="text-[11px] text-muted-foreground truncate">{t.user?.designation || "Technical Lab Assistant"}</div>
+                            </div>
                           </div>
-                        </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <div className="p-4 rounded-xl border border-dashed border-border text-xs text-muted-foreground text-center">
+                        Co-trainers conduct live problem solving labs and practice sessions.
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -534,36 +578,94 @@ export default function CourseDetailPage() {
               {/* ─── TECH STACK TAB VIEW ─── */}
               {activeSection === "tech" && (
                 <div className="space-y-6">
-                  {/* Tech Stack Grid */}
-                  <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                    <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                      <Layers className="h-5 w-5 text-primary" /> Technologies You&apos;ll Learn
-                    </h2>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                  {/* 1. Modern Frameworks & Core Tech */}
+                  <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                        <Layers className="h-5 w-5 text-primary" /> 1. Modern Frameworks & Core Technologies
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Modern industry-standard frameworks, databases, and AI models covered in this program.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
                       {((course.techStack && course.techStack.length > 0)
                         ? course.techStack
                         : [
-                            { name: "React", color: "#61dafb" },
+                            { name: "React", color: "#61DAFB" },
                             { name: "Next.js", color: "#000000" },
                             { name: "Node.js", color: "#339933" },
-                            { name: "TypeScript", color: "#3178c6" },
-                            { name: "Tailwind CSS", color: "#06b6d4" },
-                            { name: "MongoDB", color: "#47a248" },
-                            { name: "Git", color: "#f05032" },
-                            { name: "VS Code", color: "#007acc" },
+                            { name: "Express", color: "#000000" },
+                            { name: "TypeScript", color: "#3178C6" },
+                            { name: "Tailwind CSS", color: "#06B6D4" },
+                            { name: "MongoDB", color: "#47A248" },
+                            { name: "Generative AI", color: "#10A37F" },
+                            { name: "Agentic AI", color: "#9333EA" },
                           ]
                       ).map((tech, i) => {
                         const techInfo = getTechInfo(tech.name);
                         const IconComp = techInfo?.icon;
-                        const color = tech.color || techInfo?.color || "#6b7280";
+                        const rawColor = tech.color || techInfo?.color || "#6b7280";
+                        const isBlackColor = rawColor.toLowerCase() === "#000000" || rawColor.toLowerCase() === "#000";
+                        const bgStyleColor = isBlackColor ? "#38bdf8" : rawColor;
+
                         return (
                           <div
                             key={i}
                             className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group"
-                            style={{ borderColor: `${color}35` }}
+                            style={{ borderColor: `${bgStyleColor}35` }}
                           >
                             <div
-                              className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                              className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                              style={{ backgroundColor: `${bgStyleColor}18`, boxShadow: `0 0 0 1px ${bgStyleColor}30` }}
+                            >
+                              {IconComp ? (
+                                <IconComp className={`h-6 w-6 ${isBlackColor ? "text-foreground dark:text-white" : ""}`} style={{ color: isBlackColor ? undefined : rawColor }} />
+                              ) : (
+                                <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: bgStyleColor }} />
+                              )}
+                            </div>
+                            <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">
+                              {techInfo?.label || tech.name}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 2. Developer Editors & Productivity Tools */}
+                  <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                        <FolderKanban className="h-5 w-5 text-indigo-600" /> 2. Developer Editors & Productivity Tools
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Professional IDEs, code editors, version control systems, and testing environments.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
+                      {[
+                        { name: "VS Code", color: "#007ACC" },
+                        { name: "Sublime Text", color: "#FF9800" },
+                        { name: "Git & GitHub", color: "#F05032" },
+                        { name: "Postman", color: "#FF6C37" },
+                        { name: "Docker", color: "#2496ED" },
+                        { name: "Figma", color: "#F24E1E" },
+                      ].map((tech, i) => {
+                        const techInfo = getTechInfo(tech.name);
+                        const IconComp = techInfo?.icon;
+                        const color = tech.color || techInfo?.color || "#007ACC";
+
+                        return (
+                          <div
+                            key={i}
+                            className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group border-indigo-500/20"
+                          >
+                            <div
+                              className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
                               style={{ backgroundColor: `${color}18`, boxShadow: `0 0 0 1px ${color}30` }}
                             >
                               {IconComp ? (
@@ -572,7 +674,54 @@ export default function CourseDetailPage() {
                                 <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: color }} />
                               )}
                             </div>
-                            <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">{tech.name}</span>
+                            <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">
+                              {techInfo?.label || tech.name}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3. Core Fundamentals & Prerequisites */}
+                  <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-4">
+                    <div>
+                      <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                        <Target className="h-5 w-5 text-emerald-600" /> 3. Core Fundamentals & Prerequisites
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Foundational building blocks for clean architecture and problem-solving.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-1">
+                      {[
+                        { name: "HTML5", color: "#E34F26" },
+                        { name: "CSS3", color: "#1572B6" },
+                        { name: "JavaScript", color: "#F7DF1E" },
+                      ].map((tech, i) => {
+                        const techInfo = getTechInfo(tech.name);
+                        const IconComp = techInfo?.icon;
+                        const color = tech.color || techInfo?.color || "#1572B6";
+
+                        return (
+                          <div
+                            key={i}
+                            className="flex flex-col items-center gap-2 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group border-emerald-500/20"
+                          >
+                            <div
+                              className="w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                              style={{ backgroundColor: `${color}18`, boxShadow: `0 0 0 1px ${color}30` }}
+                            >
+                              {IconComp ? (
+                                <IconComp className="h-6 w-6" style={{ color }} />
+                              ) : (
+                                <div className="h-6 w-6 rounded-lg" style={{ backgroundColor: color }} />
+                              )}
+                            </div>
+                            <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">
+                              {techInfo?.label || tech.name}
+                            </span>
                           </div>
                         );
                       })}
@@ -583,7 +732,7 @@ export default function CourseDetailPage() {
                   {course.projects && course.projects.length > 0 && (
                     <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
                       <h2 className="text-xl font-bold text-foreground mb-5 flex items-center gap-2">
-                        <FolderKanban className="h-5 w-5 text-primary" /> Real-World Projects
+                        <Trophy className="h-5 w-5 text-primary" /> Real-World Projects You&apos;ll Build
                       </h2>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {course.projects.map((project, i) => (

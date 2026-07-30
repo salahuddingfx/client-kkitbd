@@ -128,7 +128,7 @@ export default function CoursesPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {filteredCourses.map((course, index) => (
                   <FadeIn key={course._id} delay={index * 0.1}>
-                    <Link href={`/courses/${course._id}`}>
+                    <Link href={`/courses/${course.slug || course._id}`}>
                       <div className="animated-border-lg h-full">
                         <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300 border-transparent bg-background flex flex-col">
                         {/* Thumbnail */}

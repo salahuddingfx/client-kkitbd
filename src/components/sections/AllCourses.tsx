@@ -134,7 +134,7 @@ export function AllCourses() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {visible.map((course, idx) => (
                 <div key={course._id} className="all-course-card">
-                  <Link href={`/courses/${course._id}`}>
+                  <Link href={`/courses/${course.slug || course._id}`}>
                     <div className="animated-border-lg">
                       <GlowCard
                         variant="glow"

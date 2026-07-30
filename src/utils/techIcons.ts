@@ -73,7 +73,10 @@ import {
   SiYoutube,
   SiX,
   SiTiktok,
+  SiGithub,
 } from "react-icons/si";
+import { VscVscode } from "react-icons/vsc";
+import { TbBrandSublimeText, TbBrandOpenai } from "react-icons/tb";
 import { FaAws, FaJava, FaBrain } from "react-icons/fa";
 import { BsCameraVideo, BsBrush, BsLinkedin, BsPalette, BsFilm, BsPen, BsGrid } from "react-icons/bs";
 import type { IconType } from "react-icons";
@@ -133,6 +136,18 @@ const techMap: Record<string, TechInfo> = {
   kubernetes: { icon: SiKubernetes, color: "#326CE5", label: "Kubernetes" },
   nginx: { icon: SiNginx, color: "#009639", label: "Nginx" },
   git: { icon: SiGit, color: "#F05032", label: "Git" },
+  github: { icon: SiGithub, color: "#181717", label: "GitHub" },
+  "git & github": { icon: SiGit, color: "#F05032", label: "Git & GitHub" },
+  vscode: { icon: VscVscode, color: "#007ACC", label: "VS Code" },
+  "vs code": { icon: VscVscode, color: "#007ACC", label: "VS Code" },
+  "visual studio code": { icon: VscVscode, color: "#007ACC", label: "VS Code" },
+  sublime: { icon: TbBrandSublimeText, color: "#FF9800", label: "Sublime Text" },
+  sublimetext: { icon: TbBrandSublimeText, color: "#FF9800", label: "Sublime Text" },
+  "sublime text": { icon: TbBrandSublimeText, color: "#FF9800", label: "Sublime Text" },
+  openai: { icon: TbBrandOpenai, color: "#10A37F", label: "OpenAI / ChatGPT" },
+  "generative ai": { icon: TbBrandOpenai, color: "#10A37F", label: "Generative AI" },
+  "agentic ai": { icon: FaBrain, color: "#9333EA", label: "Agentic AI" },
+  ai: { icon: FaBrain, color: "#9333EA", label: "AI & ML" },
   vite: { icon: SiVite, color: "#646CFF", label: "Vite" },
   webpack: { icon: SiWebpack, color: "#8DD6F9", label: "Webpack" },
   aws: { icon: FaAws, color: "#FF9900", label: "AWS" },
