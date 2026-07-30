@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
+import { getTechInfo } from "@/utils/techIcons";
 import {
   Clock,
   Users,
@@ -32,7 +33,6 @@ import { CourseOutlineForm } from "@/components/common/CourseOutlineForm";
 import { HowItWorksSection } from "@/components/common/HowItWorksSection";
 import { coursesApi, Course } from "@/services/api";
 import { useAppSelector } from "@/redux/hooks";
-import { getSkillIcon } from "@/lib/icons";
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -45,6 +45,18 @@ export default function CourseDetailPage() {
   const [showPayment, setShowPayment] = useState(false);
   const [showOutlineForm, setShowOutlineForm] = useState(false);
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set());
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = document.documentElement;
+      const scrollTop = el.scrollTop || document.body.scrollTop;
+      const scrollHeight = el.scrollHeight - el.clientHeight;
+      setScrollProgress(scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -143,6 +155,20 @@ export default function CourseDetailPage() {
 
   return (
     <>
+      {/* Modern Scroll Progress Bar */}
+      <div
+        className="fixed top-0 left-0 z-[999] h-[3px] bg-gradient-to-r from-primary via-orange-400 to-primary transition-all duration-100 ease-out"
+        style={{ width: `${scrollProgress}%`, boxShadow: "0 0 8px 1px rgba(220,38,38,0.5)" }}
+      />
+      {/* Floating scroll % badge */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: scrollProgress > 5 ? 1 : 0, scale: scrollProgress > 5 ? 1 : 0.8 }}
+        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shadow-lg shadow-primary/40"
+        style={{ boxShadow: "0 0 0 3px rgba(220,38,38,0.2), 0 4px 24px rgba(220,38,38,0.3)" }}
+      >
+        {Math.round(scrollProgress)}%
+      </motion.div>
       {/* Hero */}
       <section className="pt-20 pb-12 bg-background-secondary">
         <Container>
@@ -354,24 +380,29 @@ export default function CourseDetailPage() {
         <section className="py-12 border-b border-border">
           <Container>
             <div className="max-w-4xl mx-auto">
-              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2"><Layers className="h-5 w-5 text-primary" /> Tech Stack</h3>
-              <div className="flex flex-wrap gap-3">
+              <h3 className="text-lg font-bold text-foreground mb-5 flex items-center gap-2"><Layers className="h-5 w-5 text-primary" /> Technologies You&apos;ll Learn</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
                 {course.techStack.map((tech, i) => {
-                  const skillIcon = getSkillIcon(tech.name);
-                  const IconComp = skillIcon?.icon;
-                  const color = tech.color || skillIcon?.color || "#6b7280";
+                  const techInfo = getTechInfo(tech.name);
+                  const IconComp = techInfo?.icon;
+                  const color = tech.color || techInfo?.color || "#6b7280";
                   return (
                     <div
                       key={i}
-                      className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border bg-background hover:shadow-md transition-shadow"
-                      style={{ borderColor: `${color}40` }}
+                      className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-background hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 group"
+                      style={{ borderColor: `${color}35` }}
                     >
-                      {IconComp ? (
-                        <IconComp className="h-5 w-5" style={{ color }} />
-                      ) : (
-                        <div className="h-5 w-5 rounded" style={{ backgroundColor: color }} />
-                      )}
-                      <span className="text-sm font-medium" style={{ color }}>{tech.name}</span>
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-200 group-hover:scale-110"
+                        style={{ backgroundColor: `${color}18`, boxShadow: `0 0 0 1px ${color}30` }}
+                      >
+                        {IconComp ? (
+                          <IconComp className="h-5 w-5" style={{ color }} />
+                        ) : (
+                          <div className="h-5 w-5 rounded-md" style={{ backgroundColor: color }} />
+                        )}
+                      </div>
+                      <span className="text-[11px] font-semibold text-foreground text-center leading-tight line-clamp-2">{tech.name}</span>
                     </div>
                   );
                 })}

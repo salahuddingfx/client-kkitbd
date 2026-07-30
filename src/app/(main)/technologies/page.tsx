@@ -78,6 +78,12 @@ import {
   SiYoutube,
   SiX,
   SiTiktok,
+  SiTensorflow,
+  SiPytorch,
+  SiHuggingface,
+  SiScikitlearn,
+  SiJupyter,
+  SiApachespark,
 } from "react-icons/si";
 import {
   BsPalette,
@@ -87,7 +93,13 @@ import {
   BsFilm,
   BsCameraVideo,
   BsLinkedin,
+  BsBarChartLine,
+  BsChatDots,
+  BsEye,
+  BsCpu,
+  BsDiagram3,
 } from "react-icons/bs";
+import { FaAws, FaBrain, FaRobot } from "react-icons/fa";
 
 const markupStyles = [
   { name: "HTML5", icon: SiHtml5, color: "#E34F26", desc: "Semantic markup language" },
@@ -142,6 +154,7 @@ const devopsCloud = [
   { name: "RabbitMQ", icon: SiRabbitmq, color: "#FF6600", desc: "Message broker" },
   { name: "Terraform", icon: SiTerraform, color: "#7B42BC", desc: "Infrastructure as code" },
   { name: "Google Cloud", icon: SiGooglecloud, color: "#4285F4", desc: "Cloud infrastructure" },
+  { name: "AWS", icon: FaAws, color: "#FF9900", desc: "Amazon Web Services" },
   { name: "Vercel", icon: SiVercel, color: "#000000", desc: "Frontend cloud platform" },
   { name: "Netlify", icon: SiNetlify, color: "#00C7B7", desc: "Web hosting platform" },
   { name: "Cloudflare", icon: SiCloudflare, color: "#F38020", desc: "CDN & security" },
@@ -176,15 +189,31 @@ const cmsBackend = [
   { name: "Sass", icon: SiSass, color: "#CC6699", desc: "CSS extension language" },
 ];
 
+const aiMl = [
+  { name: "TensorFlow", icon: SiTensorflow, color: "#FF6F00", desc: "ML framework by Google" },
+  { name: "PyTorch", icon: SiPytorch, color: "#EE4C2C", desc: "Dynamic deep learning" },
+  { name: "Hugging Face", icon: SiHuggingface, color: "#FFD21E", desc: "Transformers & model hub" },
+  { name: "scikit-learn", icon: SiScikitlearn, color: "#F7931E", desc: "Classic ML algorithms" },
+  { name: "Jupyter", icon: SiJupyter, color: "#F37626", desc: "Interactive data notebooks" },
+  { name: "Apache Spark", icon: SiApachespark, color: "#E25A1C", desc: "Big data processing" },
+  { name: "OpenAI API", icon: BsCpu, color: "#412991", desc: "GPT-4 & ChatGPT APIs" },
+  { name: "LangChain", icon: BsDiagram3, color: "#1C3C3C", desc: "LLM application framework" },
+  { name: "Machine Learning", icon: FaBrain, color: "#6366F1", desc: "Predictive modeling" },
+  { name: "AI Agents", icon: FaRobot, color: "#8B5CF6", desc: "Autonomous AI systems" },
+  { name: "Data Analysis", icon: BsBarChartLine, color: "#3B82F6", desc: "Statistical analysis" },
+  { name: "Computer Vision", icon: BsEye, color: "#EC4899", desc: "Image recognition" },
+  { name: "NLP", icon: BsChatDots, color: "#14B8A6", desc: "Natural language processing" },
+];
+
 const designTools = [
   { name: "Photoshop", icon: BsPalette, color: "#31A8FF", desc: "Industry-standard image editing" },
   { name: "Illustrator", icon: BsBrush, color: "#FF9A00", desc: "Vector graphics & illustration" },
   { name: "InDesign", icon: BsPen, color: "#FF3366", desc: "Print & digital publishing" },
   { name: "Creative Cloud", icon: BsGrid, color: "#DA1F26", desc: "Adobe's full creative suite" },
   { name: "Canva", icon: BsBrush, color: "#00C4CC", desc: "Easy drag-and-drop design" },
-  { name: "Photopea", icon: BsPalette, color: "#18A0FB", desc: "Free browser-based photo editor" },
+  { name: "Photopea", icon: BsPalette, color: "#18A0FB", desc: "Browser-based photo editor" },
   { name: "Figma", icon: SiFigma, color: "#F24E1E", desc: "Collaborative UI/UX design" },
-  { name: "Sketch", icon: SiSketch, color: "#F7B500", desc: "Mac-first vector design tool" },
+  { name: "Sketch", icon: SiSketch, color: "#F7B500", desc: "Mac-first vector design" },
   { name: "Blender", icon: SiBlender, color: "#E87D0D", desc: "3D modeling & animation" },
 ];
 
@@ -192,7 +221,7 @@ const videoEditing = [
   { name: "After Effects", icon: BsFilm, color: "#9999FF", desc: "Motion graphics & VFX" },
   { name: "Premiere Pro", icon: BsCameraVideo, color: "#9999FF", desc: "Professional video editing" },
   { name: "DaVinci Resolve", icon: BsCameraVideo, color: "#E54526", desc: "Color grading & editing" },
-  { name: "Adobe Animate", icon: BsFilm, color: "#FF0000", desc: "2D animation & interactive media" },
+  { name: "Adobe Animate", icon: BsFilm, color: "#FF0000", desc: "2D animation & interactive" },
   { name: "Blender", icon: SiBlender, color: "#E87D0D", desc: "3D animation & rendering" },
 ];
 
@@ -200,7 +229,7 @@ const socialMarketing = [
   { name: "Meta", icon: SiMeta, color: "#0081FB", desc: "Meta Ads & Business Suite" },
   { name: "Facebook", icon: SiFacebook, color: "#1877F2", desc: "Social media marketing" },
   { name: "Instagram", icon: SiInstagram, color: "#E4405F", desc: "Visual content & reels" },
-  { name: "LinkedIn", icon: BsLinkedin, color: "#0A66C2", desc: "Professional networking & B2B" },
+  { name: "LinkedIn", icon: BsLinkedin, color: "#0A66C2", desc: "Professional & B2B marketing" },
   { name: "Pinterest", icon: SiPinterest, color: "#BD081C", desc: "Visual discovery platform" },
   { name: "Behance", icon: SiBehance, color: "#1769FF", desc: "Designer portfolio showcase" },
   { name: "Dribbble", icon: SiDribbble, color: "#EA4C89", desc: "Design community platform" },
@@ -216,6 +245,7 @@ const techCategories = [
   { title: "Databases & ORM", description: "Data persistence, querying, and object-relational mapping for every use case.", techs: databases },
   { title: "DevOps & Cloud", description: "Containerization, orchestration, CI/CD, and cloud infrastructure at scale.", techs: devopsCloud },
   { title: "Tools & Testing", description: "Build tools, package managers, API tools, and testing frameworks.", techs: toolsTesting },
+  { title: "AI & Machine Learning", description: "Cutting-edge AI frameworks, LLMs, deep learning, NLP, and data science tools.", techs: aiMl },
   { title: "Design & Mobile", description: "UI/UX design tools and cross-platform mobile development frameworks.", techs: designMobile },
   { title: "CMS & Backend Tools", description: "Content management systems, headless CMS, and backend utilities.", techs: cmsBackend },
   { title: "Design Tools", description: "Professional design software for graphics, branding, publishing, and creative work.", techs: designTools },
@@ -224,7 +254,7 @@ const techCategories = [
 ];
 
 const stats = [
-  { number: "60+", label: "Technologies" },
+  { number: "80+", label: "Technologies" },
   { number: "50+", label: "Expert Developers" },
   { number: "100+", label: "Projects Delivered" },
   { number: "99.9%", label: "Uptime SLA" },
@@ -287,40 +317,39 @@ export default function TechnologiesPage() {
 
       {/* Tech Categories */}
       {techCategories.map((category, catIndex) => (
-        <section key={category.title} className={`py-12 sm:py-20 ${catIndex % 2 === 1 ? "bg-background-secondary" : ""}`}>
+        <section key={category.title} className={`py-10 sm:py-16 ${catIndex % 2 === 1 ? "bg-background-secondary" : ""}`}>
           <Container>
             <ScrollReveal direction="up" distance={30}>
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-foreground mb-3">{category.title}</h2>
-                <p className="text-muted-foreground max-w-xl mx-auto">{category.description}</p>
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-foreground mb-2">{category.title}</h2>
+                <p className="text-muted-foreground text-sm max-w-xl mx-auto">{category.description}</p>
               </div>
             </ScrollReveal>
 
             <StaggerReveal
               childSelector=".tech-item"
-              stagger={0.06}
-              y={40}
-              duration={0.6}
+              stagger={0.04}
+              y={30}
+              duration={0.5}
               from="center"
             >
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
                 {category.techs.map((tech) => (
                   <div key={tech.name} className="tech-item">
-                    <GlowCard variant="glow" className="p-5 text-center group cursor-default h-full">
+                    <GlowCard variant="glow" className="p-2.5 text-center group cursor-default h-full">
                       <div
-                        className="w-12 h-12 mx-auto mb-2 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
+                        className="w-8 h-8 mx-auto mb-1.5 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-md"
                         style={{
-                          backgroundColor: `${tech.color}15`,
-                          boxShadow: `0 0 0 1px ${tech.color}20`,
+                          backgroundColor: `${tech.color}18`,
+                          boxShadow: `0 0 0 1px ${tech.color}25`,
                         }}
                       >
                         <tech.icon
-                          className="w-6 h-6 transition-transform duration-300 group-hover:scale-110"
+                          className="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
                           style={{ color: tech.color }}
                         />
                       </div>
-                      <h3 className="font-semibold text-foreground text-sm mb-0.5">{tech.name}</h3>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{tech.desc}</p>
+                      <h3 className="font-semibold text-foreground text-[10px] leading-tight">{tech.name}</h3>
                     </GlowCard>
                   </div>
                 ))}
@@ -431,11 +460,11 @@ export default function TechnologiesPage() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                      <SiMongodb className="w-6 h-6 text-[#47A248]" />
+                      <FaBrain className="w-6 h-6 text-[#6366F1]" />
                     </div>
                     <div>
-                      <div className="font-semibold text-foreground">Flexible Data</div>
-                      <div className="text-sm text-muted-foreground">MongoDB + PostgreSQL + MySQL</div>
+                      <div className="font-semibold text-foreground">AI-Powered</div>
+                      <div className="text-sm text-muted-foreground">TensorFlow + PyTorch + OpenAI</div>
                     </div>
                   </div>
                 </div>
