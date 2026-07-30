@@ -3,7 +3,6 @@ import type { NextRequest } from "next/server";
 import { AUTH_COOKIE_NAME } from "@/constants";
 
 const protectedRoutes = ["/dashboard", "/profile", "/settings"];
-const authRoutes = ["/login", "/register", "/forgot-password"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,10 +12,6 @@ export function proxy(request: NextRequest) {
     const url = new URL("/login", request.url);
     url.searchParams.set("from", pathname);
     return NextResponse.redirect(url);
-  }
-
-  if (authRoutes.includes(pathname) && token) {
-    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();
