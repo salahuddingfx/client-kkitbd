@@ -12,12 +12,15 @@ import {
   ArrowRight,
   Play,
   Loader2,
+  ShoppingBag,
+  Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import { Card, CardContent, Skeleton } from "@/components/ui";
 import { FadeIn } from "@/components/animations";
 import { cn, formatCurrency, formatDate } from "@/utils";
 import { useAppSelector } from "@/redux/hooks";
-import { enrollmentsApi, paymentApi } from "@/services/api";
+import { enrollmentsApi, paymentApi, serviceOrdersApi } from "@/services/api";
 
 const activityIcons = {
   course_progress: TrendingUp,
@@ -25,6 +28,7 @@ const activityIcons = {
   payment: CreditCard,
   wishlist: BookOpen,
   profile: BookOpen,
+  service_order: ShoppingBag,
 };
 
 export default function DashboardOverviewPage() {
@@ -34,18 +38,23 @@ export default function DashboardOverviewPage() {
   const [loading, setLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<any[]>([]);
   const [payments, setPayments] = useState<any[]>([]);
+  const [serviceOrders, setServiceOrders] = useState<any[]>([]);
 
   useEffect(() => {
     Promise.all([
       enrollmentsApi.getAll(),
       paymentApi.getAll(),
+      serviceOrdersApi.getMyOrders().catch(() => ({ success: false, data: [] })),
     ])
-      .then(([enrollmentsRes, paymentsRes]) => {
+      .then(([enrollmentsRes, paymentsRes, serviceOrdersRes]) => {
         if (enrollmentsRes.success) {
           setEnrollments(enrollmentsRes.data);
         }
         if (paymentsRes.success) {
           setPayments(paymentsRes.data);
+        }
+        if (serviceOrdersRes.success && serviceOrdersRes.data) {
+          setServiceOrders(serviceOrdersRes.data);
         }
       })
       .catch((err) => {
@@ -70,6 +79,10 @@ export default function DashboardOverviewPage() {
     }, 0)
   );
 
+  const activeServiceOrders = serviceOrders.filter((s) =>
+    ["pending_review", "in_progress", "revision", "delivered"].includes(s.projectStatus)
+  );
+
   const stats = [
     {
       label: "Enrolled Courses",
@@ -79,7 +92,14 @@ export default function DashboardOverviewPage() {
       bg: "bg-blue-500/10",
     },
     {
-      label: "Completed",
+      label: "Service Orders",
+      value: serviceOrders.length,
+      icon: ShoppingBag,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      label: "Completed Courses",
       value: completedCount,
       icon: Award,
       color: "text-green-500",
@@ -123,6 +143,13 @@ export default function DashboardOverviewPage() {
       description: `Amount: ${formatCurrency(p.amount)} via ${p.method}`,
       date: p.createdAt,
     })),
+    ...serviceOrders.map((s) => ({
+      id: s._id,
+      type: "service_order" as const,
+      title: `Service Order: ${s.serviceName || s.orderNumber}`,
+      description: `Status: ${s.projectStatus?.replace("_", " ")} | ৳${s.totalAmount}`,
+      date: s.createdAt,
+    })),
   ]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
@@ -137,8 +164,8 @@ export default function DashboardOverviewPage() {
         </div>
 
         {/* Stats Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
             <Card key={i}>
               <CardContent className="p-5">
                 <div className="flex items-center gap-4">
@@ -210,23 +237,23 @@ export default function DashboardOverviewPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">Welcome back, {userName}!</h1>
         <p className="text-muted-foreground mt-1">
-          Here&apos;s what&apos;s happening with your learning journey.
+          Here&apos;s what&apos;s happening with your learning journey and active service projects.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((stat, i) => (
           <FadeIn key={stat.label} delay={i * 0.1}>
             <Card className="hover:shadow-md transition-shadow">
-              <CardContent className="p-5">
-                <div className="flex items-center gap-4">
-                  <div className={cn("p-3 rounded-xl", stat.bg)}>
+              <CardContent className="p-4 sm:p-5">
+                <div className="flex items-center gap-3">
+                  <div className={cn("p-3 rounded-xl shrink-0", stat.bg)}>
                     <stat.icon className={cn("h-5 w-5", stat.color)} />
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className="text-xs text-muted-foreground">{stat.label}</p>
+                  <div className="min-w-0">
+                    <p className="text-xl sm:text-2xl font-bold text-foreground truncate">{stat.value}</p>
+                    <p className="text-xs text-muted-foreground truncate">{stat.label}</p>
                   </div>
                 </div>
               </CardContent>
@@ -234,6 +261,38 @@ export default function DashboardOverviewPage() {
           </FadeIn>
         ))}
       </div>
+
+      {/* Active Service Orders Banner / Card */}
+      {serviceOrders.length > 0 && (
+        <FadeIn delay={0.15}>
+          <Card className="border-emerald-500/20 bg-emerald-500/5">
+            <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                  <ShoppingBag className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-foreground flex items-center gap-2">
+                    Service Orders & Projects ({serviceOrders.length})
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-300">
+                      {activeServiceOrders.length} Active
+                    </span>
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Track live project development, deliverables, and revision requests for your digital agency services.
+                  </p>
+                </div>
+              </div>
+              <Link
+                href="/dashboard/services"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold text-xs hover:bg-emerald-700 transition-colors shrink-0 shadow-sm"
+              >
+                View Service Projects <ArrowRight className="h-4 w-4" />
+              </Link>
+            </CardContent>
+          </Card>
+        </FadeIn>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Continue Learning */}
