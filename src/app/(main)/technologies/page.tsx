@@ -333,23 +333,24 @@ export default function TechnologiesPage() {
               duration={0.5}
               from="center"
             >
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                 {category.techs.map((tech) => (
                   <div key={tech.name} className="tech-item">
-                    <GlowCard variant="glow" className="p-2.5 text-center group cursor-default h-full">
+                    <GlowCard variant="glow" className="p-5 text-center group cursor-default h-full">
                       <div
-                        className="w-8 h-8 mx-auto mb-1.5 rounded-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-md"
+                        className="w-14 h-14 mx-auto mb-3 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg"
                         style={{
                           backgroundColor: `${tech.color}18`,
-                          boxShadow: `0 0 0 1px ${tech.color}25`,
+                          boxShadow: `0 0 0 1px ${tech.color}30`,
                         }}
                       >
                         <tech.icon
-                          className="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
+                          className="w-7 h-7 transition-transform duration-300 group-hover:scale-110"
                           style={{ color: tech.color }}
                         />
                       </div>
-                      <h3 className="font-semibold text-foreground text-[10px] leading-tight">{tech.name}</h3>
+                      <h3 className="font-semibold text-foreground text-sm mb-1">{tech.name}</h3>
+                      <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2">{tech.desc}</p>
                     </GlowCard>
                   </div>
                 ))}
