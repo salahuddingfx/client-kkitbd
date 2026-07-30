@@ -293,7 +293,7 @@ export default function TechnologiesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {processSteps.map((step) => (
                 <div key={step.step} className="process-step">
-                  <GlowCard variant="animated" className="p-4 sm:p-8 h-full relative overflow-hidden">
+                  <GlowCard variant="animated" className="h-full relative overflow-hidden" innerClassName="p-4 sm:p-8 h-full relative overflow-hidden">
                     <div className="text-6xl font-black text-primary/10 absolute top-4 right-4">
                       {step.step}
                     </div>

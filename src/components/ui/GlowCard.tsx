@@ -6,12 +6,14 @@ import { cn } from "@/lib/utils";
 interface GlowCardProps {
   children: ReactNode;
   className?: string;
+  innerClassName?: string;
   variant?: "glow" | "animated" | "neu";
 }
 
 export function GlowCard({
   children,
   className = "",
+  innerClassName = "",
   variant = "glow",
 }: GlowCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -30,6 +32,21 @@ export function GlowCard({
     animated: "animated-border",
     neu: "neu-card",
   }[variant];
+
+  if (variant === "animated") {
+    return (
+      <div
+        ref={cardRef}
+        className={cn(variantClass, className)}
+        onMouseMove={handleMouseMove}
+      >
+        {/* Inner wrapper: solid bg so the spinning conic gradient shows only as a border */}
+        <div className={cn("bg-card h-full w-full rounded-[calc(1rem-2px)] relative z-10", innerClassName)}>
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

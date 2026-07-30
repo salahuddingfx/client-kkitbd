@@ -286,6 +286,7 @@ html {
 
 .animated-border > * {
   border-radius: calc(1rem - 2px);
+  background: var(--card);
   overflow: hidden;
   position: relative;
   z-index: 2;
