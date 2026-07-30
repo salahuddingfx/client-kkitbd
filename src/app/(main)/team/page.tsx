@@ -77,7 +77,7 @@ export default function TeamPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {team.map((member, index) => (
                 <FadeIn key={member._id} delay={index * 0.1}>
-                  <Link href={`/team/${member.slug}`}>
+                  <Link href={`/team/${member.slug || member._id}`}>
                     <Card className="h-full text-center group hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer">
                       <CardContent className="p-4 sm:p-8">
                         <Avatar className="w-24 h-24 mx-auto mb-4">

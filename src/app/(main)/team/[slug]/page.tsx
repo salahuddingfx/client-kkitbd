@@ -19,7 +19,35 @@ export default function TeamMemberPage() {
     const fetchMember = async () => {
       try {
         const res = await teamApi.getBySlug(slug);
-        setMember(res.data || null);
+        if (res.data) {
+          setMember(res.data);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Fallthrough
+      }
+
+      try {
+        const res = await teamApi.getById(slug);
+        if (res.data) {
+          setMember(res.data);
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Fallthrough
+      }
+
+      try {
+        const res = await teamApi.getAll();
+        const found = (res.data || []).find(
+          (m: TeamMember) =>
+            m._id === slug ||
+            m.slug === slug ||
+            m.name?.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slug
+        );
+        setMember(found || null);
       } catch {
         setMember(null);
       } finally {

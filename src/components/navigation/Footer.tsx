@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, CheckCircle, ShieldCheck } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle, ShieldCheck, Heart } from "lucide-react";
 import { Separator } from "@/components/ui";
 import { Container } from "@/components/common";
 import { FOOTER_LINKS, SOCIAL_LINKS } from "@/constants";
@@ -233,10 +233,21 @@ export function Footer() {
 
         <Separator className="my-8" />
 
-        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 mb-8">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} KKIT. All rights reserved.
-          </p>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left">
+            <p className="text-sm text-muted-foreground">
+              © {new Date().getFullYear()} KKIT. All rights reserved.
+            </p>
+            <span className="hidden sm:inline text-muted-foreground/30">•</span>
+            <p className="text-xs text-muted-foreground flex items-center gap-1 font-medium">
+              <span>Crafted with</span>
+              <Heart className="h-3.5 w-3.5 text-red-500 fill-red-500 animate-pulse" />
+              <span>by</span>
+              <span className="text-foreground font-semibold hover:text-primary transition-colors cursor-default">
+                KKIT Engineering Team
+              </span>
+            </p>
+          </div>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             {FOOTER_LINKS.legal.map((link) => (
               <Link

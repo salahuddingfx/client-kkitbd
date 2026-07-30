@@ -88,23 +88,51 @@ export default function TeamMemberClient({ member }: { member: TeamMember }) {
         </Container>
       </section>
 
-      {/* Bio */}
-      {member.bio && (
-        <section className="py-16">
-          <Container>
-            <div className="max-w-4xl mx-auto">
+      {/* Bio & Details Section */}
+      <section className="py-12 md:py-16">
+        <Container>
+          <div className="max-w-4xl mx-auto space-y-6">
+            {member.bio && (
               <FadeIn>
                 <GlowCard variant="glow">
-                  <div className="p-6">
-                    <h2 className="text-xl font-semibold text-foreground mb-3">About</h2>
-                    <p className="text-muted-foreground leading-relaxed">{member.bio}</p>
+                  <div className="p-6 md:p-8">
+                    <h2 className="text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+                      <Briefcase className="h-5 w-5 text-primary" />
+                      About {member.name}
+                    </h2>
+                    <p className="text-muted-foreground leading-relaxed text-sm md:text-base whitespace-pre-line">
+                      {member.bio}
+                    </p>
                   </div>
                 </GlowCard>
               </FadeIn>
-            </div>
-          </Container>
-        </section>
-      )}
+            )}
+
+            {member.skills && member.skills.length > 0 && (
+              <FadeIn delay={0.1}>
+                <GlowCard variant="glow">
+                  <div className="p-6 md:p-8">
+                    <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-primary" />
+                      Skills & Technologies
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {member.skills.map((skill: string) => (
+                        <span
+                          key={skill}
+                          className="px-3.5 py-1.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-semibold text-xs shadow-xs"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </GlowCard>
+              </FadeIn>
+            )}
+          </div>
+        </Container>
+      </section>
     </>
   );
 }

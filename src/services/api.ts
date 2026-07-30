@@ -563,6 +563,7 @@ export interface TeamMember {
   designation: string;
   department?: string;
   bio?: string;
+  skills?: string[];
   avatar?: { url: string; publicId: string };
   email?: string;
   phone?: string;
@@ -585,6 +586,9 @@ export const teamApi = {
 
   getBySlug: (slug: string) =>
     api.get<ApiResponse<TeamMember>>(`/team/${slug}`),
+
+  getById: (id: string) =>
+    api.get<ApiResponse<TeamMember>>(`/team/${id}`),
 };
 
 // Pricing API

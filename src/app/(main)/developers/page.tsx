@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui";
 import { Breadcrumb, Container } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { GlowCard } from "@/components/ui";
-import { Globe, ExternalLink } from "lucide-react";
+import { Globe, ExternalLink, ArrowRight } from "lucide-react";
 import { SiGithub, SiX } from "react-icons/si";
 import { BsLinkedin } from "react-icons/bs";
 import {
@@ -210,7 +210,9 @@ export default function DevelopersPage() {
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <h3 className="text-lg font-semibold text-foreground">{dev.name}</h3>
+                        <Link href={`/developers/${dev.id}`} className="hover:text-primary transition-colors">
+                          <h3 className="text-lg font-bold text-foreground hover:text-primary transition-colors">{dev.name}</h3>
+                        </Link>
                         <p className="text-sm text-primary font-medium">{dev.role}</p>
                         <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                           <span>{dev.experience}</span>
@@ -221,7 +223,7 @@ export default function DevelopersPage() {
                     </div>
 
                     {/* Bio */}
-                    <p className="text-sm text-muted-foreground mb-4">{dev.bio}</p>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{dev.bio}</p>
 
                     {/* Skills */}
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -236,48 +238,57 @@ export default function DevelopersPage() {
                       ))}
                     </div>
 
-                    {/* Social Links */}
-                    <div className="flex items-center gap-2 pt-3 border-t border-border">
-                      {dev.social.github && (
-                        <a
-                          href={dev.social.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
-                        >
-                          <SiGithub className="h-4 w-4" />
-                        </a>
-                      )}
-                      {dev.social.linkedin && (
-                        <a
-                          href={dev.social.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
-                        >
-                          <BsLinkedin className="h-4 w-4" />
-                        </a>
-                      )}
-                      {dev.social.twitter && (
-                        <a
-                          href={dev.social.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
-                        >
-                          <SiX className="h-4 w-4" />
-                        </a>
-                      )}
-                      {dev.social.website && (
-                        <a
-                          href={dev.social.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
-                        >
-                          <Globe className="h-4 w-4" />
-                        </a>
-                      )}
+                    {/* Social Links & View Profile */}
+                    <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
+                      <div className="flex items-center gap-2">
+                        {dev.social.github && (
+                          <a
+                            href={dev.social.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                          >
+                            <SiGithub className="h-4 w-4" />
+                          </a>
+                        )}
+                        {dev.social.linkedin && (
+                          <a
+                            href={dev.social.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                          >
+                            <BsLinkedin className="h-4 w-4" />
+                          </a>
+                        )}
+                        {dev.social.twitter && (
+                          <a
+                            href={dev.social.twitter}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                          >
+                            <SiX className="h-4 w-4" />
+                          </a>
+                        )}
+                        {dev.social.website && (
+                          <a
+                            href={dev.social.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-primary hover:text-white transition-all"
+                          >
+                            <Globe className="h-4 w-4" />
+                          </a>
+                        )}
+                      </div>
+
+                      <Link
+                        href={`/developers/${dev.id}`}
+                        className="inline-flex items-center text-xs font-bold text-primary hover:underline gap-1 ml-auto"
+                      >
+                        View Profile <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
                     </div>
                   </div>
                 </GlowCard>
