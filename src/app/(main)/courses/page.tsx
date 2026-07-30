@@ -126,49 +126,65 @@ export default function CoursesPage() {
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCourses.map((course, index) => (
+                 {filteredCourses.map((course, index) => (
                   <FadeIn key={course._id} delay={index * 0.1}>
                     <Link href={`/courses/${course._id}`}>
-                      <div className="animated-border-lg">
-                        <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300 border-transparent bg-background">
-                        <div className="relative h-48 bg-gradient-to-br from-primary/20 to-primary/5" />
-                        <CardContent className="p-6">
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary">{typeof course.category === "object" ? course.category?.name : course.category}</Badge>
-                            <Badge>{course.level}</Badge>
+                      <div className="animated-border-lg h-full">
+                        <Card className="h-full overflow-hidden group hover:border-primary/50 transition-all duration-300 border-transparent bg-background flex flex-col">
+                        {/* Thumbnail */}
+                        <div className="relative h-44 bg-gradient-to-br from-primary/20 via-primary/10 to-orange-500/10 overflow-hidden shrink-0">
+                          {course.thumbnail?.url ? (
+                            <img src={course.thumbnail.url} alt={course.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-4xl font-black text-primary/20">{course.title?.[0]}</span>
+                            </div>
+                          )}
+                          <div className="absolute top-3 left-3 flex gap-2">
+                            <Badge variant="secondary" className="text-[10px]">{typeof course.category === "object" ? course.category?.name : course.category}</Badge>
+                            <Badge className="text-[10px]">{course.level}</Badge>
                           </div>
-                          <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                        </div>
+                        <CardContent className="p-5 flex flex-col flex-1">
+                          <h3 className="text-base font-bold text-foreground mb-1.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                             {course.title}
                           </h3>
-                          <p className="text-muted-foreground text-sm mb-4">
+                          <p className="text-muted-foreground text-xs mb-3 line-clamp-2 flex-1">
                             {course.shortDescription || course.description?.substring(0, 100)}
                           </p>
-                          <div className="flex items-center justify-between text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-2 sm:space-x-4">
-                              <span className="flex items-center">
-                                <Clock className="h-4 w-4 mr-1" />
+                          <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
+                            <div className="flex items-center gap-3">
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3.5 w-3.5" />
                                 {course.totalDuration}h
                               </span>
-                              <span className="flex items-center">
-                                <Users className="h-4 w-4 mr-1" />
-                                {course.enrolledStudents}
+                              <span className="flex items-center gap-1">
+                                <Users className="h-3.5 w-3.5" />
+                                {course.enrolledStudents?.toLocaleString()}
                               </span>
                             </div>
-                            <span className="flex items-center">
-                              <Star className="h-4 w-4 mr-1 text-yellow-500" />
+                            <span className="flex items-center gap-1">
+                              <Star className="h-3.5 w-3.5 text-yellow-500" />
                               {course.rating?.average?.toFixed(1) || "N/A"}
                             </span>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                            <span className="text-xl font-bold text-primary">
-                              ${course.price}
-                            </span>
-                            <Button variant="ghost" size="sm">
-                              Enroll Now
+                          <div className="pt-3 border-t border-border flex items-center justify-between">
+                            <div className="flex items-baseline gap-2">
+                              <span className="text-xl font-bold text-primary">
+                                ৳{(course.discountPrice || course.price)?.toLocaleString()}
+                              </span>
+                              {course.discountPrice && course.discountPrice < course.price && (
+                                <span className="text-xs text-muted-foreground line-through">
+                                  ৳{course.price?.toLocaleString()}
+                                </span>
+                              )}
+                            </div>
+                            <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 text-xs">
+                              Enroll Now →
                             </Button>
                           </div>
                         </CardContent>
-                      </Card>
+                        </Card>
                       </div>
                     </Link>
                   </FadeIn>
