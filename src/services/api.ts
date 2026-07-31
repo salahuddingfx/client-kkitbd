@@ -912,6 +912,16 @@ export interface PortfolioItem {
   image?: { url: string; publicId: string };
   status: string;
   featured: boolean;
+  projectType?: "client" | "student" | "internal";
+  metrics?: { label: string; value: string };
+  testimonial?: { quote: string; author: string; designation?: string; company?: string };
+  challenge?: string;
+  solution?: string;
+  features?: string[];
+  deliverables?: string[];
+  studentName?: string;
+  courseName?: string;
+  gallery?: { url: string; caption?: string }[];
 }
 
 export const portfolioApi = {
@@ -919,7 +929,45 @@ export const portfolioApi = {
     const query = params ? "?" + new URLSearchParams(params).toString() : "";
     return api.get<ApiResponse<PortfolioItem[]>>(`/portfolio${query}`);
   },
+  getById: (id: string) =>
+    api.get<ApiResponse<PortfolioItem>>(`/portfolio/${id}`),
+  getBySlug: (slug: string) =>
+    api.get<ApiResponse<PortfolioItem>>(`/portfolio/slug/${slug}`),
 };
+
+// Careers API
+export interface CareerItem {
+  _id: string;
+  title: string;
+  slug: string;
+  department: string;
+  location: string;
+  type: "full-time" | "part-time" | "contract" | "internship" | "remote";
+  description: string;
+  requirements?: string[];
+  responsibilities?: string[];
+  salary?: {
+    min?: number;
+    max?: number;
+    currency?: string;
+    period?: string;
+  };
+  status: "active" | "closed" | "draft";
+  order?: number;
+  createdAt?: string;
+}
+
+export const careersApi = {
+  getAll: (params?: Record<string, string>) => {
+    const query = params ? "?" + new URLSearchParams(params).toString() : "";
+    return api.get<ApiResponse<CareerItem[]>>(`/careers${query}`);
+  },
+  getById: (id: string) =>
+    api.get<ApiResponse<CareerItem>>(`/careers/${id}`),
+  apply: (id: string, data: { name: string; email: string; phone: string; resumeUrl?: string; coverLetter?: string; experience?: string }) =>
+    api.post<ApiResponse<any>>(`/careers/${id}/apply`, data),
+};
+
 
 // Services API
 export interface ServiceItem {

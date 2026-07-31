@@ -15,7 +15,7 @@ interface ExtendedPortfolio extends PortfolioItem {
   client?: string;
   duration?: string;
   metrics?: { label: string; value: string };
-  testimonial?: { quote: string; author: string; designation: string; company: string };
+  testimonial?: { quote: string; author: string; designation?: string; company?: string };
   studentName?: string;
   courseName?: string;
 }
@@ -221,75 +221,85 @@ export default function PortfolioPage() {
 function ClientProjectCard({ project }: { project: ExtendedPortfolio }) {
   return (
     <div className="animated-border-lg h-full">
-      <Card className="h-full group hover:border-primary/50 transition-all duration-300 border-transparent bg-background">
-        {project.image?.url ? (
-          <div className="h-48 bg-muted overflow-hidden">
-            <img src={project.image.url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-          </div>
-        ) : (
-          <div className="h-48 bg-gradient-to-br from-blue-500/20 to-blue-500/5 relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Briefcase className="h-12 w-12 text-blue-500/30" />
+      <Card className="h-full group hover:border-primary/50 transition-all duration-300 border-transparent bg-background flex flex-col justify-between">
+        <div>
+          {project.image?.url ? (
+            <div className="h-48 bg-muted overflow-hidden">
+              <img src={project.image.url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
-              {project.liveUrl && (
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                  <ExternalLink className="h-5 w-5 text-foreground" />
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-3">
-            <Badge variant="secondary">{project.category}</Badge>
-            {project.duration && <span className="text-xs text-muted-foreground">{project.duration}</span>}
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
-          {project.client && <p className="text-sm text-muted-foreground mb-2">Client: {project.client}</p>}
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.shortDescription || project.description}</p>
-
-          {/* Metrics */}
-          {project.metrics && (
-            <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 mb-4">
-              <Star className="h-4 w-4 text-primary shrink-0" />
-              <span className="text-lg font-bold text-primary">{project.metrics.value}</span>
-              <span className="text-sm text-muted-foreground">{project.metrics.label}</span>
-            </div>
-          )}
-
-          {/* Testimonial */}
-          {project.testimonial?.quote && (
-            <div className="p-3 rounded-lg bg-muted/50 mb-4">
-              <div className="flex items-start gap-2">
-                <Quote className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm italic line-clamp-2">&ldquo;{project.testimonial.quote}&rdquo;</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    — {project.testimonial.author}{project.testimonial.designation && `, ${project.testimonial.designation}`}{project.testimonial.company && ` @ ${project.testimonial.company}`}
-                  </p>
-                </div>
+          ) : (
+            <div className="h-48 bg-gradient-to-br from-blue-500/20 to-blue-500/5 relative">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Briefcase className="h-12 w-12 text-blue-500/30" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
+                {project.liveUrl && (
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                    <ExternalLink className="h-5 w-5 text-foreground" />
+                  </a>
+                )}
               </div>
             </div>
           )}
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <Badge variant="secondary">{project.category}</Badge>
+              {project.duration && <span className="text-xs text-muted-foreground">{project.duration}</span>}
+            </div>
+            <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
+            {project.client && <p className="text-sm text-muted-foreground mb-2">Client: {project.client}</p>}
+            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.shortDescription || project.description}</p>
 
-          <div className="flex flex-wrap gap-1.5">
-            {project.technologies?.slice(0, 5).map((tech) => {
-              const info = getTechInfo(tech);
-              const Icon = info?.icon;
-              return (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border bg-background"
-                  title={info?.label || tech}
-                >
-                  {Icon ? <Icon className="h-3.5 w-3.5" style={{ color: info?.color || undefined }} /> : <span className="w-3.5 h-3.5 rounded bg-muted inline-block" />}
-                  <span>{info?.label || tech}</span>
-                </span>
-              );
-            })}
-          </div>
-        </CardContent>
+            {/* Metrics */}
+            {project.metrics && (
+              <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 mb-4">
+                <Star className="h-4 w-4 text-primary shrink-0" />
+                <span className="text-lg font-bold text-primary">{project.metrics.value}</span>
+                <span className="text-sm text-muted-foreground">{project.metrics.label}</span>
+              </div>
+            )}
+
+            {/* Testimonial */}
+            {project.testimonial?.quote && (
+              <div className="p-3 rounded-lg bg-muted/50 mb-4">
+                <div className="flex items-start gap-2">
+                  <Quote className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm italic line-clamp-2">&ldquo;{project.testimonial.quote}&rdquo;</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      — {project.testimonial.author}{project.testimonial.designation && `, ${project.testimonial.designation}`}{project.testimonial.company && ` @ ${project.testimonial.company}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {project.technologies?.slice(0, 5).map((tech) => {
+                const info = getTechInfo(tech);
+                const Icon = info?.icon;
+                return (
+                  <span
+                    key={tech}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border bg-background"
+                    title={info?.label || tech}
+                  >
+                    {Icon ? <Icon className="h-3.5 w-3.5" style={{ color: info?.color || undefined }} /> : <span className="w-3.5 h-3.5 rounded bg-muted inline-block" />}
+                    <span>{info?.label || tech}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </CardContent>
+        </div>
+
+        <div className="p-5 pt-0">
+          <Button variant="outline" size="sm" className="w-full font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-colors" asChild>
+            <Link href={`/portfolio/${project._id}`}>
+              View Full Case Study <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
+        </div>
       </Card>
     </div>
   );
@@ -298,56 +308,67 @@ function ClientProjectCard({ project }: { project: ExtendedPortfolio }) {
 function StudentProjectCard({ project }: { project: ExtendedPortfolio }) {
   return (
     <div className="animated-border-lg h-full">
-      <Card className="h-full group hover:border-primary/50 transition-all duration-300 border-transparent bg-background">
-        {project.image?.url ? (
-          <div className="h-48 bg-muted overflow-hidden">
-            <img src={project.image.url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-          </div>
-        ) : (
-          <div className="h-48 bg-gradient-to-br from-green-500/20 to-green-500/5 relative">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Code className="h-12 w-12 text-green-500/30" />
+      <Card className="h-full group hover:border-primary/50 transition-all duration-300 border-transparent bg-background flex flex-col justify-between">
+        <div>
+          {project.image?.url ? (
+            <div className="h-48 bg-muted overflow-hidden">
+              <img src={project.image.url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
             </div>
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
-              {project.liveUrl && (
-                <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-                  <ExternalLink className="h-5 w-5 text-foreground" />
-                </a>
-              )}
-            </div>
-          </div>
-        )}
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-3">
-            <Badge variant="secondary" className="bg-green-500/10 text-green-600">{project.category}</Badge>
-            {project.courseName && <span className="text-xs text-muted-foreground">{project.courseName}</span>}
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
-          {project.studentName && (
-            <div className="flex items-center gap-2 mb-2">
-              <Users className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">by {project.studentName}</span>
+          ) : (
+            <div className="h-48 bg-gradient-to-br from-green-500/20 to-green-500/5 relative">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Code className="h-12 w-12 text-green-500/30" />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50">
+                {project.liveUrl && (
+                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                    <ExternalLink className="h-5 w-5 text-foreground" />
+                  </a>
+                )}
+              </div>
             </div>
           )}
-          <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.shortDescription || project.description}</p>
-          <div className="flex flex-wrap gap-1.5">
-            {project.technologies?.slice(0, 5).map((tech) => {
-              const info = getTechInfo(tech);
-              const Icon = info?.icon;
-              return (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border bg-background"
-                  title={info?.label || tech}
-                >
-                  {Icon ? <Icon className="h-3.5 w-3.5" style={{ color: info?.color || undefined }} /> : <span className="w-3.5 h-3.5 rounded bg-muted inline-block" />}
-                  <span>{info?.label || tech}</span>
-                </span>
-              );
-            })}
-          </div>
-        </CardContent>
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <Badge variant="secondary" className="bg-green-500/10 text-green-600">{project.category}</Badge>
+              {project.courseName && <span className="text-xs text-muted-foreground">{project.courseName}</span>}
+            </div>
+            <h3 className="text-lg font-semibold mb-2">{project.title}</h3>
+            {project.studentName && (
+              <div className="flex items-center gap-2 mb-2">
+                <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">by {project.studentName}</span>
+              </div>
+            )}
+            <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{project.shortDescription || project.description}</p>
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {project.technologies?.slice(0, 5).map((tech) => {
+                const info = getTechInfo(tech);
+                const Icon = info?.icon;
+                return (
+                  <span
+                    key={tech}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium border bg-background"
+                    title={info?.label || tech}
+                  >
+                    {Icon ? <Icon className="h-3.5 w-3.5" style={{ color: info?.color || undefined }} /> : <span className="w-3.5 h-3.5 rounded bg-muted inline-block" />}
+                    <span>{info?.label || tech}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </CardContent>
+        </div>
+
+        <div className="p-5 pt-0">
+          <Button variant="outline" size="sm" className="w-full font-bold group-hover:bg-primary group-hover:text-primary-foreground transition-colors" asChild>
+            <Link href={`/portfolio/${project._id}`}>
+              View Full Case Study <ArrowRight className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
+        </div>
       </Card>
     </div>
   );
 }
+
