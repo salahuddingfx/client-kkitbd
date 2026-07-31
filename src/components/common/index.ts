@@ -17,4 +17,6 @@ export { LazyLoad } from "./LazyLoad";
 export { CourseComparison } from "./CourseComparison";
 export { ClientFeatures } from "./ClientFeatures";
 export { VideoModal } from "./VideoModal";
+export { VisitorTracker } from "./VisitorTracker";
+
 

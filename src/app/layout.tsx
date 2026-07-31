@@ -1,12 +1,14 @@
 import "core-js/stable";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import Providers from "@/components/providers";
 import { PreloaderWrapper } from "@/components/ui/preloader-wrapper";
 import { CookieConsent } from "@/components/common/CookieConsent";
 import { SecurityWrapper } from "@/components/common/SecurityWrapper";
 import { CookieConsentProvider } from "@/components/common/CookieConsentProvider";
 import { ConditionalScripts } from "@/components/common/ConditionalScripts";
+import { VisitorTracker } from "@/components/common/VisitorTracker";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -160,6 +162,9 @@ export default function RootLayout({
         <Providers>
           <CookieConsentProvider>
             <SecurityWrapper>
+              <Suspense fallback={null}>
+                <VisitorTracker />
+              </Suspense>
               <PreloaderWrapper />
               <ConditionalScripts />
               {children}
