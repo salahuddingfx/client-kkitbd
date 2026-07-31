@@ -22,6 +22,7 @@ import { Button, Badge, Skeleton } from "@/components/ui";
 import { Container } from "@/components/common";
 import { coursesApi, paymentApi, offersApi, Course } from "@/services/api";
 import { useAppSelector } from "@/redux/hooks";
+import { trackGA4BeginCheckout, trackGA4Purchase } from "@/lib/tracking";
 
 export default function FullPageCheckout() {
   const params = useParams();
@@ -49,7 +50,16 @@ export default function FullPageCheckout() {
     const fetchCourse = async () => {
       try {
         const res = await coursesApi.getById(id);
-        setCourse(res.data || null);
+        if (res.data) {
+          setCourse(res.data);
+          trackGA4BeginCheckout({
+            id: res.data._id,
+            name: res.data.title,
+            value: res.data.discountPrice || res.data.price || 0,
+          });
+        } else {
+          setCourse(null);
+        }
       } catch {
         setCourse(null);
       } finally {
@@ -108,6 +118,14 @@ export default function FullPageCheckout() {
       });
 
       if (res.success || res.data) {
+        trackGA4Purchase({
+          transaction_id: res.data?._id || transactionId || `TX-${Date.now()}`,
+          value: finalAmount,
+          item_id: id,
+          item_name: course?.title || "Course Enrollment",
+          coupon: couponApplied ? couponCode : undefined,
+        });
+
         setSuccessMsg("Payment submitted successfully! Directing to your enrolled dashboard...");
         setTimeout(() => {
           router.push("/dashboard/courses");

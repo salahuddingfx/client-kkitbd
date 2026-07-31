@@ -38,6 +38,7 @@ import { CourseOutlineForm } from "@/components/common/CourseOutlineForm";
 import { HowItWorksSection } from "@/components/common/HowItWorksSection";
 import { coursesApi, Course } from "@/services/api";
 import { useAppSelector } from "@/redux/hooks";
+import { trackGA4ViewItem } from "@/lib/tracking";
 
 export default function CourseDetailPage() {
   const params = useParams();
@@ -78,7 +79,17 @@ export default function CourseDetailPage() {
         } else {
           res = await coursesApi.getBySlug(id);
         }
-        setCourse(res.data || null);
+        if (res.data) {
+          setCourse(res.data);
+          trackGA4ViewItem({
+            id: res.data._id,
+            name: res.data.title,
+            price: res.data.discountPrice || res.data.price || 0,
+            category: typeof res.data.category === "object" ? res.data.category.name : res.data.category,
+          });
+        } else {
+          setCourse(null);
+        }
       } catch {
         setCourse(null);
       } finally {
@@ -87,6 +98,7 @@ export default function CourseDetailPage() {
     };
     if (id) fetchCourse();
   }, [id]);
+
 
   const totalLessons = useMemo(() => {
     if (!course?.modules) return 0;

@@ -23,6 +23,8 @@ import {
 import { Button, Badge, Skeleton, Card, CardContent } from "@/components/ui";
 import { Container } from "@/components/common";
 import { careersApi, CareerItem } from "@/services/api";
+import { trackGA4Lead } from "@/lib/tracking";
+
 
 const fallbackJobs: Record<string, CareerItem> = {
   "65a000000000000000000001": {
@@ -128,6 +130,7 @@ export default function SingleCareerPage() {
           coverLetter,
         });
       }
+      trackGA4Lead({ lead_type: "job_application", lead_name: job?.title || "Career Application" });
       setSuccessMsg("🎉 Your application was submitted successfully! Our HR team will reach out soon.");
       setTimeout(() => {
         setShowModal(false);

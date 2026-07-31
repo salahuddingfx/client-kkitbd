@@ -11,6 +11,7 @@ import { Breadcrumb, Container, SectionHeader } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { contactApi } from "@/services/api";
+import { trackGA4Lead } from "@/lib/tracking";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -68,6 +69,7 @@ export default function ContactPage() {
         message: data.message,
         phone: data.phone,
       });
+      trackGA4Lead({ lead_type: "contact_form", lead_name: data.subject });
       toast.success("Message sent successfully! We'll get back to you soon.");
       reset();
     } catch {
