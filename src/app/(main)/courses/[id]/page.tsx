@@ -32,7 +32,7 @@ import {
   Share2,
 } from "lucide-react";
 import { Button, Badge, Skeleton } from "@/components/ui";
-import { Container, ShareButtons, PaymentModal } from "@/components/common";
+import { Container, ShareButtons } from "@/components/common";
 import { CourseOfferBanner } from "@/components/common/CourseOfferBanner";
 import { CourseOutlineForm } from "@/components/common/CourseOutlineForm";
 import { HowItWorksSection } from "@/components/common/HowItWorksSection";
@@ -47,8 +47,8 @@ export default function CourseDetailPage() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const [showPayment, setShowPayment] = useState(false);
   const [showOutlineForm, setShowOutlineForm] = useState(false);
+
   const [expandedModules, setExpandedModules] = useState<Set<number>>(new Set([0]));
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeSection, setActiveSection] = useState("overview");
@@ -849,7 +849,6 @@ export default function CourseDetailPage() {
       </section>
 
       {showOutlineForm && <CourseOutlineForm courseName={course.title} courseId={course._id} onClose={() => setShowOutlineForm(false)} />}
-      <PaymentModal isOpen={showPayment} onClose={() => setShowPayment(false)} courseId={course._id} courseTitle={course.title} amount={course.discountPrice || course.price} />
     </>
   );
 }
