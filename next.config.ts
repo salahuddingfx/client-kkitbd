@@ -17,7 +17,9 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-tooltip",
     ],
   },
+  output: process.env.NEXT_PUBLIC_BUILD_TARGET === "mobile" ? "export" : undefined,
   images: {
+    unoptimized: process.env.NEXT_PUBLIC_BUILD_TARGET === "mobile" || process.env.NODE_ENV === "production",
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
