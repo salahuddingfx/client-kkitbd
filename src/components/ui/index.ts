@@ -61,3 +61,5 @@ export { OTPInput } from "./OTPInput";
 export { PhoneInput } from "./PhoneInput";
 export { GlowCard } from "./GlowCard";
 export { ImageUpload } from "./ImageUpload";
+export { RandomLetterSwap } from "./random-letter-swap";
+export { default as RandomLetterSwapNav } from "./m-random-letter-swap-1";

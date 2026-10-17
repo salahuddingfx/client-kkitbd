@@ -22,6 +22,7 @@ import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 import { NAV_LINKS } from "@/constants";
 import { Button } from "@/components/ui";
+import { RandomLetterSwap } from "@/components/ui/random-letter-swap";
 import { Container } from "@/components/common";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleMobileMenu, closeMobileMenu } from "@/redux/slices/uiSlice";
@@ -199,7 +200,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Center — Empty (pushes links right on lg+) */}
+          {/* Center — Empty spacer (keeps layout beautifully organized) */}
           <div className="hidden lg:block flex-1" />
 
           {/* Right — Desktop Links + Actions (lg+) */}
@@ -209,13 +210,18 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary whitespace-nowrap",
+                  "text-sm font-medium transition-colors hover:text-primary whitespace-nowrap py-1 inline-flex items-center",
                   pathname === link.href
-                    ? "text-primary"
-                    : "text-foreground/70"
+                    ? "text-primary font-semibold"
+                    : "text-foreground/75 hover:text-foreground"
                 )}
               >
-                {link.label}
+                <RandomLetterSwap
+                  label={link.label}
+                  staggerDuration={0.025}
+                  transition={{ duration: 0.6, type: "spring" }}
+                  className="cursor-pointer"
+                />
               </Link>
             ))}
 
