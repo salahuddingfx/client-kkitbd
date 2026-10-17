@@ -156,7 +156,7 @@ export function LavaEffect({
       ref={containerRef}
       aria-hidden="true"
       className={cn(
-        "absolute inset-0 pointer-events-none overflow-hidden select-none -z-0",
+        "absolute inset-0 pointer-events-none overflow-hidden select-none z-0",
         className
       )}
     >
@@ -179,7 +179,7 @@ export function LavaEffect({
       {/* Lava Lamp Chamber with organic morphing blobs */}
       <div
         className={cn(
-          "absolute inset-0 transition-opacity duration-700 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_90%)]",
+          "absolute inset-0 transition-opacity duration-700 pointer-events-none mask-[radial-gradient(ellipse_at_center,black_50%,transparent_90%)]",
           opacityMap[intensity]
         )}
         style={{
@@ -193,7 +193,7 @@ export function LavaEffect({
           className="absolute -top-12 left-[15%] pointer-events-none transition-transform duration-75 ease-out"
           style={{ willChange: "transform" }}
         >
-          <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-gradient-to-tr from-red-600 via-rose-600 to-amber-500 animate-lava-drift-1 mix-blend-multiply dark:mix-blend-screen opacity-90" />
+          <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-linear-to-tr from-red-600 via-rose-600 to-amber-500 animate-lava-drift-1 mix-blend-multiply dark:mix-blend-screen opacity-90" />
         </div>
 
         {/* Blob 2: Warm Amber / Flame Orange (with mouse counter-physics wrapper) */}
@@ -202,7 +202,7 @@ export function LavaEffect({
           className="absolute top-1/4 right-[15%] pointer-events-none transition-transform duration-75 ease-out"
           style={{ willChange: "transform" }}
         >
-          <div className="w-64 h-64 sm:w-88 sm:h-88 rounded-full bg-gradient-to-br from-orange-500 via-amber-500 to-red-600 animate-lava-drift-2 mix-blend-multiply dark:mix-blend-screen opacity-85" />
+          <div className="w-64 h-64 sm:w-88 sm:h-88 rounded-full bg-linear-to-br from-orange-500 via-amber-500 to-red-600 animate-lava-drift-2 mix-blend-multiply dark:mix-blend-screen opacity-85" />
         </div>
 
         {/* Blob 3: Deep Ruby / Coral Core (with mouse rise physics wrapper) */}
@@ -211,7 +211,7 @@ export function LavaEffect({
           className="absolute -bottom-14 left-[35%] pointer-events-none transition-transform duration-75 ease-out"
           style={{ willChange: "transform" }}
         >
-          <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-gradient-to-tl from-rose-700 via-red-500 to-orange-400 animate-lava-drift-3 mix-blend-multiply dark:mix-blend-screen opacity-80" />
+          <div className="w-80 h-80 sm:w-96 sm:h-96 rounded-full bg-linear-to-tl from-rose-700 via-red-500 to-orange-400 animate-lava-drift-3 mix-blend-multiply dark:mix-blend-screen opacity-80" />
         </div>
 
         {/* Blob 4: Golden Honey Accent (with tilt physics wrapper) */}
@@ -220,14 +220,14 @@ export function LavaEffect({
           className="absolute top-1/3 left-[50%] -translate-x-1/2 pointer-events-none transition-transform duration-75 ease-out"
           style={{ willChange: "transform" }}
         >
-          <div className="w-60 h-60 sm:w-72 sm:h-72 rounded-full bg-gradient-to-r from-amber-400 via-rose-500 to-red-600 animate-lava-drift-4 mix-blend-multiply dark:mix-blend-screen opacity-75" />
+          <div className="w-60 h-60 sm:w-72 sm:h-72 rounded-full bg-linear-to-r from-amber-400 via-rose-500 to-red-600 animate-lava-drift-4 mix-blend-multiply dark:mix-blend-screen opacity-75" />
         </div>
 
         {/* Interactive Mouse Molten Drop: Melts and connects dynamically with all blobs */}
         {interactive && (
           <div
             ref={cursorBlobRef}
-            className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-r from-red-600 via-orange-500 to-amber-400 mix-blend-multiply dark:mix-blend-screen pointer-events-none transition-opacity duration-300"
+            className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-linear-to-r from-red-600 via-orange-500 to-amber-400 mix-blend-multiply dark:mix-blend-screen pointer-events-none transition-opacity duration-300"
             style={{
               left: "50%",
               top: "50%",
@@ -242,7 +242,7 @@ export function LavaEffect({
       {interactive && (
         <div
           ref={cursorGlowRef}
-          className="absolute w-96 h-96 rounded-full bg-gradient-to-tr from-red-500/30 via-orange-400/20 to-transparent blur-3xl pointer-events-none mix-blend-screen transition-opacity duration-300"
+          className="absolute w-96 h-96 rounded-full bg-linear-to-tr from-red-500/30 via-orange-400/20 to-transparent blur-3xl pointer-events-none mix-blend-screen transition-opacity duration-300"
           style={{
             left: "50%",
             top: "50%",
@@ -265,14 +265,14 @@ export function LavaEffect({
 
       {/* Subtle SaaS Dot Grid Overlay */}
       {showGrid && (
-        <div className="absolute inset-0 bg-dot-pattern opacity-40 dark:opacity-20 pointer-events-none [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_80%)]" />
+        <div className="absolute inset-0 bg-dot-pattern opacity-40 dark:opacity-20 pointer-events-none mask-[radial-gradient(ellipse_at_center,black_40%,transparent_80%)]" />
       )}
 
       {/* Soft Vignette / Edge Blends */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-transparent to-background pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-b from-background/50 via-transparent to-background pointer-events-none" />
 
       {/* Bottom glowing accent line */}
-      <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-red-500/30 to-transparent pointer-events-none" />
     </div>
   );
 }
