@@ -192,11 +192,6 @@ export default function CourseDetailPage() {
 
   return (
     <>
-      {/* ─── Scroll Progress Bar ─── */}
-      <div
-        className="fixed top-0 left-0 z-[999] h-[3px] bg-gradient-to-r from-primary via-orange-400 to-primary transition-all duration-100 ease-out"
-        style={{ width: `${scrollProgress}%`, boxShadow: "0 0 10px rgba(220,38,38,0.6)" }}
-      />
       <motion.div
         initial={{ opacity: 0, scale: 0.8, y: 20 }}
         animate={{ opacity: scrollProgress > 5 ? 1 : 0, scale: scrollProgress > 5 ? 1 : 0.8, y: scrollProgress > 5 ? 0 : 20 }}

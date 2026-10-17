@@ -412,12 +412,6 @@ export default function BlogPostPage() {
 
   return (
     <div className="relative min-h-screen">
-      {/* Top Reading Progress Bar */}
-      <div
-        className="fixed top-16 left-0 right-0 h-1 bg-primary z-40 transition-all duration-150 origin-left"
-        style={{ transform: `scaleX(${readingProgress / 100})` }}
-      />
-
       {/* Hero Heading Banner with Interactive Lava Effect */}
       <LavaHero
         badge={post.category || "Technology"}
