@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage, Skeleton, GlowCard } from "@/components/ui";
-import { Breadcrumb, Container } from "@/components/common";
+import { Breadcrumb, Container, LavaHero } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { teamApi, TeamMember } from "@/services/api";
 import { getSkillIcon } from "@/lib/icons";
@@ -33,27 +33,12 @@ export default function TeamPage() {
 
   return (
     <>
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary border-b border-border">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-sm font-medium text-primary uppercase tracking-wider">
-              Our Team
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6">
-              Meet the Experts Behind KKIT
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Our team of passionate professionals, leaders, and instructors is dedicated to your success.
-            </p>
-            <Breadcrumb items={[{ label: "Our Team" }]} className="justify-center mt-6" />
-          </motion.div>
-        </Container>
-      </section>
+      <LavaHero
+        badge="Our Team"
+        title="Meet the Experts Behind KKIT"
+        description="Our team of passionate professionals, leaders, and instructors is dedicated to your success."
+        breadcrumbItems={[{ label: "Our Team" }]}
+      />
 
       <section className="py-12 sm:py-20">
         <Container>

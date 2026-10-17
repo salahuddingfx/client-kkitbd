@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent, Badge, Button, Skeleton } from "@/components/ui";
-import { Breadcrumb, Container } from "@/components/common";
+import { Breadcrumb, Container, LavaHero } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { MapPin, Clock, ArrowRight, Search, Briefcase, Sparkles, DollarSign } from "lucide-react";
 import { careersApi, CareerItem } from "@/services/api";
@@ -95,28 +95,16 @@ export default function CareersPage() {
   return (
     <>
       {/* Hero Header */}
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary border-b">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary uppercase tracking-wider mb-3">
-              <Sparkles className="h-3.5 w-3.5" /> We Are Hiring
-            </span>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-foreground mt-2 mb-4">
-              Build the Future of EdTech <span className="text-primary">&</span> Software
-            </h1>
-            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-              Join KKIT&apos;s fast-growing team of software engineers, designers, and educators.
-              We empower learners and build enterprise-grade software.
-            </p>
-            <Breadcrumb items={[{ label: "Careers" }]} className="justify-center mt-6" />
-          </motion.div>
-        </Container>
-      </section>
+      <LavaHero
+        badge="We Are Hiring"
+        title={
+          <>
+            Build the Future of EdTech <span className="text-primary">&amp;</span> Software
+          </>
+        }
+        description="Join KKIT's fast-growing team of software engineers, designers, and educators. We empower learners and build enterprise-grade software."
+        breadcrumbItems={[{ label: "Careers" }]}
+      />
 
       {/* Filter & Jobs Section */}
       <section className="py-12 sm:py-20">

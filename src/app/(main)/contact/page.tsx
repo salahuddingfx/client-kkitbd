@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Card, CardContent, Input, Textarea, Button, Label, PhoneInput } from "@/components/ui";
-import { Breadcrumb, Container, SectionHeader } from "@/components/common";
+import { Breadcrumb, Container, SectionHeader, LavaHero } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { contactApi } from "@/services/api";
@@ -81,27 +81,12 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-sm font-medium text-primary uppercase tracking-wider">
-              Contact Us
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6">
-              Get in Touch
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Have a question or want to work together? We&apos;d love to hear from you.
-            </p>
-            <Breadcrumb items={[{ label: "Contact Us" }]} className="justify-center mt-6" />
-          </motion.div>
-        </Container>
-      </section>
+      <LavaHero
+        badge="Contact Us"
+        title="Get in Touch"
+        description="Have a question or want to work together? We'd love to hear from you."
+        breadcrumbItems={[{ label: "Contact Us" }]}
+      />
 
       <section className="py-12 sm:py-20 overflow-hidden">
         <Container>

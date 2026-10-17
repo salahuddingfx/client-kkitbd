@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { Play, Quote, Loader2 } from "lucide-react";
 import { GlowCard, Button } from "@/components/ui";
-import { Breadcrumb, Container, SectionHeader } from "@/components/common";
+import { Breadcrumb, Container, SectionHeader, LavaEffect } from "@/components/common";
 import { VideoModal } from "@/components/common/VideoModal";
 import { ScrollReveal, StaggerReveal, Timeline } from "@/components/animations";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
@@ -84,13 +84,21 @@ export default function AboutPage() {
   return (
     <>
       {/* Hero */}
-      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
-        <Container>
+      <section ref={heroRef} className="relative overflow-hidden pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background border-b border-border/40">
+        <LavaEffect intensity="medium" />
+        <Container className="relative z-10">
           <div className="text-center max-w-3xl mx-auto">
-            <span className="about-subtitle text-sm font-medium text-primary uppercase tracking-wider">About Us</span>
-            <h1 className="about-title text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6">Empowering the Next Generation of Tech Leaders</h1>
-            <p className="about-desc text-lg text-muted-foreground">We&apos;re on a mission to democratize technology education and help individuals build successful careers in the digital age.</p>
-            <div className="about-breadcrumb"><Breadcrumb items={[{ label: "About Us" }]} className="justify-center mt-6" /></div>
+            <span className="about-subtitle inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase text-primary bg-primary/10 border border-primary/25 backdrop-blur-md shadow-xs mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              About Us
+            </span>
+            <h1 className="about-title text-4xl md:text-5xl font-extrabold text-foreground mt-2 mb-4 leading-tight">Empowering the Next Generation of Tech Leaders</h1>
+            <p className="about-desc text-lg text-muted-foreground max-w-2xl mx-auto">We&apos;re on a mission to democratize technology education and help individuals build successful careers in the digital age.</p>
+            <div className="about-breadcrumb mt-6 flex justify-center">
+              <div className="inline-block px-3.5 py-1.5 rounded-full bg-background/60 backdrop-blur-md border border-border/60 shadow-xs">
+                <Breadcrumb items={[{ label: "About Us" }]} className="justify-center" />
+              </div>
+            </div>
           </div>
         </Container>
       </section>

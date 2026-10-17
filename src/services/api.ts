@@ -418,6 +418,29 @@ export const userApi = {
     api.put<ApiResponse<User>>(`/users/${id}/role`, { role }),
 };
 
+export interface BlogComment {
+  id: string;
+  name: string;
+  email?: string;
+  avatar?: string | null;
+  userId?: string | null;
+  role?: string;
+  content: string;
+  likes: number;
+  parentId?: string | null;
+  replies?: BlogComment[];
+  createdAt: string;
+}
+
+export interface BlogReactions {
+  like?: number;
+  love?: number;
+  fire?: number;
+  clap?: number;
+  insightful?: number;
+  [key: string]: number | undefined;
+}
+
 // Blog API
 export const blogApi = {
   getAll: (params?: Record<string, string>) => {
@@ -430,6 +453,21 @@ export const blogApi = {
 
   getBySlug: (slug: string) =>
     api.get<ApiResponse<unknown>>(`/blogs/${slug}`),
+
+  addReaction: (slug: string, type: string) =>
+    api.post<ApiResponse<{ reactions: BlogReactions; likes: number; userReaction: string }>>(`/blogs/${slug}/reactions`, { type }),
+
+  getComments: (slug: string) =>
+    api.get<ApiResponse<BlogComment[]>>(`/blogs/${slug}/comments`),
+
+  addComment: (slug: string, data: { content: string; name?: string; email?: string; parentId?: string }) =>
+    api.post<ApiResponse<{ comment: BlogComment; comments: BlogComment[]; totalComments: number }>>(`/blogs/${slug}/comments`, data),
+
+  likeComment: (slug: string, commentId: string) =>
+    api.post<ApiResponse<{ comment: BlogComment; comments: BlogComment[] }>>(`/blogs/${slug}/comments/${commentId}/like`),
+
+  getRelated: (slug: string) =>
+    api.get<ApiResponse<unknown[]>>(`/blogs/${slug}/related`),
 
   create: (data: unknown) =>
     api.post<ApiResponse<unknown>>("/blogs", data),

@@ -18,5 +18,7 @@ export { CourseComparison } from "./CourseComparison";
 export { ClientFeatures } from "./ClientFeatures";
 export { VideoModal } from "./VideoModal";
 export { VisitorTracker } from "./VisitorTracker";
+export { LavaEffect } from "./LavaEffect";
+export { LavaHero } from "./LavaHero";
 
 

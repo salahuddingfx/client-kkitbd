@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui";
-import { Breadcrumb, Container, SectionHeader } from "@/components/common";
+import { Breadcrumb, Container, SectionHeader, LavaHero } from "@/components/common";
 
 const faqCategories = [
   {
@@ -61,27 +61,12 @@ const faqCategories = [
 export default function FAQPage() {
   return (
     <>
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-sm font-medium text-primary uppercase tracking-wider">
-              FAQ
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6">
-              Frequently Asked Questions
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Find answers to common questions about our platform, courses, and services.
-            </p>
-            <Breadcrumb items={[{ label: "FAQ" }]} className="justify-center mt-6" />
-          </motion.div>
-        </Container>
-      </section>
+      <LavaHero
+        badge="FAQ"
+        title="Frequently Asked Questions"
+        description="Find answers to common questions about our platform, courses, and services."
+        breadcrumbItems={[{ label: "FAQ" }]}
+      />
 
       <section className="py-12 sm:py-20">
         <Container>

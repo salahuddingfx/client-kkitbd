@@ -763,3 +763,93 @@ input[type="checkbox"]:focus-visible {
   outline: 2px solid var(--ring, #dc2626);
   outline-offset: 2px;
 }
+
+/* Lava Lamp Fluid Animations */
+@keyframes lava-drift-1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate(50px, -25px) scale(1.15) rotate(40deg);
+  }
+  66% {
+    transform: translate(-35px, 20px) scale(0.92) rotate(-25deg);
+  }
+}
+
+@keyframes lava-drift-2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1.05) rotate(0deg);
+  }
+  33% {
+    transform: translate(-55px, 30px) scale(0.9) rotate(-45deg);
+  }
+  66% {
+    transform: translate(40px, -15px) scale(1.18) rotate(30deg);
+  }
+}
+
+@keyframes lava-drift-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(0.95) rotate(0deg);
+  }
+  50% {
+    transform: translate(65px, 25px) scale(1.22) rotate(70deg);
+  }
+}
+
+@keyframes lava-drift-4 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1.1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-50px, -30px) scale(0.88) rotate(-50deg);
+  }
+}
+
+.animate-lava-drift-1 {
+  animation: lava-drift-1 18s ease-in-out infinite;
+}
+
+.animate-lava-drift-2 {
+  animation: lava-drift-2 22s ease-in-out infinite;
+}
+
+.animate-lava-drift-3 {
+  animation: lava-drift-3 16s ease-in-out infinite;
+}
+
+.animate-lava-drift-4 {
+  animation: lava-drift-4 20s ease-in-out infinite;
+}
+
+/* Floating Lava Embers */
+.lava-ember {
+  position: absolute;
+  bottom: -20px;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background-color: #f97316;
+  box-shadow: 0 0 10px 2px rgba(239, 68, 68, 0.8);
+  animation: lava-ember-rise 7s ease-in infinite;
+  pointer-events: none;
+}
+
+@keyframes lava-ember-rise {
+  0% {
+    transform: translateY(0) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-240px) scale(1.2);
+    opacity: 0;
+  }
+}
+

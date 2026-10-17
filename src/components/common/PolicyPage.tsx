@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Breadcrumb, Container } from "@/components/common";
+import { Breadcrumb, Container, LavaEffect } from "@/components/common";
 import { GlowCard } from "@/components/ui";
 import { ScrollReveal, StaggerReveal } from "@/components/animations";
 import { gsap, useGSAP } from "@/hooks/useGSAP";
@@ -44,20 +44,24 @@ export function PolicyPage({
   return (
     <>
       {/* Hero */}
-      <section ref={heroRef} className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
-        <Container>
+      <section ref={heroRef} className="relative overflow-hidden pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background border-b border-border/40">
+        <LavaEffect intensity="medium" />
+        <Container className="relative z-10">
           <div className="text-center max-w-3xl mx-auto">
-            <span className="policy-badge inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+            <span className="policy-badge inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold mb-3 shadow-xs backdrop-blur-md">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
               Legal
             </span>
-            <h1 className="policy-title text-4xl md:text-5xl font-bold text-foreground">
+            <h1 className="policy-title text-4xl md:text-5xl font-extrabold text-foreground mt-2 mb-4 leading-tight">
               {title}
             </h1>
-            <p className="policy-date text-lg text-muted-foreground mt-4">
+            <p className="policy-date text-base sm:text-lg text-muted-foreground">
               Last updated: {lastUpdated}
             </p>
-            <div className="policy-breadcrumb">
-              <Breadcrumb items={[{ label: breadcrumbLabel }]} className="justify-center mt-6" />
+            <div className="policy-breadcrumb mt-6 flex justify-center">
+              <div className="inline-block px-3.5 py-1.5 rounded-full bg-background/60 backdrop-blur-md border border-border/60 shadow-xs">
+                <Breadcrumb items={[{ label: breadcrumbLabel }]} className="justify-center" />
+              </div>
             </div>
           </div>
         </Container>

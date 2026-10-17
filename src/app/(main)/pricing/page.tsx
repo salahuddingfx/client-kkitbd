@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent, Badge, Button, Separator, Skeleton } from "@/components/ui";
-import { Breadcrumb, Container, SectionHeader, CourseComparison, GuaranteeBadge } from "@/components/common";
+import { Breadcrumb, Container, SectionHeader, CourseComparison, GuaranteeBadge, LavaHero } from "@/components/common";
 import { FadeIn } from "@/components/animations";
 import { Check, Loader2 } from "lucide-react";
 import { pricingApi, PricingPlan } from "@/services/api";
@@ -29,27 +29,12 @@ export default function PricingPage() {
 
   return (
     <>
-      <section className="pt-12 sm:pt-20 pb-10 sm:pb-16 bg-background-secondary">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <span className="text-sm font-medium text-primary uppercase tracking-wider">
-              Pricing
-            </span>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mt-4 mb-6">
-              Simple, Transparent Pricing
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Choose the plan that works best for you. All plans include a 7-day free trial.
-            </p>
-            <Breadcrumb items={[{ label: "Pricing" }]} className="justify-center mt-6" />
-          </motion.div>
-        </Container>
-      </section>
+      <LavaHero
+        badge="Pricing"
+        title="Simple, Transparent Pricing"
+        description="Choose the plan that works best for you. All plans include a 7-day free trial."
+        breadcrumbItems={[{ label: "Pricing" }]}
+      />
 
       <section className="py-12 sm:py-20">
         <Container>
