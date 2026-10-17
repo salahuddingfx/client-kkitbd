@@ -21,6 +21,7 @@ export const NAV_LINKS = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Courses", href: "/courses" },
+  { label: "Portfolio", href: "/portfolio" },
   { label: "Blog", href: "/blog" },
   { label: "Contact", href: "/contact" },
 ] as const;
@@ -55,7 +56,6 @@ export const FOOTER_LINKS = {
     { label: "Live Classes", href: "/live-classes" },
     { label: "Learning Paths", href: "/learning-paths" },
     { label: "Community Forum", href: "/discussions" },
-    { label: "API Docs", href: "/api-docs" },
     { label: "Status", href: "/status" },
     { label: "Changelog", href: "/changelog" },
   ],
