@@ -204,11 +204,25 @@ export default function PortfolioPage() {
               Whether you need a digital product built or want to become a developer — we&apos;ve got you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild variant="secondary" size="lg">
-                <Link href="/contact">Hire Us <ArrowRight className="h-4 w-4 ml-2" /></Link>
+              <Button
+                asChild
+                variant="secondary"
+                size="lg"
+                className="bg-white text-primary hover:bg-white/90 font-semibold shadow-md"
+              >
+                <Link href="/contact">
+                  Hire Us <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                <Link href="/courses">Browse Courses <ArrowRight className="h-4 w-4 ml-2" /></Link>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-white/40 text-white bg-transparent hover:bg-white/10 hover:text-white font-semibold"
+              >
+                <Link href="/courses">
+                  Browse Courses <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
               </Button>
             </div>
           </div>
