@@ -922,6 +922,7 @@ export interface PortfolioItem {
   studentName?: string;
   courseName?: string;
   gallery?: { url: string; caption?: string }[];
+  isCaseStudy?: boolean;
 }
 
 export const portfolioApi = {

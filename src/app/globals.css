@@ -86,7 +86,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.011em;
 }
 
 /* Custom Scrollbar */
@@ -137,14 +138,88 @@ html {
 
 /* Glass Effect */
 .glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
 }
 
 .dark .glass {
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Ambient Background Patterns */
+.bg-mesh-subtle {
+  background-image: 
+    radial-gradient(circle at 12% 18%, rgba(220, 38, 38, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 88% 82%, rgba(249, 115, 22, 0.05) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.02) 0%, transparent 60%);
+}
+
+.dark .bg-mesh-subtle {
+  background-image: 
+    radial-gradient(circle at 12% 18%, rgba(220, 38, 38, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 88% 82%, rgba(249, 115, 22, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.04) 0%, transparent 65%);
+}
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.dark .bg-dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+.bg-grid-subtle {
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.dark .bg-grid-subtle {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Multi-layered Depth Card */
+.card-depth-elevated {
+  position: relative;
+  border-radius: 1.25rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 16px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.card-depth-elevated:hover {
+  transform: translateY(-5px);
+  border-color: rgba(220, 38, 38, 0.35);
+  box-shadow: 
+    0 16px 36px -8px rgba(220, 38, 38, 0.15),
+    0 4px 14px -2px rgba(0, 0, 0, 0.06);
+}
+
+.dark .card-depth-elevated {
+  background: rgba(23, 23, 23, 0.85);
+  backdrop-filter: blur(12px);
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+}
+
+.dark .card-depth-elevated:hover {
+  border-color: rgba(220, 38, 38, 0.55);
+  box-shadow: 
+    0 20px 48px -10px rgba(220, 38, 38, 0.28),
+    0 4px 18px rgba(0, 0, 0, 0.5);
 }
 
 /* Gradient Text */
@@ -301,8 +376,8 @@ html {
 
 .animated-border-lg {
   position: relative;
-  border-radius: 1rem;
-  padding: 3px;
+  border-radius: 1.25rem;
+  padding: 2.5px;
   background: conic-gradient(
     from var(--border-angle),
     transparent 0%,
@@ -318,7 +393,16 @@ html {
     #f97316 83%,
     transparent 91%
   );
-  animation: spin-border-angle 8s linear infinite;
+  animation: spin-border-angle 7s linear infinite;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animated-border-lg:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 18px 42px -8px rgba(220, 38, 38, 0.22),
+    0 4px 14px -2px rgba(0, 0, 0, 0.06);
 }
 
 @keyframes spin-border-angle {
@@ -327,7 +411,7 @@ html {
 }
 
 .animated-border-lg > * {
-  border-radius: calc(1rem - 3px);
+  border-radius: calc(1.25rem - 2.5px);
   overflow: hidden;
 }
 

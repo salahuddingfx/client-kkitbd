@@ -39,8 +39,9 @@ export function FeaturedServices() {
   }, []);
 
   return (
-    <section className="py-20">
-      <Container>
+    <section className="py-20 relative overflow-hidden bg-background">
+      <div className="absolute inset-0 bg-mesh-subtle pointer-events-none opacity-60" />
+      <Container className="relative z-10">
         <SectionHeader
           subtitle="Our Services"
           title="What We Offer"
@@ -53,10 +54,10 @@ export function FeaturedServices() {
               return (
                 <div key={service.title} className="service-card">
                   <Link href={service.href}>
-                    <div className="animated-border-lg">
+                    <div className="card-depth-elevated">
                       <GlowCard variant="glow" className="h-full group border-transparent bg-background">
                         <div className="p-6">
-                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                          <div className="w-13 h-13 rounded-2xl bg-gradient-to-br from-primary/15 via-primary/10 to-orange-500/10 border border-primary/25 shadow-xs shadow-primary/10 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary group-hover:shadow-md group-hover:shadow-primary/30 transition-all duration-300">
                             <IconComp className="h-6 w-6 text-primary group-hover:text-white" />
                           </div>
                           <h3 className="text-xl font-semibold text-foreground mb-2">{service.title}</h3>
