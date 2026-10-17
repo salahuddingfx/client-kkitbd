@@ -3,7 +3,18 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Code, Smartphone, Palette, TrendingUp, ShoppingBag } from "lucide-react";
+import {
+  ArrowRight,
+  Code,
+  Smartphone,
+  Palette,
+  TrendingUp,
+  ShoppingBag,
+  Cloud,
+  Cpu,
+  ShieldCheck,
+  Store,
+} from "lucide-react";
 import { GlowCard } from "@/components/ui";
 import { Breadcrumb, Container, SectionHeader } from "@/components/common";
 import { ScrollReveal, StaggerReveal } from "@/components/animations";
@@ -42,6 +53,38 @@ const services = [
       "Data-driven marketing strategies to grow your online presence and reach your target audience.",
     features: ["SEO Optimization", "Social Media", "Content Marketing", "Analytics"],
     href: "/services/digital-marketing",
+  },
+  {
+    icon: Cloud,
+    title: "Cloud & DevOps",
+    description:
+      "Automated CI/CD pipelines, containerization, and robust cloud infrastructure scaling.",
+    features: ["Docker & Kubernetes", "AWS & Cloud Hosting", "CI/CD Pipelines", "24/7 Monitoring"],
+    href: "/services/web-development",
+  },
+  {
+    icon: Cpu,
+    title: "AI & Automation",
+    description:
+      "Intelligent workflows, OpenAI/LLM models, AI agent automations, and predictive data systems.",
+    features: ["Custom AI Agents", "LLM Integration", "Automated Pipelines", "Data Analytics"],
+    href: "/services/web-development",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Cybersecurity & QA",
+    description:
+      "Comprehensive security audits, automated testing, and software quality assurance.",
+    features: ["Penetration Testing", "Security Audits", "Automated QA", "Code Review"],
+    href: "/services/web-development",
+  },
+  {
+    icon: Store,
+    title: "E-Commerce Solutions",
+    description:
+      "High-converting online storefronts, multi-vendor marketplaces, and payment gateway systems.",
+    features: ["Payment Integration", "Inventory Control", "Custom SaaS Portals", "High-Traffic Checkout"],
+    href: "/services/web-development",
   },
 ];
 
@@ -83,39 +126,43 @@ export default function ServicesPage() {
 
       <section className="py-12 sm:py-20">
         <Container>
-          <StaggerReveal childSelector=".service-card" stagger={0.12} y={50} duration={0.7}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+          <StaggerReveal childSelector=".service-card" stagger={0.08} y={40} duration={0.6}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {services.map((service) => (
-                <div key={service.title} className="service-card">
-                  <div className="animated-border-lg">
-                    <GlowCard variant="glow" className="h-full group border-transparent bg-background">
-                      <div className="p-4 sm:p-8">
-                        <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                          <service.icon className="h-7 w-7 text-primary group-hover:text-white" />
+                <div key={service.title} className="service-card flex">
+                  <div className="animated-border-lg w-full">
+                    <GlowCard variant="glow" className="h-full group border-transparent bg-background flex flex-col justify-between">
+                      <div className="p-5 sm:p-6 flex flex-col justify-between h-full">
+                        <div>
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                            <service.icon className="h-6 w-6 text-primary group-hover:text-white transition-colors" />
+                          </div>
+                          <h2 className="text-lg font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                            {service.title}
+                          </h2>
+                          <p className="text-xs sm:text-sm text-muted-foreground mb-4 line-clamp-2 leading-relaxed min-h-[2.5rem]">
+                            {service.description}
+                          </p>
+                          <ul className="space-y-1.5 mb-5">
+                            {service.features.map((feature) => (
+                              <li key={feature} className="flex items-center text-xs text-muted-foreground">
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mr-2" />
+                                <span className="truncate">{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <h2 className="text-2xl font-bold text-foreground mb-3">
-                          {service.title}
-                        </h2>
-                        <p className="text-muted-foreground mb-6">{service.description}</p>
-                        <ul className="space-y-2 mb-6">
-                          {service.features.map((feature) => (
-                            <li key={feature} className="flex items-center text-sm text-muted-foreground">
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="flex items-center justify-between pt-2 border-t border-border">
-                          <Link href={service.href} className="inline-flex items-center text-sm font-medium text-primary hover:underline">
+                        <div className="flex items-center justify-between pt-3 border-t border-border mt-auto">
+                          <Link href={service.href} className="inline-flex items-center text-xs font-semibold text-primary hover:underline">
                             Learn Details
-                            <ArrowRight className="ml-1 h-4 w-4" />
+                            <ArrowRight className="ml-1 h-3.5 w-3.5" />
                           </Link>
                           <button
                             onClick={() => setSelectedService(service.title)}
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow-md"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-all shadow-xs cursor-pointer"
                           >
                             <ShoppingBag className="h-3.5 w-3.5" />
-                            Order Service
+                            Order
                           </button>
                         </div>
                       </div>
